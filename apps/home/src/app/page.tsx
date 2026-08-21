@@ -23,7 +23,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center w-full max-w-4xl mx-auto mb-20 md:mb-32"
+          className="text-center w-full max-w-4xl mx-auto mb-20 md:mb-32 mt-16 md:mt-24"
         >
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-8">
             <Sparkles className="w-4 h-4 text-blue-400" />
