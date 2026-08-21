@@ -15,7 +15,7 @@ export default function Page() {
   }, []);
 
   return (
-    <div ref={ref} className="relative w-full flex flex-col">
+    <div ref={ref} className="relative w-full block">
       <AnalogyScene />
       <NextSection 
         href="/memory" 

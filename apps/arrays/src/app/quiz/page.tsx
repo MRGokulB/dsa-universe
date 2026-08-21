@@ -5,7 +5,7 @@ import { NextSection } from "@/components/layout/NextSection";
 
 export default function Page() {
   return (
-    <div className="relative w-full flex flex-col">
+    <div className="relative w-full block">
       <QuizScene />
       <NextSection 
         href="/" 
