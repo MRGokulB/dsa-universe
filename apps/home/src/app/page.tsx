@@ -8,7 +8,7 @@ const topics = [
     id: "arrays",
     title: "Arrays",
     status: "live",
-    url: "https://dsa-arrays.vercel.app",
+    url: "https://arrays-oo2gwqfix-gokul-boddawars-projects.vercel.app",
     description: "Contiguous memory, O(1) access, Two Pointers, Sliding Window.",
     color: "from-blue-500/20 to-blue-600/5",
     border: "border-blue-500/30",
