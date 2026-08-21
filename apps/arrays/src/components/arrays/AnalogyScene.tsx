@@ -64,7 +64,7 @@ export function AnalogyScene() {
   }, []);
 
   return (
-    <div ref={containerRef} className="h-screen w-full flex flex-col items-center justify-center relative bg-[#09090b] z-10 overflow-hidden">
+    <div ref={containerRef} className="h-screen w-full flex flex-col items-center justify-center relative bg-transparent z-10 overflow-hidden">
       
       {/* Narration Text */}
       <div ref={textRef} className="w-[90vw] md:w-full max-w-3xl text-center z-20 mb-12 md:mb-24">

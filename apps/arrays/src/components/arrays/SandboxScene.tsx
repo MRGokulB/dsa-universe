@@ -39,7 +39,7 @@ export function SandboxScene() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 md:p-12 py-24 md:py-32 bg-[#09090b]">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 md:p-12 py-24 md:py-32 bg-transparent">
       
       <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 h-auto lg:h-[600px]">
         
@@ -52,7 +52,7 @@ export function SandboxScene() {
             <span className="ml-4 text-xs font-mono text-white/40">sandbox.js</span>
           </div>
 
-          <pre className="font-mono text-xs md:text-sm leading-loose overflow-x-auto">
+          <pre className="font-mono text-xs md:text-sm leading-loose overflow-x-auto pb-4">
             <code className="text-white/70">
               <div className={`px-4 -mx-4 rounded transition-colors ${activeLine === 1 ? 'bg-white/10 text-white' : ''}`}>
                 <span className="text-blue-400">const</span> arr = [10, 20, 30];

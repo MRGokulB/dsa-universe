@@ -64,7 +64,7 @@ export function QuizScene() {
   const isComplete = currentQ >= QUESTIONS.length;
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center py-24 px-4 bg-[#09090b] relative overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center py-24 px-4 bg-transparent relative overflow-hidden">
       
       {/* Background flare based on state */}
       <div className={`absolute inset-0 transition-colors duration-700 pointer-events-none opacity-20

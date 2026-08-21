@@ -2,105 +2,140 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { BookOpen, Cpu, BarChart, TerminalSquare, SearchCode, CheckCircle2 } from "lucide-react";
+import { BookOpen, Cpu, BarChart, TerminalSquare, SearchCode, CheckCircle2, ArrowRight } from "lucide-react";
 
 export default function ArraysCurriculum() {
   const modules = [
     {
-      title: "1. The Analogy",
+      title: "The Analogy",
       desc: "Understand the core concept through a real-world bookshelf metaphor.",
       href: "/analogy",
       icon: BookOpen,
       color: "text-blue-400",
       bg: "bg-blue-400/10",
-      border: "border-blue-400/20"
+      border: "border-blue-400/20",
+      hoverBg: "group-hover:bg-blue-500/10",
+      hoverBorder: "group-hover:border-blue-500/50",
+      glow: "from-blue-500/20 to-transparent"
     },
     {
-      title: "2. Memory & Hardware",
+      title: "Memory & Hardware",
       desc: "Dive into the silicon. See how RAM slots map to array indices.",
       href: "/memory",
       icon: Cpu,
       color: "text-purple-400",
       bg: "bg-purple-400/10",
-      border: "border-purple-400/20"
+      border: "border-purple-400/20",
+      hoverBg: "group-hover:bg-purple-500/10",
+      hoverBorder: "group-hover:border-purple-500/50",
+      glow: "from-purple-500/20 to-transparent"
     },
     {
-      title: "3. Big O Complexity",
+      title: "Big O Complexity",
       desc: "The theory behind the speed. Why inserting is O(n) but accessing is O(1).",
       href: "/big-o",
       icon: BarChart,
       color: "text-green-400",
       bg: "bg-green-400/10",
-      border: "border-green-400/20"
+      border: "border-green-400/20",
+      hoverBg: "group-hover:bg-green-500/10",
+      hoverBorder: "group-hover:border-green-500/50",
+      glow: "from-green-500/20 to-transparent"
     },
     {
-      title: "4. Interactive Sandbox",
+      title: "Interactive Sandbox",
       desc: "Push, pop, shift, and unshift elements yourself to see the cascading effects.",
       href: "/sandbox",
       icon: TerminalSquare,
       color: "text-yellow-400",
       bg: "bg-yellow-400/10",
-      border: "border-yellow-400/20"
+      border: "border-yellow-400/20",
+      hoverBg: "group-hover:bg-yellow-500/10",
+      hoverBorder: "group-hover:border-yellow-500/50",
+      glow: "from-yellow-500/20 to-transparent"
     },
     {
-      title: "5. Algorithmic Patterns",
+      title: "Algorithmic Patterns",
       desc: "Master Two Pointers & Sliding Window through step-by-step visualizations.",
       href: "/patterns",
       icon: SearchCode,
       color: "text-orange-400",
       bg: "bg-orange-400/10",
-      border: "border-orange-400/20"
+      border: "border-orange-400/20",
+      hoverBg: "group-hover:bg-orange-500/10",
+      hoverBorder: "group-hover:border-orange-500/50",
+      glow: "from-orange-500/20 to-transparent"
     },
     {
-      title: "6. Knowledge Check",
+      title: "Knowledge Check",
       desc: "Test your understanding with a quick interactive quiz.",
       href: "/quiz",
       icon: CheckCircle2,
       color: "text-pink-400",
       bg: "bg-pink-400/10",
-      border: "border-pink-400/20"
+      border: "border-pink-400/20",
+      hoverBg: "group-hover:bg-pink-500/10",
+      hoverBorder: "group-hover:border-pink-500/50",
+      glow: "from-pink-500/20 to-transparent"
     }
   ];
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-start py-24 px-8 bg-[#09090b] relative">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(59,130,246,0.1),transparent_50%)] pointer-events-none" />
-
-      <div className="max-w-6xl w-full z-10">
-        <div className="mb-16">
-          <h1 className="text-5xl font-bold tracking-tighter mb-4">Arrays</h1>
-          <p className="text-xl text-white/50 max-w-2xl">
-            The fundamental building block of all data structures. Contiguous, rigid, and lightning fast if used correctly.
-          </p>
+    <div className="min-h-screen text-white overflow-hidden relative">
+      <main className="relative z-10 max-w-6xl mx-auto px-6 py-24 md:py-32">
+        <div className="flex flex-col items-center text-center mb-24">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <p className="font-mono text-sm tracking-[0.2em] text-white/40 mb-6 uppercase">Module 01</p>
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6">
+              Arrays
+            </h1>
+            <p className="text-lg md:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed">
+              The fundamental building block of all data structures. Contiguous, rigid, and lightning fast if used correctly.
+            </p>
+          </motion.div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {modules.map((mod, i) => (
-            <Link key={mod.title} href={mod.href}>
+            <Link key={mod.title} href={mod.href} className="block outline-none">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                whileHover={{ scale: 1.02 }}
-                className={`h-full p-6 rounded-2xl border ${mod.border} bg-white/[0.02] hover:bg-white/[0.04] transition-colors group relative overflow-hidden`}
+                transition={{ duration: 0.5, delay: i * 0.1, ease: "easeOut" }}
+                className={`group relative h-full flex flex-col p-8 rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-xl transition-all duration-500 overflow-hidden ${mod.hoverBorder} ${mod.hoverBg}`}
               >
-                <div className={`absolute top-0 right-0 w-32 h-32 ${mod.bg} blur-[50px] -mr-16 -mt-16 group-hover:bg-opacity-20 transition-all`} />
-                
-                <div className="relative z-10">
-                  <div className={`w-12 h-12 rounded-xl ${mod.bg} border ${mod.border} flex items-center justify-center mb-6`}>
-                    <mod.icon className={mod.color} size={24} />
+                <div className={`absolute inset-0 bg-gradient-to-br ${mod.glow} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+
+                <div className="relative z-10 flex flex-col h-full">
+                  <div className="flex justify-between items-start mb-6">
+                    <div className={`p-3 rounded-2xl bg-white/5 border border-white/10 ${mod.color} group-hover:scale-110 transition-transform duration-500`}>
+                      <mod.icon strokeWidth={1.5} size={24} />
+                    </div>
+                    <span className="text-[10px] uppercase tracking-wider font-bold text-white/30 font-mono">
+                      Step 0{i + 1}
+                    </span>
                   </div>
-                  
-                  <h3 className="text-xl font-bold mb-2">{mod.title}</h3>
-                  <p className="text-white/50 text-sm leading-relaxed">
+
+                  <h3 className="text-2xl font-bold mb-3 tracking-tight">{mod.title}</h3>
+                  <p className="text-sm text-white/50 leading-relaxed mb-8 flex-grow">
                     {mod.desc}
                   </p>
+
+                  <div className="mt-auto">
+                    <div className={`inline-flex items-center gap-2 text-sm font-medium ${mod.color}`}>
+                      Enter <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             </Link>
           ))}
         </div>
-      </div>
+      </main>
     </div>
   );
 }

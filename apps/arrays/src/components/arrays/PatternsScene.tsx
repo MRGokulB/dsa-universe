@@ -162,7 +162,7 @@ export function PatternsScene() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-start py-16 px-4 bg-[#09090b] relative">
+    <div className="min-h-screen w-full flex flex-col items-center justify-start py-16 px-4 bg-transparent relative">
 
       <div className="max-w-5xl w-full">
 

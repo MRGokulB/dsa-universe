@@ -46,7 +46,7 @@ export function ComplexityScene() {
   const active = NOTATION_EXPLAINERS[activeTab];
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-start py-20 px-4 md:px-12 bg-[#09090b]">
+    <div className="min-h-screen w-full flex flex-col items-center justify-start py-20 px-4 md:px-12 bg-transparent">
       <div className="max-w-5xl w-full">
 
         {/* Section 1: What does Big O even mean? */}

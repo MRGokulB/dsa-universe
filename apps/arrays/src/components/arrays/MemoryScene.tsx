@@ -55,7 +55,7 @@ export function MemoryScene() {
   }));
 
   return (
-    <div ref={containerRef} className="w-full relative bg-[#09090b]">
+    <div ref={containerRef} className="w-full relative bg-transparent">
       <div id="memory-pin-wrapper" className="h-[100dvh] w-full flex flex-col items-center justify-center relative overflow-hidden">
 
         {/* Step 1: Plain English Intro */}
