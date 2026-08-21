@@ -198,63 +198,78 @@ export function PatternsScene() {
         </div>
 
         {/* Main Content: Code + Visual side by side */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
 
-          {/* Code Panel - 2 cols */}
-          <div className="lg:col-span-2 bg-black/60 border border-white/10 rounded-2xl p-5 backdrop-blur-xl">
-            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-white/10">
-              <div className="w-3 h-3 rounded-full bg-red-500/80" />
-              <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-              <div className="w-3 h-3 rounded-full bg-green-500/80" />
-              <span className="ml-2 font-mono text-xs text-white/40">{mode === "twopointers" ? "two-pointers.js" : "sliding-window.js"}</span>
+          {/* Code Panel - 5 cols */}
+          <div className="lg:col-span-5 bg-[#0d1117] border border-white/10 rounded-2xl overflow-hidden shadow-2xl relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 pointer-events-none" />
+            <div className="flex items-center justify-between px-4 py-3 bg-[#161b22] border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-500/80 shadow-[0_0_5px_rgba(239,68,68,0.5)]" />
+                <div className="w-3 h-3 rounded-full bg-yellow-500/80 shadow-[0_0_5px_rgba(234,179,8,0.5)]" />
+                <div className="w-3 h-3 rounded-full bg-green-500/80 shadow-[0_0_5px_rgba(34,197,94,0.5)]" />
+              </div>
+              <span className="font-mono text-xs text-white/40">{mode === "twopointers" ? "two-pointers.ts" : "sliding-window.ts"}</span>
+              <div className="w-12" /> {/* Spacer */}
             </div>
-            <div className="font-mono text-sm leading-7 relative">
+            <div className="font-mono text-[13px] md:text-sm leading-8 relative p-4 overflow-x-auto">
               {code.map((line, i) => (
                 <div
                   key={i}
-                  className={`px-3 py-0.5 rounded transition-all duration-300 ${step.codeLine === i
-                    ? `${mode === "twopointers" ? "bg-blue-500/15 border-l-2 border-blue-400" : "bg-purple-500/15 border-l-2 border-purple-400"} text-white`
-                    : "text-white/40 border-l-2 border-transparent"
+                  className={`px-3 rounded transition-all duration-300 relative whitespace-nowrap ${step.codeLine === i
+                    ? "text-white bg-white/5"
+                    : "text-white/40"
                     }`}
-                  style={{ paddingLeft: `${line.indent * 16 + 12}px` }}
+                  style={{ paddingLeft: `${line.indent * 1.5 + 1}rem` }}
                 >
+                  {step.codeLine === i && (
+                    <motion.div 
+                      layoutId="code-highlight"
+                      className={`absolute left-0 top-0 bottom-0 w-1 ${mode === "twopointers" ? "bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]" : "bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.8)]"}`}
+                    />
+                  )}
                   {line.text}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Visual Panel - 3 cols */}
-          <div className="lg:col-span-3 bg-white/[0.02] border border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[300px]">
+          {/* Visual Panel - 7 cols */}
+          <div className="lg:col-span-7 relative bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-10 flex flex-col items-center justify-center min-h-[400px] overflow-hidden">
+            
+            {/* Background glowing orb */}
+            <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full blur-[100px] opacity-20 pointer-events-none transition-colors duration-700 ${mode === "twopointers" ? "bg-blue-500" : "bg-purple-500"}`} />
 
             {/* Array visualization */}
-            <div className="flex gap-2 md:gap-3 flex-wrap justify-center mb-8">
+            <div className="flex gap-2 md:gap-4 flex-wrap justify-center mb-16 relative z-10 w-full">
               {arr.map((val, i) => {
                 const state = getCellState(i);
                 return (
                   <motion.div
                     key={`${mode}-${i}`}
                     layout
-                    className={`relative w-14 h-16 md:w-16 md:h-20 rounded-xl border-2 flex flex-col items-center justify-center transition-all duration-500 ${cellColor[state]}`}
+                    className={`relative w-12 h-14 md:w-16 md:h-20 rounded-xl border flex flex-col items-center justify-center transition-all duration-500 ${cellColor[state]} backdrop-blur-md`}
                   >
-                    <span className="text-[10px] text-white/30 absolute top-1.5 left-2 font-mono">{i}</span>
-                    <span className="font-mono font-bold text-lg">{val}</span>
+                    <span className="text-[9px] md:text-[10px] text-white/40 absolute top-1.5 left-1.5 md:left-2 font-mono">{i}</span>
+                    <span className="font-mono font-bold text-base md:text-xl text-white shadow-black drop-shadow-md">{val}</span>
                     
                     {/* Pointer Labels */}
                     {mode === "twopointers" && i === (step as (typeof TP_STEPS)[0]).left && (
                       <motion.div
                         layoutId="ptr-left"
-                        className="absolute -bottom-8 bg-blue-500 text-white text-[10px] font-bold px-2 py-0.5 rounded"
+                        className="absolute -bottom-10 flex flex-col items-center pointer-events-none"
                       >
-                        L
+                        <div className="w-0.5 h-3 bg-blue-400 mb-1" />
+                        <div className="bg-blue-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-[0_0_15px_rgba(59,130,246,0.6)]">LEFT</div>
                       </motion.div>
                     )}
                     {mode === "twopointers" && i === (step as (typeof TP_STEPS)[0]).right && (
                       <motion.div
                         layoutId="ptr-right"
-                        className="absolute -bottom-8 bg-pink-500 text-white text-[10px] font-bold px-2 py-0.5 rounded"
+                        className="absolute -bottom-10 flex flex-col items-center pointer-events-none"
                       >
-                        R
+                        <div className="w-0.5 h-3 bg-pink-400 mb-1" />
+                        <div className="bg-pink-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-[0_0_15px_rgba(236,72,153,0.6)]">RIGHT</div>
                       </motion.div>
                     )}
                   </motion.div>

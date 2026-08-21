@@ -5,8 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
   LayoutDashboard, 
-  Menu, 
-  X, 
   Maximize, 
   Minimize,
   BookOpen,
@@ -16,12 +14,11 @@ import {
   SearchCode,
   CheckCircle2
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 export function Sidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -51,93 +48,74 @@ export function Sidebar() {
   ];
 
   return (
-    <>
-      {/* Mobile Toggle Button */}
-      <button 
-        onClick={() => setIsMobileOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-black/50 backdrop-blur-md border border-white/10 rounded-lg text-white"
-      >
-        <Menu size={24} />
-      </button>
-
-      {/* Sidebar Container */}
-      <motion.aside 
-        initial={false}
-        animate={{ 
-          width: isCollapsed ? 80 : 256,
-          x: 0
-        }}
-        className={`hidden md:flex h-screen sticky top-0 border-r border-white/5 bg-[#09090b]/80 backdrop-blur-xl z-50 flex-col py-8 transition-all duration-500`}
-      >
-        <div className={`px-6 mb-8 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
-          {!isCollapsed && <h1 className="text-xl font-bold tracking-tighter text-gradient whitespace-nowrap">Arrays</h1>}
-          <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-1 hover:bg-white/10 rounded-md transition-colors text-white/50 hover:text-white">
-            <Menu size={20} />
-          </button>
-        </div>
-
-        <nav className="flex-1 px-4 space-y-2">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link key={item.name} href={item.href}>
-                <div className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 'text-white/60 hover:text-white hover:bg-white/5 border border-transparent'}`}>
-                  <item.icon size={20} className="min-w-[20px]" />
-                  {!isCollapsed && <span className="font-medium whitespace-nowrap">{item.name}</span>}
-                </div>
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="px-4 mt-auto">
-          <button 
-            onClick={toggleFullscreen}
-            className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 text-white/60 hover:text-white hover:bg-white/5 border border-transparent ${isCollapsed ? 'justify-center' : ''}`}
-          >
-            {isFullscreen ? <Minimize size={20} className="min-w-[20px]" /> : <Maximize size={20} className="min-w-[20px]" />}
-            {!isCollapsed && <span className="font-medium whitespace-nowrap">Full Screen</span>}
-          </button>
-        </div>
-      </motion.aside>
-
-      {/* Mobile Drawer */}
-      <AnimatePresence>
-        {isMobileOpen && (
-          <>
-            <motion.div 
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              onClick={() => setIsMobileOpen(false)}
-              className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
-            />
-            <motion.aside
-              initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }}
-              transition={{ type: "spring", bounce: 0, duration: 0.4 }}
-              className="md:hidden fixed top-0 left-0 bottom-0 w-64 bg-[#09090b] border-r border-white/10 z-[70] flex flex-col py-8"
-            >
-              <div className="px-6 mb-8 flex items-center justify-between">
-                <h1 className="text-xl font-bold tracking-tighter text-gradient">Arrays</h1>
-                <button onClick={() => setIsMobileOpen(false)} className="p-1 hover:bg-white/10 rounded-md transition-colors text-white/50 hover:text-white">
-                  <X size={20} />
-                </button>
+    <motion.div 
+      initial={{ y: 50, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] pointer-events-none"
+    >
+      <div className="pointer-events-auto flex items-center gap-2 p-2 rounded-2xl bg-black/40 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+        
+        {navItems.map((item, i) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link key={item.name} href={item.href} className="relative group">
+              <div 
+                onMouseEnter={() => setHoveredIdx(i)}
+                onMouseLeave={() => setHoveredIdx(null)}
+                className={`relative flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ${
+                  isActive 
+                    ? "bg-white/15 text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]" 
+                    : "text-white/50 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
+                
+                {/* Tooltip */}
+                {hoveredIdx === i && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    className="absolute -top-12 px-3 py-1.5 rounded-lg bg-white text-black text-xs font-bold whitespace-nowrap shadow-xl pointer-events-none"
+                  >
+                    {item.name}
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-t-white" />
+                  </motion.div>
+                )}
+                
+                {/* Active Indicator */}
+                {isActive && (
+                  <motion.div 
+                    layoutId="active-nav"
+                    className="absolute -bottom-1.5 w-1 h-1 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+                  />
+                )}
               </div>
-              <nav className="flex-1 px-4 space-y-2">
-                {navItems.map((item) => {
-                  const isActive = pathname === item.href;
-                  return (
-                    <Link key={item.name} href={item.href} onClick={() => setIsMobileOpen(false)}>
-                      <div className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 ${isActive ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 'text-white/60 hover:text-white hover:bg-white/5 border border-transparent'}`}>
-                        <item.icon size={20} />
-                        <span className="font-medium">{item.name}</span>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </nav>
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
-    </>
+            </Link>
+          );
+        })}
+
+        <div className="w-px h-8 bg-white/10 mx-2" />
+
+        <button 
+          onClick={toggleFullscreen}
+          onMouseEnter={() => setHoveredIdx(99)}
+          onMouseLeave={() => setHoveredIdx(null)}
+          className="relative flex items-center justify-center w-12 h-12 rounded-xl text-white/50 hover:bg-white/10 hover:text-white transition-all duration-300"
+        >
+          {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
+          {hoveredIdx === 99 && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              className="absolute -top-12 px-3 py-1.5 rounded-lg bg-white text-black text-xs font-bold whitespace-nowrap shadow-xl pointer-events-none"
+            >
+              {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-t-white" />
+            </motion.div>
+          )}
+        </button>
+      </div>
+    </motion.div>
   );
 }

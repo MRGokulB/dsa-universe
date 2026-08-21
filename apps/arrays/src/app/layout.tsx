@@ -27,16 +27,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
-      <body className="min-h-full flex bg-[#09090b] text-white">
+      <body className="bg-[#09090b] text-white overflow-x-hidden min-h-screen">
         <SmoothScroll>
-          <div className="flex w-full min-h-screen">
+          <main className="relative w-full min-h-screen flex flex-col pb-24">
             <Sidebar />
-            <main className="flex-1 min-h-screen relative">
-              {children}
-            </main>
-          </div>
+            {children}
+          </main>
         </SmoothScroll>
       </body>
     </html>

@@ -39,8 +39,9 @@ export function AnalogyScene() {
 
       // Step 3: We want to insert a new book at index 2.
       // So books at index 2, 3, 4 must slide right to make space.
+      // 16 tailwind width = 4rem, 4 tailwind gap = 1rem => total 5rem
       tl.to(bookRefs.current.slice(2, 5), {
-        x: 80, // width of one book + gap
+        x: "5rem", 
         duration: 1,
         ease: "power2.inOut",
       });
@@ -100,8 +101,8 @@ export function AnalogyScene() {
           {/* The New Book to Insert */}
           <div
             ref={(el) => { bookRefs.current[5] = el; }}
-            className="w-16 h-40 bg-blue-500/20 glass-card rounded-t-md border-blue-400/50 flex items-end justify-center pb-4 absolute left-[160px]"
-            // left = 80px (width+gap) * 2 (index 2)
+            className="w-16 h-40 bg-blue-500/20 glass-card rounded-t-md border-blue-400/50 flex items-end justify-center pb-4 absolute left-[10rem]"
+            // left = 5rem (width+gap) * 2 (index 2)
           >
              <span className="text-blue-200 font-mono">New</span>
           </div>
