@@ -10,7 +10,7 @@ export default function Home() {
       id: "arrays",
       title: "Arrays",
       status: "live",
-      url: "https://arrays-oo2gwqfix-gokul-boddawars-projects.vercel.app",
+      url: "https://arrays-rho.vercel.app",
       description: "Contiguous memory, O(1) access, Two Pointers, Sliding Window.",
       color: "blue",
       icon: Layers,
