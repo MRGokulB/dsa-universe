@@ -11,41 +11,45 @@ export function MemoryScene() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: "#memory-pin-wrapper",
-          start: "top top",
-          end: "+=3000",
-          scrub: 1,
-          pin: true,
-          pinSpacing: true,
-          anticipatePin: 1
-        }
-      });
+    const timer = setTimeout(() => {
+      const ctx = gsap.context(() => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: "#memory-pin-wrapper",
+            start: "top top",
+            end: "+=2500", // slightly reduced
+            scrub: 1,
+            pin: true,
+            pinSpacing: true,
+            anticipatePin: 1
+          }
+        });
 
-      tl.to(".intro-text", { opacity: 0, y: -20, duration: 1 })
-        .fromTo(".address-explainer",
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, duration: 2 }
-        );
+        tl.to(".intro-text", { opacity: 0, y: -20, duration: 1 })
+          .fromTo(".address-explainer",
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 2 }
+          );
 
-      tl.to(".address-explainer", { opacity: 0, y: -20, duration: 1 })
-        .fromTo(".ram-grid",
-          { opacity: 0, scale: 0.9, y: 50 },
-          { opacity: 1, scale: 1, y: 0, duration: 2 }
-        );
+        tl.to(".address-explainer", { opacity: 0, y: -20, duration: 1 })
+          .fromTo(".ram-grid",
+            { opacity: 0, scale: 0.9, y: 50 },
+            { opacity: 1, scale: 1, y: 0, duration: 2 }
+          );
 
-      tl.to(".cpu-status", { opacity: 1, duration: 0.5 })
-        .to(".pointer-arrow", { x: 3 * (80 + 16), duration: 2, ease: "power2.inOut" })
-        .to(".block-3", { backgroundColor: "rgba(56, 189, 248, 0.3)", borderColor: "rgba(56, 189, 248, 1)", scale: 1.1, duration: 0.5 });
+        tl.to(".cpu-status", { opacity: 1, duration: 0.5 })
+          .to(".pointer-arrow", { x: 3 * (80 + 16), duration: 2, ease: "power2.inOut" })
+          .to(".block-3", { backgroundColor: "rgba(56, 189, 248, 0.3)", borderColor: "rgba(56, 189, 248, 1)", scale: 1.1, duration: 0.5 });
 
-      tl.to(".math-hud", { opacity: 1, y: 0, duration: 1 })
-        .to(".conclusion", { opacity: 1, duration: 1 });
+        tl.to(".math-hud", { opacity: 1, y: 0, duration: 1 })
+          .to(".conclusion", { opacity: 1, duration: 1 });
 
-    }, containerRef);
+      }, containerRef);
 
-    return () => ctx.revert();
+      return () => ctx.revert();
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const memoryBlocks = Array.from({ length: 8 }).map((_, i) => ({

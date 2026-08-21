@@ -10,57 +10,50 @@ export function AnalogyScene() {
   const bookRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Pin the whole container
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "+=2000",
-          scrub: 1,
-          pin: true,
-          pinSpacing: true,
-          anticipatePin: 1
-        },
-      });
+    // Delay GSAP initialization slightly to allow Framer Motion page transition to settle
+    const timer = setTimeout(() => {
+      const ctx = gsap.context(() => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top top",
+            end: "+=1200", // Reduced scroll distance for tighter pacing
+            scrub: 1,
+            pin: true,
+            pinSpacing: true,
+            anticipatePin: 1
+          },
+        });
 
-      // Step 1: Books pop in one by one
-      tl.from(bookRefs.current.slice(0, 5), {
-        y: -100,
-        opacity: 0,
-        stagger: 0.1,
-        ease: "back.out(1.7)",
-        duration: 1,
-      });
+        // Step 1: Text 1 fades out, Text 2 fades in
+        tl.to(".text-step-1", { opacity: 0, duration: 1 })
+          .to(".text-step-2", { opacity: 1, duration: 1 }, "<");
 
-      // Step 2: Fade out first text, fade in next
-      tl.to(".text-step-1", { opacity: 0, duration: 0.5 })
-        .to(".text-step-2", { opacity: 1, duration: 0.5 }, "<");
+        // Step 2: Books at index 2, 3, 4 slide right
+        tl.to(bookRefs.current.slice(2, 5), {
+          x: "5rem", 
+          duration: 1.5,
+          ease: "power2.inOut",
+        });
 
-      // Step 3: We want to insert a new book at index 2.
-      // So books at index 2, 3, 4 must slide right to make space.
-      // 16 tailwind width = 4rem, 4 tailwind gap = 1rem => total 5rem
-      tl.to(bookRefs.current.slice(2, 5), {
-        x: "5rem", 
-        duration: 1,
-        ease: "power2.inOut",
-      });
+        // Step 3: Fade in the new book (the "insertion")
+        tl.from(bookRefs.current[5], {
+          y: -100,
+          opacity: 0,
+          duration: 1,
+          ease: "bounce.out",
+        });
 
-      // Step 4: Fade in the new book (the "insertion")
-      tl.from(bookRefs.current[5], {
-        y: -100,
-        opacity: 0,
-        duration: 1,
-        ease: "bounce.out",
-      });
+        // Step 4: Text 2 fades out, Text 3 fades in
+        tl.to(".text-step-2", { opacity: 0, duration: 1 })
+          .to(".text-step-3", { opacity: 1, duration: 1 }, "<");
 
-      // Fade in final text
-      tl.to(".text-step-2", { opacity: 0, duration: 0.5 })
-        .to(".text-step-3", { opacity: 1, duration: 0.5 }, "<");
+      }, containerRef);
 
-    }, containerRef);
+      return () => ctx.revert();
+    }, 500); // 500ms matches the page transition duration
 
-    return () => ctx.revert();
+    return () => clearTimeout(timer);
   }, []);
 
   return (
