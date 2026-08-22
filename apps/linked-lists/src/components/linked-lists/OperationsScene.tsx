@@ -449,8 +449,8 @@ export default function OperationsScene() {
                 return (
                   <motion.path
                     key={`${mode}-${edge.id}-${stepIdx}`}
-                    initial={{ pathLength: 0, opacity: 0 }}
-                    animate={{ pathLength: 1, opacity: edge.style === "fading" ? 0.2 : 1 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: edge.style === "fading" ? 0.2 : 1 }}
                     transition={{ duration: 0.5 }}
                     d={pathD}
                     fill="none"
@@ -494,7 +494,7 @@ export default function OperationsScene() {
                   animate={{ opacity: node.status === "deleting" ? 0 : 1, scale: 1, x: getColX(node.col) - 32, y: getRowY(node.row) - 24 }}
                   exit={{ opacity: 0, scale: 0.8 }}
                   transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                  className={`absolute w-[64px] h-[48px] rounded-lg border-2 flex items-center justify-center text-lg font-bold shadow-lg
+                  className={`absolute top-0 left-0 w-[64px] h-[48px] rounded-lg border-2 flex items-center justify-center text-lg font-bold shadow-lg
                     ${
                       node.status === "new"
                         ? "bg-green-500/20 border-green-400 text-green-300"
