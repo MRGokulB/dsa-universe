@@ -85,19 +85,29 @@ export default function Home() {
             </motion.div>
           </Link>
 
-          {/* Linked Lists (Standard Card) */}
-          <div className="group relative p-6 md:p-8 flex flex-col justify-between rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-md opacity-70 grayscale cursor-not-allowed overflow-hidden">
-            <div className="flex justify-between items-start mb-8">
-              <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-white/50">
-                <LayoutList strokeWidth={1.5} size={24} />
+          {/* Linked Lists (Live Card) */}
+          <Link href="https://linked-lists.vercel.app" className="block outline-none">
+            <div className="group relative p-6 md:p-8 flex flex-col justify-between rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-md overflow-hidden hover:bg-white/[0.05] hover:border-purple-500/30 transition-all duration-500 h-full">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              <div className="relative z-10 flex justify-between items-start mb-8">
+                <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500">
+                  <LayoutList strokeWidth={1.5} size={24} />
+                </div>
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded border border-purple-500/30 bg-purple-500/10 text-purple-400">
+                  <div className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+                  <span className="text-[10px] font-mono uppercase tracking-widest font-bold">Live</span>
+                </div>
               </div>
-              <span className="text-[10px] font-mono uppercase tracking-widest px-2 py-1 rounded border border-white/10 text-white/40">Upcoming</span>
+              
+              <div className="relative z-10">
+                <h3 className="text-2xl font-bold mb-2 group-hover:text-purple-300 transition-colors">Linked Lists</h3>
+                <p className="text-sm text-white/60 leading-relaxed group-hover:text-white/80 transition-colors">
+                  Dynamic nodes, pointer reversal, and Floyd's cycle detection.
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-2xl font-bold mb-2">Linked Lists</h3>
-              <p className="text-sm text-white/40 leading-relaxed">Dynamic nodes, pointer reversal, and cycle detection.</p>
-            </div>
-          </div>
+          </Link>
 
           {/* Stacks & Queues (Standard Card) */}
           <div className="group relative p-6 md:p-8 flex flex-col justify-between rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-md opacity-70 grayscale cursor-not-allowed overflow-hidden">
