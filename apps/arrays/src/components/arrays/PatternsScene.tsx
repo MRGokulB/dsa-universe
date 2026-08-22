@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const TP_ARRAY = [2, 7, 11, 15, 19, 23, 28];
-const TP_TARGET = 30;
+const TP_TARGET = 26;
 
 function generateTwoPointerSteps() {
   const steps = [];
