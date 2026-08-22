@@ -369,7 +369,7 @@ export default function OperationsScene() {
         </div>
 
         <div className="lg:col-span-7 flex flex-col gap-4">
-          <div className="bg-white/[0.02] border border-white/10 rounded-xl backdrop-blur-xl h-[400px] relative overflow-hidden flex-1 shadow-2xl">
+          <div className="bg-white/[0.02] border border-white/10 rounded-xl backdrop-blur-xl min-h-[400px] w-full relative overflow-hidden shadow-2xl">
             <svg className="absolute inset-0 w-full h-full pointer-events-none">
               <defs>
                 <marker
