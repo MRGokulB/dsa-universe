@@ -1,6 +1,6 @@
 "use client";
 
-import { MemoryScene } from "@/components/linked-lists/MemoryScene";
+import MemoryScene from "@/components/linked-lists/MemoryScene";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect } from "react";

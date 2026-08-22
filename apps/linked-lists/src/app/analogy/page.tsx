@@ -1,6 +1,6 @@
 "use client";
 
-import { AnalogyScene } from "@/components/linked-lists/AnalogyScene";
+import AnalogyScene from "@/components/linked-lists/AnalogyScene";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect } from "react";

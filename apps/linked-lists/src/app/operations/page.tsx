@@ -1,6 +1,6 @@
 "use client";
 
-import { OperationsScene } from "@/components/linked-lists/OperationsScene";
+import OperationsScene from "@/components/linked-lists/OperationsScene";
 import { NextSection } from "@/components/layout/NextSection";
 
 export default function Page() {

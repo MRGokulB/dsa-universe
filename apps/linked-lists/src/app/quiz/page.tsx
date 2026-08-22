@@ -1,6 +1,6 @@
 "use client";
 
-import { QuizScene } from "@/components/linked-lists/QuizScene";
+import QuizScene from "@/components/linked-lists/QuizScene";
 
 export default function Page() {
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { PatternsScene } from "@/components/linked-lists/PatternsScene";
+import PatternsScene from "@/components/linked-lists/PatternsScene";
 import { NextSection } from "@/components/layout/NextSection";
 
 export default function Page() {

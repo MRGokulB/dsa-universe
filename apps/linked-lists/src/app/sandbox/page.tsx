@@ -1,6 +1,6 @@
 "use client";
 
-import { SandboxScene } from "@/components/linked-lists/SandboxScene";
+import SandboxScene from "@/components/linked-lists/SandboxScene";
 import { NextSection } from "@/components/layout/NextSection";
 
 export default function Page() {
