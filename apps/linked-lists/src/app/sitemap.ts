@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const domain = "https://linked-lists.vercel.app";
+  const domain = "https://linked-lists-xi.vercel.app";
   const lastModified = new Date();
   return ["", "/analogy", "/memory", "/operations", "/patterns", "/sandbox", "/quiz"].map((route) => ({
     url: `${domain}${route}`,

@@ -86,7 +86,7 @@ export default function Home() {
           </Link>
 
           {/* Linked Lists (Live Card) */}
-          <Link href="https://linked-lists.vercel.app" className="block outline-none">
+          <Link href="https://linked-lists-xi.vercel.app" className="block outline-none">
             <div className="group relative p-6 md:p-8 flex flex-col justify-between rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-md overflow-hidden hover:bg-white/[0.05] hover:border-purple-500/30 transition-all duration-500 h-full">
               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               
