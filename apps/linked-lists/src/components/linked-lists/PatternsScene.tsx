@@ -215,38 +215,70 @@ function ReverseVisualizer({ step }: { step: any }) {
   
   return (
     <div className="relative w-full h-[300px] flex items-center justify-center">
-      <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
-        <defs>
-          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="rgba(255,255,255,0.2)" />
-          </marker>
-          <marker id="arrowhead-rev" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="rgba(255,255,255,0.6)" />
-          </marker>
-        </defs>
-        
-        {nodes.map((node) => {
-          const nextNode = step.links[node];
-          if (nextNode === undefined) return null;
+      <div className="relative w-[800px] h-[300px]">
+        <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="rgba(255,255,255,0.2)" />
+            </marker>
+            <marker id="arrowhead-rev" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="rgba(255,255,255,0.6)" />
+            </marker>
+          </defs>
           
-          if (nextNode === null) {
-            if (node === 1 && step.links[1] === null) {
+          {nodes.map((node) => {
+            const nextNode = step.links[node];
+            if (nextNode === undefined) return null;
+            
+            if (nextNode === null) {
+              if (node === 1 && step.links[1] === null) {
+                return (
+                  <path
+                    key={`link-${node}-null`}
+                    d="M 120 150 Q 80 150 50 150"
+                    stroke="rgba(255,255,255,0.6)"
+                    strokeWidth="2"
+                    fill="none"
+                    markerEnd="url(#arrowhead-rev)"
+                  />
+                );
+              }
+              if (node === 5 && step.links[5] === null) {
+                return (
+                  <path
+                    key={`link-${node}-null`}
+                    d="M 680 150 L 720 150"
+                    stroke="rgba(255,255,255,0.2)"
+                    strokeWidth="2"
+                    fill="none"
+                    markerEnd="url(#arrowhead)"
+                  />
+                );
+              }
+              return null;
+            }
+            
+            const x1 = 120 + (node - 1) * 140;
+            const x2 = 120 + (nextNode - 1) * 140;
+            
+            const isReversed = nextNode < node;
+            
+            if (isReversed) {
               return (
                 <path
-                  key={`link-${node}-null`}
-                  d="M 120 150 Q 80 150 50 150"
+                  key={`link-${node}-${nextNode}`}
+                  d={`M ${x1 - 30} 140 Q ${(x1 + x2)/2} 110 ${x2 + 30} 140`}
                   stroke="rgba(255,255,255,0.6)"
                   strokeWidth="2"
                   fill="none"
                   markerEnd="url(#arrowhead-rev)"
                 />
               );
-            }
-            if (node === 5 && step.links[5] === null) {
+            } else {
               return (
                 <path
-                  key={`link-${node}-null`}
-                  d="M 680 150 L 720 150"
+                  key={`link-${node}-${nextNode}`}
+                  d={`M ${x1 + 30} 150 L ${x2 - 30} 150`}
                   stroke="rgba(255,255,255,0.2)"
                   strokeWidth="2"
                   fill="none"
@@ -254,123 +286,93 @@ function ReverseVisualizer({ step }: { step: any }) {
                 />
               );
             }
-            return null;
-          }
+          })}
+        </svg>
+        
+        <div className="absolute inset-0" style={{ zIndex: 10 }}>
+          {nodes.map((node, i) => (
+            <div
+              key={`node-${node}`}
+              className="absolute top-1/2 -translate-y-1/2 w-16 h-16 bg-[#1a1a1a] border-2 border-white/20 rounded-xl flex items-center justify-center text-xl font-bold shadow-lg"
+              style={{ left: `${88 + i * 140}px` }}
+            >
+              {node}
+            </div>
+          ))}
           
-          const x1 = 120 + (node - 1) * 140;
-          const x2 = 120 + (nextNode - 1) * 140;
+          <div className="absolute top-1/2 -translate-y-1/2 left-4 text-white/30 font-mono text-sm">null</div>
+          <div className="absolute top-1/2 -translate-y-1/2 right-8 text-white/30 font-mono text-sm">null</div>
           
-          const isReversed = nextNode < node;
+          {step.prev !== null && (
+            <motion.div
+              layoutId="prev"
+              initial={false}
+              animate={{ left: step.prev === null ? '30px' : `${88 + (step.prev - 1) * 140}px` }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="absolute top-[200px] w-16 flex justify-center"
+            >
+              <div className="bg-gray-500/20 text-gray-400 border border-gray-500/30 px-3 py-1 rounded-full text-xs font-mono">
+                prev
+              </div>
+            </motion.div>
+          )}
           
-          if (isReversed) {
-            return (
-              <path
-                key={`link-${node}-${nextNode}`}
-                d={`M ${x1 - 30} 140 Q ${(x1 + x2)/2} 110 ${x2 + 30} 140`}
-                stroke="rgba(255,255,255,0.6)"
-                strokeWidth="2"
-                fill="none"
-                markerEnd="url(#arrowhead-rev)"
-              />
-            );
-          } else {
-            return (
-              <path
-                key={`link-${node}-${nextNode}`}
-                d={`M ${x1 + 30} 150 L ${x2 - 30} 150`}
-                stroke="rgba(255,255,255,0.2)"
-                strokeWidth="2"
-                fill="none"
-                markerEnd="url(#arrowhead)"
-              />
-            );
-          }
-        })}
-      </svg>
-      
-      <div className="relative w-[800px] h-[300px]" style={{ zIndex: 10 }}>
-        {nodes.map((node, i) => (
-          <div
-            key={`node-${node}`}
-            className="absolute top-1/2 -translate-y-1/2 w-16 h-16 bg-[#1a1a1a] border-2 border-white/20 rounded-xl flex items-center justify-center text-xl font-bold shadow-lg"
-            style={{ left: `${88 + i * 140}px` }}
-          >
-            {node}
-          </div>
-        ))}
-        
-        <div className="absolute top-1/2 -translate-y-1/2 left-4 text-white/30 font-mono text-sm">null</div>
-        <div className="absolute top-1/2 -translate-y-1/2 right-8 text-white/30 font-mono text-sm">null</div>
-        
-        {step.prev !== null && (
-          <motion.div
-            layoutId="prev"
-            initial={false}
-            animate={{ left: step.prev === null ? '30px' : `${88 + (step.prev - 1) * 140}px` }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="absolute top-[200px] w-16 flex justify-center"
-          >
-            <div className="bg-gray-500/20 text-gray-400 border border-gray-500/30 px-3 py-1 rounded-full text-xs font-mono">
-              prev
-            </div>
-          </motion.div>
-        )}
-        
-        {step.prev === null && (
-          <motion.div
-            layoutId="prev"
-            initial={false}
-            animate={{ left: '10px' }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="absolute top-[200px] w-16 flex justify-center"
-          >
-            <div className="bg-gray-500/20 text-gray-400 border border-gray-500/30 px-3 py-1 rounded-full text-xs font-mono">
-              prev
-            </div>
-          </motion.div>
-        )}
-        
-        {step.curr !== null && (
-          <motion.div
-            layoutId="curr"
-            initial={false}
-            animate={{ left: `${88 + (step.curr - 1) * 140}px` }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="absolute top-[60px] w-16 flex justify-center"
-          >
-            <div className="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-full text-xs font-mono">
-              curr
-            </div>
-          </motion.div>
-        )}
-
-        {step.curr === null && (
-          <motion.div
-            layoutId="curr"
-            initial={false}
-            animate={{ left: `${720}px` }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="absolute top-[60px] w-16 flex justify-center"
-          >
-            <div className="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-full text-xs font-mono">
-              curr
-            </div>
-          </motion.div>
-        )}
-        
-        {step.next !== null && (
-          <motion.div
-            layoutId="next"
-            initial={false}
-            animate={{ left: `${88 + (step.next - 1) * 140}px` }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="absolute top-[240px] w-16 flex justify-center"
-          >
-            <div className="bg-purple-500/20 text-purple-400 border border-purple-500/30 px-3 py-1 rounded-full text-xs font-mono">
-              next
-            </div>
-          </motion.div>
-        )}
+          {step.prev === null && (
+            <motion.div
+              layoutId="prev"
+              initial={false}
+              animate={{ left: '10px' }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="absolute top-[200px] w-16 flex justify-center"
+            >
+              <div className="bg-gray-500/20 text-gray-400 border border-gray-500/30 px-3 py-1 rounded-full text-xs font-mono">
+                prev
+              </div>
+            </motion.div>
+          )}
+          
+          {step.curr !== null && (
+            <motion.div
+              layoutId="curr"
+              initial={false}
+              animate={{ left: `${88 + (step.curr - 1) * 140}px` }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="absolute top-[60px] w-16 flex justify-center"
+            >
+              <div className="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-full text-xs font-mono">
+                curr
+              </div>
+            </motion.div>
+          )}
+          
+          {step.curr === null && (
+            <motion.div
+              layoutId="curr"
+              initial={false}
+              animate={{ left: `${720}px` }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="absolute top-[60px] w-16 flex justify-center"
+            >
+              <div className="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-full text-xs font-mono">
+                curr
+              </div>
+            </motion.div>
+          )}
+          
+          {step.next !== null && (
+            <motion.div
+              layoutId="next"
+              initial={false}
+              animate={{ left: `${88 + (step.next - 1) * 140}px` }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="absolute top-[240px] w-16 flex justify-center"
+            >
+              <div className="bg-purple-500/20 text-purple-400 border border-purple-500/30 px-3 py-1 rounded-full text-xs font-mono">
+                next
+              </div>
+            </motion.div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -388,79 +390,78 @@ function CycleVisualizer({ step }: { step: any }) {
   
   return (
     <div className="relative w-full h-[400px] flex items-center justify-center">
-      
       {step.met && (
         <div className="absolute inset-0 bg-green-500/5 pointer-events-none rounded-xl" />
       )}
       
-      <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
-        <defs>
-          <marker id="arrowhead-cycle" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="rgba(255,255,255,0.3)" />
-          </marker>
-          <marker id="arrowhead-cycle-active" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="rgba(74,222,128,0.5)" />
-          </marker>
-        </defs>
-        
-        <path d="M 130 150 L 190 150" stroke="rgba(255,255,255,0.3)" strokeWidth="2" fill="none" markerEnd="url(#arrowhead-cycle)" />
-        <path d="M 250 150 L 310 150" stroke="rgba(255,255,255,0.3)" strokeWidth="2" fill="none" markerEnd="url(#arrowhead-cycle)" />
-        
-        <path d="M 360 130 Q 400 70 410 70" stroke={step.met ? "rgba(74,222,128,0.5)" : "rgba(255,255,255,0.3)"} strokeWidth="2" fill="none" markerEnd={step.met ? "url(#arrowhead-cycle-active)" : "url(#arrowhead-cycle)"} />
-        <path d="M 470 70 Q 520 70 525 125" stroke={step.met ? "rgba(74,222,128,0.5)" : "rgba(255,255,255,0.3)"} strokeWidth="2" fill="none" markerEnd={step.met ? "url(#arrowhead-cycle-active)" : "url(#arrowhead-cycle)"} />
-        <path d="M 525 175 Q 520 230 470 230" stroke={step.met ? "rgba(74,222,128,0.5)" : "rgba(255,255,255,0.3)"} strokeWidth="2" fill="none" markerEnd={step.met ? "url(#arrowhead-cycle-active)" : "url(#arrowhead-cycle)"} />
-        <path d="M 410 230 Q 360 230 355 175" stroke={step.met ? "rgba(74,222,128,0.5)" : "rgba(255,255,255,0.3)"} strokeWidth="2" fill="none" markerEnd={step.met ? "url(#arrowhead-cycle-active)" : "url(#arrowhead-cycle)"} />
-      </svg>
-      
       <div className="relative w-[700px] h-[300px]" style={{ zIndex: 10 }}>
+        <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
+          <defs>
+            <marker id="arrowhead-cycle" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="rgba(255,255,255,0.3)" />
+            </marker>
+            <marker id="arrowhead-cycle-active" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="rgba(74,222,128,0.5)" />
+            </marker>
+          </defs>
+          
+          <path d="M 130 150 L 190 150" stroke="rgba(255,255,255,0.3)" strokeWidth="2" fill="none" markerEnd="url(#arrowhead-cycle)" />
+          <path d="M 250 150 L 310 150" stroke="rgba(255,255,255,0.3)" strokeWidth="2" fill="none" markerEnd="url(#arrowhead-cycle)" />
+          
+          <path d="M 360 130 Q 400 70 410 70" stroke={step.met ? "rgba(74,222,128,0.5)" : "rgba(255,255,255,0.3)"} strokeWidth="2" fill="none" markerEnd={step.met ? "url(#arrowhead-cycle-active)" : "url(#arrowhead-cycle)"} />
+          <path d="M 470 70 Q 520 70 525 125" stroke={step.met ? "rgba(74,222,128,0.5)" : "rgba(255,255,255,0.3)"} strokeWidth="2" fill="none" markerEnd={step.met ? "url(#arrowhead-cycle-active)" : "url(#arrowhead-cycle)"} />
+          <path d="M 525 175 Q 520 230 470 230" stroke={step.met ? "rgba(74,222,128,0.5)" : "rgba(255,255,255,0.3)"} strokeWidth="2" fill="none" markerEnd={step.met ? "url(#arrowhead-cycle-active)" : "url(#arrowhead-cycle)"} />
+          <path d="M 410 230 Q 360 230 355 175" stroke={step.met ? "rgba(74,222,128,0.5)" : "rgba(255,255,255,0.3)"} strokeWidth="2" fill="none" markerEnd={step.met ? "url(#arrowhead-cycle-active)" : "url(#arrowhead-cycle)"} />
+        </svg>
         
-        {[1, 2, 3, 4, 5, 6].map(node => (
-          <div
-            key={`cnode-${node}`}
-            className={`absolute w-14 h-14 -ml-7 -mt-7 rounded-full flex items-center justify-center text-lg font-bold border-2 shadow-lg transition-colors duration-500 ${
-              step.met && (node >= 3) ? "bg-green-950 border-green-500/50 text-green-400" : "bg-[#1a1a1a] border-white/20 text-white"
-            }`}
-            style={{ left: `${nodePositions[node].x}px`, top: `${nodePositions[node].y}px` }}
-          >
-            {node}
-          </div>
-        ))}
-        
-        {step.met && (
+        <div className="absolute inset-0" style={{ zIndex: 10 }}>
+          {[1, 2, 3, 4, 5, 6].map(node => (
+            <div
+              key={`cnode-${node}`}
+              className={`absolute w-14 h-14 -ml-7 -mt-7 rounded-full flex items-center justify-center text-lg font-bold border-2 shadow-lg transition-colors duration-500 ${
+                step.met && (node >= 3) ? "bg-green-950 border-green-500/50 text-green-400" : "bg-[#1a1a1a] border-white/20 text-white"
+              }`}
+              style={{ left: `${nodePositions[node].x}px`, top: `${nodePositions[node].y}px` }}
+            >
+              {node}
+            </div>
+          ))}
+          
+          {step.met && (
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-10 ml-20 flex flex-col items-center gap-2"
+            >
+              <Target className="w-8 h-8 text-green-400" />
+              <span className="text-green-400 font-medium text-sm">Met at {step.slow}</span>
+            </motion.div>
+          )}
+          
           <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-10 ml-20 flex flex-col items-center gap-2"
+            layoutId="slow"
+            initial={false}
+            animate={{ left: `${nodePositions[step.slow].x}px`, top: `${nodePositions[step.slow].y + 35}px` }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="absolute -ml-12 w-24 flex justify-center pointer-events-none"
           >
-            <Target className="w-8 h-8 text-green-400" />
-            <span className="text-green-400 font-medium text-sm">Met at {step.slow}</span>
+            <div className="bg-green-500/20 text-green-400 border border-green-500/30 px-3 py-1.5 rounded-full text-xs font-mono font-bold shadow-lg flex items-center gap-1.5 backdrop-blur-sm">
+              <span>🐢</span> slow
+            </div>
           </motion.div>
-        )}
-        
-        <motion.div
-          layoutId="slow"
-          initial={false}
-          animate={{ left: `${nodePositions[step.slow].x}px`, top: `${nodePositions[step.slow].y + 35}px` }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="absolute -ml-12 w-24 flex justify-center pointer-events-none"
-        >
-          <div className="bg-green-500/20 text-green-400 border border-green-500/30 px-3 py-1.5 rounded-full text-xs font-mono font-bold shadow-lg flex items-center gap-1.5 backdrop-blur-sm">
-            <span>🐢</span> slow
-          </div>
-        </motion.div>
-        
-        <motion.div
-          layoutId="fast"
-          initial={false}
-          animate={{ left: `${nodePositions[step.fast].x}px`, top: `${nodePositions[step.fast].y - 65}px` }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="absolute -ml-12 w-24 flex justify-center pointer-events-none"
-        >
-          <div className="bg-orange-500/20 text-orange-400 border border-orange-500/30 px-3 py-1.5 rounded-full text-xs font-mono font-bold shadow-lg flex items-center gap-1.5 backdrop-blur-sm">
-            <span>🐇</span> fast
-          </div>
-        </motion.div>
-        
+          
+          <motion.div
+            layoutId="fast"
+            initial={false}
+            animate={{ left: `${nodePositions[step.fast].x}px`, top: `${nodePositions[step.fast].y - 65}px` }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="absolute -ml-12 w-24 flex justify-center pointer-events-none"
+          >
+            <div className="bg-orange-500/20 text-orange-400 border border-orange-500/30 px-3 py-1.5 rounded-full text-xs font-mono font-bold shadow-lg flex items-center gap-1.5 backdrop-blur-sm">
+              <span>🐇</span> fast
+            </div>
+          </motion.div>
+        </div>
       </div>
     </div>
   );
