@@ -4,9 +4,12 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Layers, LayoutList, Network, Cpu, Database, Binary, Sparkles, Code2, Terminal } from "lucide-react";
 
+import { OnboardingTour } from "../components/OnboardingTour";
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#050505] text-white overflow-hidden relative selection:bg-blue-500/30">
+      <OnboardingTour />
       
       {/* --- Ambient Background --- */}
       {/* Deep background mesh */}
@@ -29,11 +32,33 @@ export default function Home() {
             <Sparkles className="w-4 h-4 text-blue-400" />
             <span className="text-xs font-mono font-medium text-white/70 uppercase tracking-widest">Next-Gen Learning</span>
           </div>
+          
+          {/* Abstract Standard Logo for DSA Universe */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8, rotate: 45 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+            className="mx-auto mb-8 relative w-24 h-24 flex items-center justify-center"
+          >
+            <div className="absolute inset-0 bg-indigo-500/20 rounded-2xl blur-xl" />
+            <svg viewBox="0 0 100 100" className="w-full h-full text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.5)]">
+              {/* Nodes and Edges connecting in a Graph-like abstract shape */}
+              <path d="M50 10 L85 30 L85 70 L50 90 L15 70 L15 30 Z" fill="none" stroke="currentColor" strokeWidth="4" />
+              <path d="M50 10 L50 50 M85 30 L50 50 M85 70 L50 50 M50 90 L50 50 M15 70 L50 50 M15 30 L50 50" stroke="currentColor" strokeWidth="2" strokeOpacity="0.4" />
+              <circle cx="50" cy="50" r="6" fill="currentColor" />
+              <circle cx="50" cy="10" r="4" fill="currentColor" />
+              <circle cx="85" cy="30" r="4" fill="currentColor" />
+              <circle cx="85" cy="70" r="4" fill="currentColor" />
+              <circle cx="50" cy="90" r="4" fill="currentColor" />
+              <circle cx="15" cy="70" r="4" fill="currentColor" />
+              <circle cx="15" cy="30" r="4" fill="currentColor" />
+            </svg>
+          </motion.div>
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter mb-8 leading-[1.1]">
-            Master DSA <br />
+            DSA <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 drop-shadow-[0_0_40px_rgba(96,165,250,0.4)]">
-              Visually.
+              Universe.
             </span>
           </h1>
 
