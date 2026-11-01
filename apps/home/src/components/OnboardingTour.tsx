@@ -9,7 +9,15 @@ export function OnboardingTour() {
   const [step, setStep] = useState(0);
 
   useEffect(() => {
-    // Only show once per user
+    const handleOpen = () => {
+      setStep(0);
+      setIsOpen(true);
+    };
+    window.addEventListener("open-dsa-tour", handleOpen);
+    return () => window.removeEventListener("open-dsa-tour", handleOpen);
+  }, []);
+
+  useEffect(() => {
     const hasSeenTour = localStorage.getItem("dsa_tour_seen");
     if (!hasSeenTour) {
       const timer = setTimeout(() => setIsOpen(true), 2500);
@@ -64,7 +72,6 @@ export function OnboardingTour() {
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="relative w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-3xl p-8 shadow-[0_0_50px_rgba(99,102,241,0.15)] overflow-hidden"
           >
-            {/* Ambient Glow */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-indigo-500/10 blur-[50px] pointer-events-none rounded-full" />
             
             <button 
@@ -88,7 +95,6 @@ export function OnboardingTour() {
               </p>
 
               <div className="flex items-center justify-between w-full">
-                {/* Dots indicator */}
                 <div className="flex gap-2">
                   {[0, 1, 2].map(i => (
                     <div 

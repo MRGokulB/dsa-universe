@@ -89,7 +89,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="bg-[#09090b] text-white min-h-screen">{children}</body>
+      <body suppressHydrationWarning className="bg-[#09090b] text-white min-h-screen">{children}</body>
     </html>
   );
 }

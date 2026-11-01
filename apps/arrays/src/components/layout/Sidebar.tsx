@@ -38,14 +38,26 @@ export function Sidebar() {
   };
 
   const navItems = [
-    { name: "Curriculum", href: "/", icon: LayoutDashboard },
-    { name: "The Analogy", href: "/analogy", icon: BookOpen },
-    { name: "Memory", href: "/memory", icon: Cpu },
-    { name: "Big O", href: "/big-o", icon: BarChart },
-    { name: "Sandbox", href: "/sandbox", icon: TerminalSquare },
-    { name: "Patterns", href: "/patterns", icon: SearchCode },
-    { name: "Quiz", href: "/quiz", icon: CheckCircle2 },
+    { name: "Intro", href: "#intro", icon: LayoutDashboard },
+    { name: "The Analogy", href: "#analogy", icon: BookOpen },
+    { name: "Memory", href: "#memory", icon: Cpu },
+    { name: "Big O", href: "#big-o", icon: BarChart },
+    { name: "Patterns", href: "#patterns", icon: SearchCode },
+    { name: "Sandbox", href: "#sandbox", icon: TerminalSquare },
+    { name: "Quiz", href: "#quiz", icon: CheckCircle2 },
   ];
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith("#")) {
+      e.preventDefault();
+      const target = document.getElementById(href.replace("#", ""));
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth" });
+      } else {
+        window.location.href = `/${href}`;
+      }
+    }
+  };
 
   return (
     <motion.div 
@@ -59,7 +71,12 @@ export function Sidebar() {
         {navItems.map((item, i) => {
           const isActive = pathname === item.href;
           return (
-            <Link key={item.name} href={item.href} className="relative group">
+            <Link 
+              key={item.name} 
+              href={item.href} 
+              onClick={(e) => handleNavClick(e, item.href)} 
+              className="relative group"
+            >
               <div 
                 onMouseEnter={() => setHoveredIdx(i)}
                 onMouseLeave={() => setHoveredIdx(null)}

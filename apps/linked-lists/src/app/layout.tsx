@@ -7,7 +7,7 @@ import { NavigationControls } from "@/components/navigation/NavigationControls";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
-const DOMAIN = "https://linked-lists.vercel.app";
+const DOMAIN = "https://linked-lists-xi.vercel.app";
 
 export const metadata: Metadata = {
   title: {
@@ -79,11 +79,12 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="bg-[#050505] text-white overflow-x-hidden min-h-screen selection:bg-purple-500/30">
+      <body suppressHydrationWarning className="bg-[#050505] text-white overflow-x-hidden min-h-screen selection:bg-purple-500/30">
         <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-500/10 blur-[120px] pointer-events-none z-0" />
         <div className="fixed top-[20%] right-[-10%] w-[40%] h-[60%] rounded-full bg-pink-500/10 blur-[150px] pointer-events-none z-0" />
         <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none z-0" />
 
+        <NavigationControls topicName="Linked Lists" />
         <main className="relative w-full min-h-screen pb-24 z-10">
           <Sidebar />
           {children}
