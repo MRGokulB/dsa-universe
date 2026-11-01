@@ -146,44 +146,74 @@ export default function Home() {
             </div>
           </Link>
 
-          <div className="group relative p-6 md:p-8 flex flex-col justify-between rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-md opacity-70 grayscale cursor-not-allowed overflow-hidden md:col-span-2 lg:col-span-1">
-            <div className="flex justify-between items-start mb-8">
-              <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-white/50">
-                <Binary strokeWidth={1.5} size={24} />
+          <Link href="https://trees-dsa.vercel.app" className="block outline-none md:col-span-2 lg:col-span-1">
+            <div className="group relative p-6 md:p-8 flex flex-col justify-between rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-md overflow-hidden hover:bg-white/[0.05] hover:border-amber-500/30 transition-all duration-500 h-full">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              <div className="relative z-10 flex justify-between items-start mb-8">
+                <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500">
+                  <Binary strokeWidth={1.5} size={24} />
+                </div>
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded border border-amber-500/30 bg-amber-500/10 text-amber-400">
+                  <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                  <span className="text-[10px] font-mono uppercase tracking-widest font-bold">Live</span>
+                </div>
               </div>
-              <span className="text-[10px] font-mono uppercase tracking-widest px-2 py-1 rounded border border-white/10 text-white/40">Upcoming</span>
+              
+              <div className="relative z-10">
+                <h3 className="text-2xl font-bold mb-2 group-hover:text-amber-300 transition-colors">Trees</h3>
+                <p className="text-sm text-white/60 leading-relaxed group-hover:text-white/80 transition-colors">
+                  Binary search trees, traversals, LCA, and recursive depth algorithms.
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-2xl font-bold mb-2">Trees</h3>
-              <p className="text-sm text-white/40 leading-relaxed">BSTs, DFS/BFS, height, and complex path problems.</p>
-            </div>
-          </div>
+          </Link>
 
-          <div className="group relative p-6 md:p-8 flex flex-col justify-between rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-md opacity-70 grayscale cursor-not-allowed overflow-hidden md:col-span-2 lg:col-span-2">
-            <div className="flex justify-between items-start mb-8">
-              <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-white/50">
-                <Network strokeWidth={1.5} size={24} />
+          <Link href="https://graphs-xi.vercel.app" className="block outline-none md:col-span-2 lg:col-span-2">
+            <div className="group relative p-6 md:p-8 flex flex-col justify-between rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-md overflow-hidden hover:bg-white/[0.05] hover:border-emerald-500/30 transition-all duration-500 h-full">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              <div className="relative z-10 flex justify-between items-start mb-8">
+                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500">
+                  <Network strokeWidth={1.5} size={24} />
+                </div>
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[10px] font-mono uppercase tracking-widest font-bold">Live</span>
+                </div>
               </div>
-              <span className="text-[10px] font-mono uppercase tracking-widest px-2 py-1 rounded border border-white/10 text-white/40">Upcoming</span>
+              
+              <div className="relative z-10">
+                <h3 className="text-2xl font-bold mb-2 group-hover:text-emerald-300 transition-colors">Graphs</h3>
+                <p className="text-sm text-white/60 leading-relaxed group-hover:text-white/80 transition-colors max-w-sm">
+                  Adjacency representations, BFS/DFS exploration, and Dijkstra's shortest path algorithm.
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-2xl font-bold mb-2">Graphs</h3>
-              <p className="text-sm text-white/40 leading-relaxed max-w-sm">Adjacency lists, Dijkstra's algorithm, topological sorts, and Union-Find visualizers.</p>
-            </div>
-          </div>
+          </Link>
 
-          <div className="group relative p-6 md:p-8 flex flex-col justify-between rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-md opacity-70 grayscale cursor-not-allowed overflow-hidden md:col-span-2 lg:col-span-1">
-            <div className="flex justify-between items-start mb-8">
-              <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-white/50">
-                <Cpu strokeWidth={1.5} size={24} />
+          <Link href="https://dp-dsa.vercel.app" className="block outline-none md:col-span-2 lg:col-span-1">
+            <div className="group relative p-6 md:p-8 flex flex-col justify-between rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-md overflow-hidden hover:bg-white/[0.05] hover:border-purple-500/30 transition-all duration-500 h-full">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              <div className="relative z-10 flex justify-between items-start mb-8">
+                <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500">
+                  <Cpu strokeWidth={1.5} size={24} />
+                </div>
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded border border-purple-500/30 bg-purple-500/10 text-purple-400">
+                  <div className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+                  <span className="text-[10px] font-mono uppercase tracking-widest font-bold">Live</span>
+                </div>
               </div>
-              <span className="text-[10px] font-mono uppercase tracking-widest px-2 py-1 rounded border border-white/10 text-white/40">Upcoming</span>
+              
+              <div className="relative z-10">
+                <h3 className="text-2xl font-bold mb-2 group-hover:text-purple-300 transition-colors">Dynamic Prog.</h3>
+                <p className="text-sm text-white/60 leading-relaxed group-hover:text-white/80 transition-colors">
+                  Memoization tables, bottom-up tabulation, and the 0/1 knapsack algorithm.
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-2xl font-bold mb-2">Dynamic Prog.</h3>
-              <p className="text-sm text-white/40 leading-relaxed">Memoization, tabulation, knapsack, and sequence matching.</p>
-            </div>
-          </div>
+          </Link>
 
         </div>
       </main>
