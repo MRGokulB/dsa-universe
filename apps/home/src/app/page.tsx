@@ -146,7 +146,7 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="https://trees-dsa.vercel.app" className="block outline-none md:col-span-2 lg:col-span-1">
+          <Link href="https://trees-eight-omega.vercel.app" className="block outline-none md:col-span-2 lg:col-span-1">
             <div className="group relative p-6 md:p-8 flex flex-col justify-between rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-md overflow-hidden hover:bg-white/[0.05] hover:border-amber-500/30 transition-all duration-500 h-full">
               <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               
@@ -169,7 +169,7 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="https://graphs-xi.vercel.app" className="block outline-none md:col-span-2 lg:col-span-2">
+          <Link href="https://graphs-steel.vercel.app" className="block outline-none md:col-span-2 lg:col-span-2">
             <div className="group relative p-6 md:p-8 flex flex-col justify-between rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-md overflow-hidden hover:bg-white/[0.05] hover:border-emerald-500/30 transition-all duration-500 h-full">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               
@@ -192,7 +192,7 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="https://dp-dsa.vercel.app" className="block outline-none md:col-span-2 lg:col-span-1">
+          <Link href="https://dp-sigma-one.vercel.app" className="block outline-none md:col-span-2 lg:col-span-1">
             <div className="group relative p-6 md:p-8 flex flex-col justify-between rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-md overflow-hidden hover:bg-white/[0.05] hover:border-purple-500/30 transition-all duration-500 h-full">
               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               

@@ -57,9 +57,9 @@ export default function StacksQueuesStoryPage() {
         <QuizScene />
       </section>
       <NextSection
-        href="https://home-two-rust.vercel.app/"
-        title="DSA Universe Curriculum"
-        description="Return to the central universe to explore Trees, Graphs, and Dynamic Programming."
+        href="https://trees-eight-omega.vercel.app"
+        title="Module 04: Trees"
+        description="Leave 1D sequences behind. Explore branching hierarchies, binary search invariants, and tree traversals."
       />
     </div>
   );

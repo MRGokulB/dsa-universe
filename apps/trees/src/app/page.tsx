@@ -57,7 +57,7 @@ export default function TreesStoryPage() {
         <QuizScene />
       </section>
       <NextSection
-        href="https://graphs-xi.vercel.app/"
+        href="https://graphs-steel.vercel.app"
         title="Module 05: Graphs"
         description="Transition from hierarchical trees to cyclic networks, adjacency matrices, BFS/DFS pathfinding, and Dijkstra's algorithm."
       />

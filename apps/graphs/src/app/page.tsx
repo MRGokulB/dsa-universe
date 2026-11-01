@@ -53,7 +53,7 @@ export default function GraphsStoryPage() {
         <QuizScene />
       </section>
       <NextSection
-        href="https://dp-dsa.vercel.app/"
+        href="https://dp-sigma-one.vercel.app"
         title="Module 06: Dynamic Programming"
         description="Master overlapping subproblems, memoization tables, bottom-up tabulation, and the 0/1 knapsack algorithm."
       />
