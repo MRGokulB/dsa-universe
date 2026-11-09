@@ -194,10 +194,10 @@ export default function Home() {
                 href={activeModule.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-clash font-semibold bg-[#18181b] text-white hover:bg-black transition-all cursor-pointer shadow-sm"
+                className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-clash font-semibold bg-[#18181b] !text-white hover:bg-black transition-all cursor-pointer shadow-sm"
               >
-                <span>Launch {activeModule.name}</span>
-                <ArrowUpRight size={14} />
+                <span className="!text-white">Launch {activeModule.name}</span>
+                <ArrowUpRight size={14} className="!text-white" />
               </a>
             </div>
           </div>
