@@ -12,9 +12,7 @@ import {
   Network,
   Cpu,
   Code2,
-  Terminal,
-  Activity,
-  Boxes
+  RotateCcw
 } from "lucide-react";
 import SiliconCrucible3D, { MODULE_SYSTEMS } from "../components/SiliconCrucible3D";
 import { OnboardingTour } from "../components/OnboardingTour";
@@ -34,45 +32,31 @@ export default function Home() {
   const ActiveIcon = SYSTEM_ICONS[activeModule.id as keyof typeof SYSTEM_ICONS] || Layers;
 
   return (
-    <div className="min-h-screen bg-[#07080b] text-[#f0f2f7] font-cabinet selection:bg-sky-500/30 selection:text-white relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#fafafb] text-[#18181b] font-cabinet selection:bg-slate-200 selection:text-black relative overflow-x-hidden">
       <OnboardingTour />
 
-      {/* Subtle Blueprint Grid Trace */}
-      <div
-        className="fixed inset-0 pointer-events-none opacity-[0.035]"
-        style={{
-          backgroundImage: `linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)`,
-          backgroundSize: "48px 48px"
-        }}
-      />
-      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(ellipse_70%_50%_at_50%_15%,rgba(56,189,248,0.06),transparent_70%)]" />
-
-      {/* Header Bar */}
-      <header className="sticky top-0 z-50 border-b border-white/[0.08] bg-[#07080b]/85 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
+      <header className="sticky top-0 z-50 border-b border-black/[0.06] bg-[#fafafb]/90 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 h-18 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 font-mono text-xs font-bold">
-              <Boxes size={18} />
+            <div className="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center font-clash font-bold text-sm shadow-sm">
+              DS
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="font-clash font-semibold text-sm tracking-tight text-white">
-                  DSA UNIVERSE
-                </span>
-                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.05] text-zinc-400 border border-white/[0.08]">
-                  WEBGL 3D
-                </span>
-              </div>
-              <p className="text-[10px] text-zinc-500 font-mono hidden sm:block">Hardware Memory &amp; Algorithm Visualizer</p>
+              <span className="font-clash font-semibold text-sm tracking-tight text-[#0f172a] block">
+                DSA UNIVERSE
+              </span>
+              <span className="text-[11px] text-[#71717a] block font-normal">
+                Hardware Memory &amp; Algorithm Visualizer
+              </span>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
             <button
               onClick={() => window.dispatchEvent(new CustomEvent("open-dsa-tour"))}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.08] hover:border-white/20 transition-all text-xs font-mono text-zinc-300 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-black/[0.08] bg-white hover:bg-black hover:text-white transition-all text-xs font-medium text-[#18181b] shadow-xs cursor-pointer"
             >
-              <Sparkles size={13} className="text-sky-400" />
+              <Sparkles size={13} className="text-amber-500" />
               <span>Tour</span>
             </button>
 
@@ -80,226 +64,201 @@ export default function Home() {
               href="https://github.com/MRGokulB/dsa-universe"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.08] hover:border-white/20 transition-all text-xs font-mono text-zinc-300"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-black/[0.08] bg-white hover:bg-black hover:text-white transition-all text-xs font-medium text-[#18181b] shadow-xs"
               aria-label="GitHub Repository"
             >
               <Code2 size={13} />
-              <span className="hidden sm:inline">Source</span>
+              <span className="hidden sm:inline">Source ↗</span>
             </a>
           </div>
         </div>
       </header>
 
-      {/* Main Experience */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-8 pt-10 pb-24 relative z-10">
-        {/* Top Hero Heading */}
-        <div className="text-center max-w-3xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-sky-500/25 bg-sky-500/[0.06] text-sky-300 text-xs font-mono mb-4">
-            <Terminal size={12} />
-            <span>AUTHENTIC THREE.JS HARDWARE CRUCIBLE</span>
-          </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-8 pt-10 pb-28 relative z-10">
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <span className="inline-block text-[11px] font-mono tracking-widest text-[#71717a] uppercase mb-3">
+            INTERACTIVE ALGORITHM STUDIO &middot; 2026
+          </span>
 
-          <h1 className="font-clash font-bold text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-[1.08] mb-4">
+          <h1
+            className="font-clash font-semibold text-[#0f172a] tracking-[-0.035em] leading-[1.08] text-center"
+            style={{ fontSize: "clamp(38px, 4.5vw, 68px)" }}
+          >
             Algorithms in Silicon. <br />
-            <span className="font-instrument italic font-normal text-zinc-300">
-              Interactive WebGL 3D execution.
+            <span className="font-instrument italic font-normal text-[#18181b]">
+              Interactive hardware execution.
             </span>
           </h1>
 
-          <p className="text-sm sm:text-base text-zinc-400 max-w-xl mx-auto leading-relaxed">
-            A real-time 3D hardware memory die rendered in WebGL. Drag to orbit the silicon crucible, click any module to focus, and launch the dedicated simulator.
+          <p className="text-sm sm:text-base text-[#52525b] max-w-lg mx-auto mt-4 font-normal leading-relaxed">
+            Examine contiguous cache lines, heap node mutations, and call stack frames across 6 dedicated interactive visualizers.
           </p>
         </div>
 
-        {/* 3D WebGL Canvas Centerpiece */}
-        <div className="mb-12">
-          <SiliconCrucible3D activeId={activeId} onSelectModule={setActiveId} />
-        </div>
-
-        {/* Interactive Active Module Telemetry Deck & Quick Selector */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-20">
-          {/* Left / Center: Active System Detailed Telemetry HUD */}
-          <div className="lg:col-span-8 silicon-panel rounded-3xl p-6 sm:p-8">
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-6 border-b border-white/[0.08]">
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-11 h-11 rounded-xl flex items-center justify-center font-mono font-bold text-base border"
-                  style={{
-                    background: `${activeModule.accent}15`,
-                    borderColor: `${activeModule.accent}35`,
-                    color: activeModule.accent
-                  }}
-                >
-                  <ActiveIcon size={22} strokeWidth={1.8} />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs text-zinc-500 uppercase">
-                      SYSTEM {activeModule.index}
-                    </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
-                      LIVE SIMULATOR
-                    </span>
-                  </div>
-                  <h2 className="font-clash font-bold text-2xl text-white tracking-tight">
-                    {activeModule.name}
-                  </h2>
-                </div>
-              </div>
-
-              <Link
-                href={activeModule.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="tactile-button-primary px-6 text-xs gap-2 shrink-0"
-              >
-                <span>Launch {activeModule.category} Visualizer</span>
-                <ArrowUpRight size={15} />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="p-4 rounded-xl border border-white/[0.06] bg-black/40">
-                <span className="text-[10px] font-mono text-zinc-500 block mb-1 uppercase tracking-wider">
-                  Asymptotic Complexity
-                </span>
-                <span className="font-mono text-xs font-semibold text-white">
-                  {activeModule.complexity}
-                </span>
-              </div>
-              <div className="p-4 rounded-xl border border-white/[0.06] bg-black/40">
-                <span className="text-[10px] font-mono text-zinc-500 block mb-1 uppercase tracking-wider">
-                  Memory Topology
-                </span>
-                <span className="font-mono text-xs font-semibold text-sky-300">
-                  {activeModule.memory}
-                </span>
-              </div>
-              <div className="p-4 rounded-xl border border-white/[0.06] bg-black/40">
-                <span className="text-[10px] font-mono text-zinc-500 block mb-1 uppercase tracking-wider">
-                  Hardware Locality
-                </span>
-                <span className="font-mono text-xs font-semibold text-emerald-300">
-                  {activeModule.tagline}
-                </span>
-              </div>
-            </div>
-
-            <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed font-normal">
-              Clicking any 3D memory block on the crucible above dynamically inspects its internal memory allocation and execution context stack in real time.
-            </p>
-          </div>
-
-          {/* Right: Tactile Quick Module Selectors */}
-          <div className="lg:col-span-4 flex flex-col gap-2.5">
-            <span className="font-mono text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-1 flex items-center gap-1.5">
-              <Activity size={13} className="text-sky-400" />
-              <span>Select 3D Memory Block</span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-24">
+          <div className="lg:col-span-3 order-2 lg:order-1 flex flex-col gap-2">
+            <span className="text-[11px] font-mono tracking-wider text-[#71717a] uppercase block mb-1">
+              CHOOSE A SYSTEM
             </span>
 
             {MODULE_SYSTEMS.map((mod) => {
               const isSelected = activeId === mod.id;
-              const Icon = SYSTEM_ICONS[mod.id as keyof typeof SYSTEM_ICONS] || Layers;
+              const IconComp = SYSTEM_ICONS[mod.id as keyof typeof SYSTEM_ICONS] || Layers;
 
               return (
                 <button
                   key={mod.id}
                   onClick={() => setActiveId(mod.id)}
-                  className={`p-3.5 rounded-2xl border text-left transition-all flex items-center justify-between cursor-pointer ${
+                  className={`w-full text-left p-3 rounded-2xl transition-all cursor-pointer flex items-center justify-between border ${
                     isSelected
-                      ? "bg-white/[0.08] border-sky-400 shadow-[0_4px_16px_rgba(56,189,248,0.15)]"
-                      : "bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.05] hover:border-white/[0.14]"
+                      ? "bg-white border-black/[0.12] shadow-sm text-black"
+                      : "bg-transparent border-transparent hover:bg-black/[0.03] text-[#71717a]"
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <div
-                      className="w-8 h-8 rounded-lg flex items-center justify-center font-mono text-xs border"
-                      style={{
-                        background: `${mod.accent}15`,
-                        borderColor: `${mod.accent}35`,
-                        color: mod.accent
-                      }}
+                      className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${
+                        isSelected ? "bg-black text-white" : "bg-black/[0.05] text-[#52525b]"
+                      }`}
                     >
-                      <Icon size={16} strokeWidth={1.8} />
+                      <IconComp size={15} />
                     </div>
                     <div>
-                      <span className="font-clash font-semibold text-xs text-white block">
+                      <span className="text-xs font-semibold block leading-tight text-[#18181b]">
                         {mod.name}
                       </span>
-                      <span className="font-mono text-[10px] text-zinc-500 block">
-                        {mod.complexity.split("·")[0]}
+                      <span className="text-[10px] text-[#71717a] font-mono">
+                        {mod.category}
                       </span>
                     </div>
                   </div>
 
-                  <span
-                    className="font-mono text-[10px] font-bold"
-                    style={{ color: mod.accent }}
-                  >
-                    {isSelected ? "FOCUSED" : "FOCUS →"}
-                  </span>
+                  {isSelected && (
+                    <div className="w-1.5 h-1.5 rounded-full bg-black shrink-0 mr-1" />
+                  )}
                 </button>
               );
             })}
           </div>
-        </div>
 
-        {/* Catalog Section Below */}
-        <section className="pt-16 border-t border-white/[0.08]">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="font-clash font-bold text-xl text-white tracking-tight">
-                All 6 Decoupled Standalone Apps
-              </h2>
-              <p className="text-xs text-zinc-500 font-mono mt-0.5">
-                Each micro-frontend can be run independently or explored via the 3D Crucible
-              </p>
-            </div>
-            <span className="text-xs font-mono text-zinc-500 hidden sm:inline">TURBOPACK REPO</span>
+          <div className="lg:col-span-6 order-1 lg:order-2 flex flex-col items-center">
+            <SiliconCrucible3D
+              activeId={activeId}
+              onSelectModule={(id) => setActiveId(id)}
+            />
+            <span className="text-[11px] text-[#71717a] font-mono mt-2 tracking-wide">
+              ::: Drag to find your angle &middot; Click module to focus
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {MODULE_SYSTEMS.map((sys) => {
-              const Icon = SYSTEM_ICONS[sys.id as keyof typeof SYSTEM_ICONS] || Layers;
+          <div className="lg:col-span-3 order-3">
+            <div className="rounded-[24px] bg-white border border-black/[0.08] p-6 shadow-[0_12px_32px_rgba(0,0,0,0.04)]">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider bg-black/[0.05] text-[#18181b]">
+                  SYSTEM {activeModule.index}
+                </span>
+                <span className="text-xs text-[#71717a] font-mono">
+                  {activeModule.category}
+                </span>
+              </div>
+
+              <h2 className="font-clash font-bold text-xl text-[#0f172a] mb-2 leading-tight">
+                {activeModule.name}
+              </h2>
+
+              <p className="text-xs sm:text-sm text-[#52525b] leading-relaxed mb-6">
+                {activeModule.tagline}
+              </p>
+
+              <div className="space-y-3 pt-4 border-t border-black/[0.06] mb-6">
+                <div>
+                  <span className="text-[10px] font-mono uppercase text-[#71717a] block mb-0.5">
+                    ASYMPTOTIC COMPLEXITY
+                  </span>
+                  <span className="text-xs font-mono font-medium text-[#18181b]">
+                    {activeModule.complexity}
+                  </span>
+                </div>
+
+                <div>
+                  <span className="text-[10px] font-mono uppercase text-[#71717a] block mb-0.5">
+                    MEMORY TOPOLOGY
+                  </span>
+                  <span className="text-xs font-mono font-medium text-[#18181b]">
+                    {activeModule.memory}
+                  </span>
+                </div>
+              </div>
+
+              <a
+                href={activeModule.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-clash font-semibold bg-[#18181b] text-white hover:bg-black transition-all cursor-pointer shadow-sm"
+              >
+                <span>Launch {activeModule.name}</span>
+                <ArrowUpRight size={14} />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <section className="pt-16 border-t border-black/[0.06]">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+            <div>
+              <span className="text-[11px] font-mono uppercase tracking-widest text-[#71717a] block mb-1">
+                STANDALONE SIMULATORS
+              </span>
+              <h2 className="font-clash font-semibold text-2xl text-[#0f172a]">
+                All 6 Dedicated Visualizers
+              </h2>
+            </div>
+            <span className="text-xs font-mono text-[#71717a]">
+              6 MICRO-FRONTENDS DEPLOYED
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {MODULE_SYSTEMS.map((item) => {
+              const IconComp = SYSTEM_ICONS[item.id as keyof typeof SYSTEM_ICONS] || Layers;
 
               return (
                 <a
-                  key={sys.id}
-                  href={sys.url}
+                  key={item.id}
+                  href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group silicon-panel rounded-2xl p-6 transition-all hover:border-white/[0.22] hover:-translate-y-1 flex flex-col justify-between"
+                  className="group p-6 rounded-[22px] bg-white border border-black/[0.06] hover:border-black/[0.18] hover:shadow-[0_12px_28px_rgba(0,0,0,0.06)] transition-all flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <div
-                        className="w-9 h-9 rounded-xl flex items-center justify-center border font-mono font-bold text-xs"
-                        style={{
-                          background: `${sys.accent}15`,
-                          borderColor: `${sys.accent}35`,
-                          color: sys.accent
-                        }}
-                      >
-                        <Icon size={16} strokeWidth={1.8} />
+                      <div className="w-9 h-9 rounded-xl bg-black/[0.04] text-[#18181b] flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
+                        <IconComp size={16} />
                       </div>
-                      <span className="font-mono text-[10px] text-zinc-500 font-bold uppercase tracking-wider">
-                        {sys.category}
+                      <span className="text-[10px] font-mono uppercase text-[#71717a]">
+                        MODULE {item.index}
                       </span>
                     </div>
 
-                    <h3 className="font-clash font-semibold text-lg text-white mb-1.5 group-hover:text-sky-300 transition-colors">
-                      {sys.name}
+                    <h3 className="font-clash font-semibold text-base text-[#0f172a] mb-1.5 group-hover:text-black">
+                      {item.name}
                     </h3>
-                    <p className="text-xs text-zinc-400 leading-relaxed font-normal mb-4">
-                      {sys.tagline}
+
+                    <p className="text-xs text-[#52525b] leading-relaxed mb-4">
+                      {item.tagline}
                     </p>
+
+                    <div className="py-2 px-3 rounded-lg bg-[#f8f9fa] border border-black/[0.04] text-[11px] font-mono text-[#52525b] mb-4">
+                      {item.complexity}
+                    </div>
                   </div>
 
-                  <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-[10px] font-mono text-zinc-500">
-                    <span>{sys.complexity.split("·")[0]}</span>
-                    <span className="text-sky-400 group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1 font-semibold">
-                      Launch App ↗
-                    </span>
+                  <div className="pt-4 border-t border-black/[0.05] flex items-center justify-between text-xs font-semibold text-[#18181b]">
+                    <span>Open Visualizer</span>
+                    <ArrowUpRight
+                      size={14}
+                      className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+                    />
                   </div>
                 </a>
               );
@@ -308,14 +267,15 @@ export default function Home() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-white/[0.08] bg-[#050609] py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-zinc-500">
+      <footer className="border-t border-black/[0.06] bg-white py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#71717a]">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-sky-400" />
-            <span className="font-clash font-semibold text-white">DSA UNIVERSE &middot; THREE.JS WEBGL CRUCIBLE</span>
+            <span className="w-2 h-2 rounded-full bg-black" />
+            <span className="font-clash font-semibold text-[#0f172a]">
+              DSA UNIVERSE
+            </span>
           </div>
-          <div>Bespoke Hardware Architecture &middot; 2026</div>
+          <div>Bespoke Architectural Experience &middot; 2026</div>
         </div>
       </footer>
     </div>
