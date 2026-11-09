@@ -14,7 +14,7 @@ import {
   Code2,
   RotateCcw
 } from "lucide-react";
-import SiliconCrucible3D, { MODULE_SYSTEMS } from "../components/SiliconCrucible3D";
+import TactileMemoryStack, { MODULE_SYSTEMS } from "../components/TactileMemoryStack";
 import { OnboardingTour } from "../components/OnboardingTour";
 
 const SYSTEM_ICONS = {
@@ -142,13 +142,10 @@ export default function Home() {
           </div>
 
           <div className="lg:col-span-6 order-1 lg:order-2 flex flex-col items-center">
-            <SiliconCrucible3D
+            <TactileMemoryStack
               activeId={activeId}
               onSelectModule={(id) => setActiveId(id)}
             />
-            <span className="text-[11px] text-[#71717a] font-mono mt-2 tracking-wide">
-              ::: Drag to find your angle &middot; Click module to focus
-            </span>
           </div>
 
           <div className="lg:col-span-3 order-3">
