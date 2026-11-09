@@ -1,649 +1,738 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import {
-  motion,
-  useMotionValue,
-  useSpring,
-  useReducedMotion,
-  AnimatePresence
-} from "framer-motion";
-import {
-  ArrowRight,
+  Sparkles,
   ArrowUpRight,
+  Code2,
+  Terminal,
+  RotateCcw,
   Layers,
   LayoutList,
-  Network,
-  Cpu,
   Database,
   Binary,
-  Sparkles,
-  Code2,
-  RotateCcw,
-  Grip,
-  ChevronLeft,
-  ChevronRight,
-  Terminal,
-  Play,
-  Boxes
+  Network,
+  Cpu,
+  Compass
 } from "lucide-react";
 import { OnboardingTour } from "../components/OnboardingTour";
 
-interface AlgorithmModule {
+interface KeyData {
   id: string;
-  num: string;
-  name: string;
-  subtitle: string;
-  tagline: string;
-  description: string;
+  char: string;
+  isLetter?: boolean;
+  color: string;
+  textColor: string;
+  sideColor: string;
+  lat: number;
+  lng: number;
+  twist: number;
+  depthOffset: number;
+  // Metadata for the left card
+  kicker: string;
+  title: string;
+  text: string;
   url: string;
-  icon: typeof Layers;
-  accent: string;
-  borderAccent: string;
-  bgAccent: string;
-  complexity: string;
-  memoryModel: string;
-  keyTopics: string[];
-  schematic: string;
+  moduleGroup: string;
 }
 
-const MODULES: AlgorithmModule[] = [
-  {
-    id: "arrays",
-    num: "01",
-    name: "Arrays",
-    subtitle: "Contiguous Memory & Two Pointers",
-    tagline: "Silicon-level contiguous allocations & cache lines",
-    description: "Explore L1/L2 cache line locality, static vs dynamic buffer expansion, two-pointer convergence, and sliding window optimization.",
-    url: "https://arrays-rho.vercel.app",
-    icon: Layers,
-    accent: "#06b6d4",
-    borderAccent: "rgba(6,182,212,0.4)",
-    bgAccent: "rgba(6,182,212,0.08)",
-    complexity: "Access O(1) · Search O(N)",
-    memoryModel: "Flat Contiguous RAM Buffer",
-    keyTopics: ["L1/L2 Locality", "Two-Pointers", "Sliding Window", "Amortized O(1)"],
-    schematic: "0x7FFE [ 12 | 24 | 36 | 48 | 60 ]"
-  },
-  {
-    id: "linked-lists",
-    num: "02",
-    name: "Linked Lists",
-    subtitle: "Heap Chains & Pointer Rewiring",
-    tagline: "Dispersed heap allocation & cycle detection",
-    description: "Trace non-contiguous heap node references, pointer mutations, in-place node reversal, and Floyd's fast/slow cycle isolation.",
-    url: "https://linked-lists-xi.vercel.app/",
-    icon: LayoutList,
-    accent: "#a855f7",
-    borderAccent: "rgba(168,85,247,0.4)",
-    bgAccent: "rgba(168,85,247,0.08)",
-    complexity: "Insert O(1) · Traversal O(N)",
-    memoryModel: "Dispersed Heap Node References",
-    keyTopics: ["Pointer Rewiring", "Floyd's Tortoise-Hare", "In-Place Reversal"],
-    schematic: "[ Node A ] → [ Node B ] → [ Node C ]"
-  },
-  {
-    id: "stacks-queues",
-    num: "03",
-    name: "Stacks & Queues",
-    subtitle: "Call Frames & Ring Buffers",
-    tagline: "LIFO execution frames & FIFO pipelines",
-    description: "Simulate thread execution call stacks, stack overflow thresholds, circular ring buffers, and monotonic search techniques.",
-    url: "https://stacks-queues.vercel.app",
-    icon: Database,
-    accent: "#10b981",
-    borderAccent: "rgba(16,185,129,0.4)",
-    bgAccent: "rgba(16,185,129,0.08)",
-    complexity: "Push/Pop O(1) · Enqueue O(1)",
-    memoryModel: "Sequential Call Stack / Ring Buffer",
-    keyTopics: ["Execution Frames", "Circular Ring Buffer", "Monotonic Invariant"],
-    schematic: "Top → [ Frame_3 ] | [ Frame_2 ] | [ Base ]"
-  },
-  {
-    id: "trees",
-    num: "04",
-    name: "Trees",
-    subtitle: "Hierarchies & Recursive Depths",
-    tagline: "BST invariants & lowest common ancestors",
-    description: "Inspect binary tree balance properties, recursive preorder/inorder/postorder call mechanics, BFS levels, and Euler tour LCA resolution.",
-    url: "https://trees-eight-omega.vercel.app",
-    icon: Binary,
-    accent: "#f59e0b",
-    borderAccent: "rgba(245,158,11,0.4)",
-    bgAccent: "rgba(245,158,11,0.08)",
-    complexity: "Search O(log N) · Traversal O(N)",
-    memoryModel: "Recursive Pointer Hierarchy",
-    keyTopics: ["BST Balancing", "DFS/BFS Traversal", "Euler LCA Resolution"],
-    schematic: "Root(50) ↙ L(25) ↘ R(75)"
-  },
-  {
-    id: "graphs",
-    num: "05",
-    name: "Graphs",
-    subtitle: "Topology & Shortest Paths",
-    tagline: "Adjacency matrices & topological ordering",
-    description: "Visualize sparse and dense adjacency matrices, graph coloring cycle detection, strongly connected components, and min-heap Dijkstra paths.",
-    url: "https://graphs-steel.vercel.app",
-    icon: Network,
-    accent: "#f43f5e",
-    borderAccent: "rgba(244,63,94,0.4)",
-    bgAccent: "rgba(244,63,94,0.08)",
-    complexity: "BFS/DFS O(V + E) · Dijkstra O((V+E)logV)",
-    memoryModel: "Sparse Adjacency Heap List",
-    keyTopics: ["Adjacency Matrix", "Dijkstra Priority Queue", "Topological Sort"],
-    schematic: "V=6, E=9 | Shortest Path Computed"
-  },
-  {
-    id: "dp",
-    num: "06",
-    name: "Dynamic Prog.",
-    subtitle: "Memoization & Tabulation",
-    tagline: "Overlapping subproblems & DAG states",
-    description: "Map overlapping subproblems into directed acyclic dependency graphs, comparing top-down recursive memoization to iterative 2D tabulation.",
-    url: "https://dp-sigma-one.vercel.app",
-    icon: Cpu,
-    accent: "#3b82f6",
-    borderAccent: "rgba(59,130,246,0.4)",
-    bgAccent: "rgba(59,130,246,0.08)",
-    complexity: "Time: O(N * W) · Space: O(W)",
-    memoryModel: "2D Tabulation Grid / Rolling Array",
-    keyTopics: ["Memoization Cache", "State Compression", "0/1 Knapsack Solver"],
-    schematic: "Table[i][w] = max(take, leave)"
-  }
+const PALETTES = [
+  { bg: "#3fe0a8", text: "#0b261a", side: "#2bb886" }, // Mint
+  { bg: "#ff7a2e", text: "#ffffff", side: "#d95b16" }, // Orange
+  { bg: "#ffd23f", text: "#1a1600", side: "#d4aa24" }, // Yellow
+  { bg: "#38b6ff", text: "#ffffff", side: "#1d8ecc" }, // Sky
+  { bg: "#a77bff", text: "#ffffff", side: "#7c52db" }, // Lilac
+  { bg: "#ff4fa3", text: "#ffffff", side: "#d62e82" }, // Pink
+  { bg: "#c8f03c", text: "#182400", side: "#9ec41f" }, // Lime
+  { bg: "#f4f2f8", text: "#0b0c10", side: "#d1cde0" }, // White
+  { bg: "#17171f", text: "#ffffff", side: "#000000" }  // Black
 ];
 
-const RADIUS = 280;
+const DSA_DATA: Record<string, { kicker: string; title: string; text: string; url: string; group: string }> = {
+  A: {
+    kicker: "A · ARRAYS",
+    title: "Contiguous Memory & Two Pointers",
+    text: "L1/L2 cache locality, pointer arithmetic, and sliding window optimization.",
+    url: "https://arrays-rho.vercel.app",
+    group: "Arrays"
+  },
+  L: {
+    kicker: "L · LINKED LISTS",
+    title: "Heap Chains & Dynamic Nodes",
+    text: "Non-contiguous memory traversal, pointer rewiring, and Floyd cycle detection.",
+    url: "https://linked-lists-xi.vercel.app/",
+    group: "Linked Lists"
+  },
+  G: {
+    kicker: "G · GRAPHS",
+    title: "Topology & Shortest Paths",
+    text: "Adjacency matrices, BFS/DFS traversal, Dijkstra min-heap, and topological sort.",
+    url: "https://graphs-steel.vercel.app",
+    group: "Graphs"
+  },
+  O: {
+    kicker: "O · ASYMPTOTICS",
+    title: "Big-O Runtime Bounds",
+    text: "Time and space bounds from amortized O(1) to logarithmic O(log N) and quadratic O(N²).",
+    url: "https://arrays-rho.vercel.app",
+    group: "Complexity"
+  },
+  R: {
+    kicker: "R · RECURSION",
+    title: "Call Stack Execution Frames",
+    text: "Simulate stack frames, base condition unwinding, and recursion tree limits.",
+    url: "https://stacks-queues.vercel.app",
+    group: "Stacks"
+  },
+  I: {
+    kicker: "I · ITERATION",
+    title: "Pointer Convergence & Windows",
+    text: "Left/right pointer narrowing, two-pass partitioning, and cyclic array buffers.",
+    url: "https://arrays-rho.vercel.app",
+    group: "Arrays"
+  },
+  T: {
+    kicker: "T · TREES",
+    title: "Hierarchical Binary Search Trees",
+    text: "BST invariants, recursive traversals, and Euler tour lowest common ancestors.",
+    url: "https://trees-eight-omega.vercel.app",
+    group: "Trees"
+  },
+  H: {
+    kicker: "H · HASH TABLES",
+    title: "Hash Tables & O(1) Key Lookup",
+    text: "Hash buckets, collision resolution chains, and open addressing probing.",
+    url: "https://arrays-rho.vercel.app",
+    group: "Arrays"
+  },
+  M: {
+    kicker: "M · MEMORY",
+    title: "Silicon-Level RAM Buffers",
+    text: "Contiguous byte offsets, stack vs heap allocation, and pointer arithmetic.",
+    url: "https://arrays-rho.vercel.app",
+    group: "Arrays"
+  },
+  S: {
+    kicker: "S · STACKS & QUEUES",
+    title: "LIFO Frames & FIFO Pipelines",
+    text: "Call stack execution frames, circular ring buffers, and monotonic patterns.",
+    url: "https://stacks-queues.vercel.app",
+    group: "Stacks"
+  },
+  D: {
+    kicker: "D · DYNAMIC PROGRAMMING",
+    title: "DAG States & 2D Tabulation",
+    text: "Optimal substructure, memoization cache grids, and 0/1 knapsack state compression.",
+    url: "https://dp-sigma-one.vercel.app",
+    group: "Dynamic Prog"
+  }
+};
+
+const EXTRA_LABELS = [
+  "PTR", "RAM", "BFS", "DFS", "BST", "LIFO", "FIFO", "O(1)", "O(N)", "DAG",
+  "HEAP", "TRIE", "{ }", "</>", "[ ]", "MEM", "JMP", "CPU", "BIT", "STK",
+  "QUE", "V+E", "LCA", "MOD", "TAB", "OPS", "LOG", "0x0", "ARR", "DP"
+];
 
 export default function Home() {
-  const [active, setActive] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [autoRotate, setAutoRotate] = useState(false);
-  const reduced = useReducedMotion();
+  const [selectedKeyId, setSelectedKeyId] = useState<string>("key-A");
+  const [hoveredKeyId, setHoveredKeyId] = useState<string | null>(null);
 
-  const yaw = useMotionValue(0);
-  const pitch = useMotionValue(8);
-  const springYaw = useSpring(yaw, { stiffness: 140, damping: 26 });
-  const springPitch = useSpring(pitch, { stiffness: 140, damping: 26 });
+  // Rotation states (degrees)
+  const [yaw, setYaw] = useState<number>(-12);
+  const [pitch, setPitch] = useState<number>(10);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
 
-  const pointerRef = useRef<{
-    startX: number;
-    startY: number;
-    startYaw: number;
-    startPitch: number;
-    moved: boolean;
-  } | null>(null);
+  const yawRef = useRef<number>(-12);
+  const pitchRef = useRef<number>(10);
+  const velocityRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const lastPointerRef = useRef<{ x: number; y: number; time: number } | null>(null);
+  const lastInteractionRef = useRef<number>(Date.now());
+  const stageRef = useRef<HTMLDivElement>(null);
+  const animFrameRef = useRef<number | null>(null);
 
-  const activeModule = MODULES[active];
+  // Build the ~80 chunky matte keycaps placed on the sphere
+  const keys = useMemo<KeyData[]>(() => {
+    const list: KeyData[] = [];
+    const spellLetters = ["A", "L", "G", "O", "R", "I", "T", "H", "M", "S"];
 
-  // Rotate to specific module
-  const selectModule = (index: number) => {
-    setActive(index);
-    setAutoRotate(false);
-    // Angle to bring module to front (facing angle = 0)
-    const targetAngle = -index * 60;
-    yaw.set(targetAngle);
-    pitch.set(8);
+    // Rings: (latitude, count)
+    const rings = [
+      { lat: 0, count: 16 },
+      { lat: 24, count: 14 },
+      { lat: -24, count: 14 },
+      { lat: 46, count: 10 },
+      { lat: -46, count: 10 },
+      { lat: 68, count: 6 },
+      { lat: -68, count: 6 },
+      { lat: 84, count: 2 },
+      { lat: -84, count: 2 }
+    ];
+
+    let extraIndex = 0;
+    let letterIndex = 0;
+
+    rings.forEach((ring, rIdx) => {
+      const step = 360 / ring.count;
+      // Stagger odd rings like bricks
+      const offset = (rIdx % 2) * (step / 2);
+
+      for (let i = 0; i < ring.count; i++) {
+        const lng = (i * step + offset) % 360;
+        // Pseudo-random deterministic twist and depth offset
+        const seed = Math.sin(rIdx * 100 + i * 17);
+        const twist = Math.round(seed * 4.5);
+        const depthOffset = Math.round(seed * 5);
+
+        // Put ALGORITHMS letters facing the front at latitude 0 and 24
+        let char = "";
+        let isLetter = false;
+        let paletteIndex = (rIdx * 4 + i) % PALETTES.length;
+
+        // Front equator facing viewer (lng around 300 to 60 deg)
+        const isEquatorFront = ring.lat === 0 && (lng <= 80 || lng >= 280);
+        const isUpperFront = ring.lat === 24 && (lng <= 60 || lng >= 300);
+
+        if ((isEquatorFront || isUpperFront) && letterIndex < spellLetters.length) {
+          char = spellLetters[letterIndex];
+          isLetter = true;
+          letterIndex++;
+          // High-contrast vibrant colors for letter keys
+          paletteIndex = (letterIndex * 2) % (PALETTES.length - 2);
+        } else {
+          char = EXTRA_LABELS[extraIndex % EXTRA_LABELS.length];
+          extraIndex++;
+        }
+
+        const pal = PALETTES[paletteIndex];
+        const dataMatch = DSA_DATA[char] || {
+          kicker: `KEY · ${char}`,
+          title: `Algorithmic Mechanic: ${char}`,
+          text: `Interactive runtime visualization and algorithmic logic.`,
+          url: "https://arrays-rho.vercel.app",
+          group: "Algorithms"
+        };
+
+        list.push({
+          id: `key-${char}-${rIdx}-${i}`,
+          char,
+          isLetter,
+          color: pal.bg,
+          textColor: pal.text,
+          sideColor: pal.side,
+          lat: ring.lat,
+          lng,
+          twist,
+          depthOffset,
+          kicker: dataMatch.kicker,
+          title: dataMatch.title,
+          text: dataMatch.text,
+          url: dataMatch.url,
+          moduleGroup: dataMatch.group
+        });
+      }
+    });
+
+    return list;
+  }, []);
+
+  // Find active key
+  const activeKey = useMemo(() => {
+    return keys.find((k) => k.id === (hoveredKeyId || selectedKeyId)) || keys[0];
+  }, [keys, hoveredKeyId, selectedKeyId]);
+
+  // Spin to a specific key so it faces the viewer (lat -> pitch, lng -> yaw)
+  const spinToKey = useCallback((key: KeyData) => {
+    setSelectedKeyId(key.id);
+    lastInteractionRef.current = Date.now();
+    // To face viewer: targetYaw = -key.lng, targetPitch = key.lat
+    let targetYaw = -key.lng;
+    while (targetYaw - yawRef.current > 180) targetYaw -= 360;
+    while (targetYaw - yawRef.current < -180) targetYaw += 360;
+
+    const targetPitch = Math.max(-45, Math.min(45, key.lat));
+    yawRef.current = targetYaw;
+    pitchRef.current = targetPitch;
+    setYaw(targetYaw);
+    setPitch(targetPitch);
+    velocityRef.current = { x: 0, y: 0 };
+  }, []);
+
+  // Spin to specific letter or topic
+  const spinToLetter = (char: string) => {
+    const target = keys.find((k) => k.char === char) || keys[0];
+    spinToKey(target);
   };
 
-  const handleNext = () => {
-    selectModule((active + 1) % MODULES.length);
-  };
-
-  const handlePrev = () => {
-    selectModule((active - 1 + MODULES.length) % MODULES.length);
-  };
-
-  // Pointer drag for 3D rotation
-  const handlePointerDown = (e: React.PointerEvent) => {
-    if (reduced || e.button !== 0) return;
-    pointerRef.current = {
-      startX: e.clientX,
-      startY: e.clientY,
-      startYaw: yaw.get(),
-      startPitch: pitch.get(),
-      moved: false
-    };
+  // Pointer drag interactions
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (e.button !== 0) return;
     setIsDragging(true);
-    e.currentTarget.setPointerCapture(e.pointerId);
+    lastInteractionRef.current = Date.now();
+    lastPointerRef.current = { x: e.clientX, y: e.clientY, time: performance.now() };
+    velocityRef.current = { x: 0, y: 0 };
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   };
 
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!pointerRef.current) return;
-    const dx = e.clientX - pointerRef.current.startX;
-    const dy = e.clientY - pointerRef.current.startY;
-    if (Math.abs(dx) + Math.abs(dy) > 4) {
-      pointerRef.current.moved = true;
-    }
-    yaw.set(pointerRef.current.startYaw + dx * 0.4);
-    pitch.set(Math.max(-20, Math.min(25, pointerRef.current.startPitch - dy * 0.25)));
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!lastPointerRef.current || !isDragging) return;
+    const now = performance.now();
+    const dt = Math.max(1, now - lastPointerRef.current.time);
+    const dx = e.clientX - lastPointerRef.current.x;
+    const dy = e.clientY - lastPointerRef.current.y;
+
+    const newYaw = yawRef.current + dx * 0.35;
+    const newPitch = Math.max(-55, Math.min(55, pitchRef.current - dy * 0.3));
+
+    yawRef.current = newYaw;
+    pitchRef.current = newPitch;
+    setYaw(newYaw);
+    setPitch(newPitch);
+
+    velocityRef.current = { x: (dx / dt) * 16, y: (dy / dt) * 16 };
+    lastPointerRef.current = { x: e.clientX, y: e.clientY, time: now };
+    lastInteractionRef.current = Date.now();
   };
 
-  const handlePointerUp = (e: React.PointerEvent) => {
-    if (!pointerRef.current) return;
+  const onPointerUp = (e: React.PointerEvent) => {
     setIsDragging(false);
-    if (!pointerRef.current.moved) {
-      // Click without drag
-    } else {
-      // Find nearest module index to current yaw
-      const currentYaw = yaw.get();
-      const rawIndex = Math.round(-currentYaw / 60);
-      const normalizedIndex = ((rawIndex % MODULES.length) + MODULES.length) % MODULES.length;
-      setActive(normalizedIndex);
+    lastPointerRef.current = null;
+    try {
+      (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+    } catch {
+      // ignore
     }
-    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-      e.currentTarget.releasePointerCapture(e.pointerId);
-    }
-    pointerRef.current = null;
   };
 
-  // Gentle idle rotation effect
+  // Physics animation loop: inertia + gentle idle sway
   useEffect(() => {
-    if (!autoRotate || reduced || isDragging) return;
-    const interval = setInterval(() => {
-      yaw.set(yaw.get() - 0.4);
-    }, 30);
-    return () => clearInterval(interval);
-  }, [autoRotate, reduced, isDragging, yaw]);
+    let lastTime = performance.now();
+
+    const loop = (currentTime: number) => {
+      const dt = (currentTime - lastTime) / 1000;
+      lastTime = currentTime;
+
+      if (!isDragging) {
+        // Apply inertia friction
+        velocityRef.current.x *= 0.92;
+        velocityRef.current.y *= 0.92;
+
+        if (Math.abs(velocityRef.current.x) > 0.05 || Math.abs(velocityRef.current.y) > 0.05) {
+          yawRef.current += velocityRef.current.x * 0.5;
+          pitchRef.current = Math.max(-55, Math.min(55, pitchRef.current - velocityRef.current.y * 0.4));
+          setYaw(yawRef.current);
+          setPitch(pitchRef.current);
+          lastInteractionRef.current = Date.now();
+        } else {
+          // Idle sway around rest position
+          const idleElapsed = (Date.now() - lastInteractionRef.current) / 1000;
+          if (idleElapsed > 2.5) {
+            const sway = Math.sin(currentTime * 0.001) * 0.25;
+            yawRef.current += sway;
+            setYaw(yawRef.current);
+          }
+        }
+      }
+
+      animFrameRef.current = requestAnimationFrame(loop);
+    };
+
+    animFrameRef.current = requestAnimationFrame(loop);
+    return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
+  }, [isDragging]);
 
   return (
-    <div className="min-h-screen bg-[#07080b] text-[#f4f5f8] font-sans antialiased relative selection:bg-cyan-500/30 selection:text-white overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-[#ffffff] via-[#fbfcff] to-[#eceef5] text-[#0b0c10] font-cabinet selection:bg-[#c8f03c] selection:text-black relative overflow-x-hidden">
       <OnboardingTour />
 
-      {/* Structural Engineering Blueprint Grid */}
+      {/* 04 / Huge Faint Background Word "ALGORITHMS" */}
       <div
-        className="fixed inset-0 pointer-events-none opacity-[0.035]"
-        style={{
-          backgroundImage: `linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)`,
-          backgroundSize: "40px 40px"
-        }}
-      />
-      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(ellipse_70%_50%_at_50%_15%,rgba(6,182,212,0.07),transparent_70%)]" />
+        aria-hidden="true"
+        className="fixed top-[32%] left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-0 text-[#0b0c10] opacity-[0.05] font-clash font-bold tracking-[-0.04em] leading-[0.8] text-center whitespace-nowrap"
+        style={{ fontSize: "clamp(80px, 16vw, 290px)" }}
+      >
+        ALGORITHMS
+      </div>
 
-      {/* Header Bar */}
-      <header className="sticky top-0 z-50 border-b border-white/[0.08] bg-[#07080b]/85 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
-              <Boxes size={18} strokeWidth={1.8} />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-semibold tracking-wider text-white">DSA UNIVERSE</span>
-                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.05] text-zinc-400 border border-white/[0.06]">
-                  SPATIAL 3D
-                </span>
-              </div>
-              <p className="text-[10px] font-mono text-zinc-500 hidden sm:block">Hardware-Level Algorithm Visualizer</p>
-            </div>
+      {/* 02 / Navigation Bar */}
+      <nav className="relative z-20 w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 py-6 flex items-center justify-between">
+        {/* Left: Brand Monogram */}
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#0b0c10] text-white flex items-center justify-center font-clash font-bold text-lg shadow-sm">
+            DSA
           </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => window.dispatchEvent(new CustomEvent("open-dsa-tour"))}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.08] hover:border-white/20 transition-all text-xs font-mono text-zinc-300"
-            >
-              <Sparkles size={13} className="text-cyan-400" />
-              <span>Interactive Tour</span>
-            </button>
-
-            <a
-              href="https://github.com/MRGokulB/dsa-universe"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.08] hover:border-white/20 transition-all text-xs font-mono text-zinc-300"
-              aria-label="GitHub Repository"
-            >
-              <Code2 size={13} />
-              <span className="hidden sm:inline">Source</span>
-            </a>
+          <div>
+            <span className="font-clash font-semibold text-sm tracking-tight text-[#0b0c10] block">
+              DSA UNIVERSE
+            </span>
+            <span className="text-[11px] text-[#5d6377] block font-medium">Interactive Key Sphere</span>
           </div>
         </div>
-      </header>
 
-      {/* Main 3D Experience */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-20">
-        {/* Top Hero Heading */}
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/[0.06] text-cyan-300 text-[11px] font-mono mb-4">
-            <Terminal size={12} />
-            <span>INTERACTIVE 3D ALGORITHM UNIVERSE</span>
+        {/* Centre: Nav links that spin their key to face the visitor */}
+        <div className="hidden md:flex items-center gap-1.5 p-1.5 rounded-2xl bg-white/70 backdrop-blur-md border border-black/[0.06] shadow-sm">
+          {[
+            { label: "Arrays", char: "A" },
+            { label: "Lists", char: "L" },
+            { label: "Stacks", char: "S" },
+            { label: "Trees", char: "T" },
+            { label: "Graphs", char: "G" },
+            { label: "DP", char: "D" }
+          ].map((item) => (
+            <button
+              key={item.char}
+              onClick={() => spinToLetter(item.char)}
+              className="px-3.5 py-1.5 rounded-xl font-clash text-xs font-semibold text-[#0b0c10] hover:bg-black hover:text-white transition-all cursor-pointer"
+            >
+              {item.label} → <span className="opacity-60">{item.char}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Right: Keycap Button "Explore All ↗" */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent("open-dsa-tour"))}
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-black/[0.08] bg-white/80 text-xs font-semibold hover:bg-black hover:text-white transition-all cursor-pointer"
+          >
+            <Sparkles size={13} className="text-[#3fe0a8]" />
+            <span>Tour</span>
+          </button>
+
+          <a
+            href="https://github.com/MRGokulB/dsa-universe"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="keycap-btn-white px-5 text-xs tracking-wide"
+          >
+            <span>Source ↗</span>
+          </a>
+        </div>
+      </nav>
+
+      {/* Main Container */}
+      <main className="relative z-10 w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 pt-4 pb-20">
+        {/* Top Heading */}
+        <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-black/[0.08] shadow-sm mb-4">
+            <span className="w-2 h-2 rounded-full bg-[#c8f03c]" />
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#0b0c10]">
+              ALGORITHM SPHERE &middot; 2026
+            </span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight mb-4">
-            Algorithm Mechanics <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-200 to-zinc-400">
-              In Spatial 3D Dimensions.
+          <h1
+            className="font-clash font-semibold text-[#0b0c10] tracking-[-0.03em] leading-[1.08] text-center"
+            style={{ fontSize: "clamp(38px, 4.4vw, 72px)" }}
+          >
+            Master data structures, <br />
+            <span className="font-instrument italic font-normal text-black">
+              with a tactile mind.
             </span>
           </h1>
-
-          <p className="text-sm sm:text-base text-zinc-400 max-w-xl mx-auto font-normal">
-            Drag the 3D core to rotate algorithms in space. Select any module to inspect contiguous memory allocations, cache locality, and runtime mechanics.
+          <p className="text-sm sm:text-base text-[#5d6377] max-w-lg mx-auto mt-3 font-normal">
+            Spin the 3D key sphere. Hover over any algorithm key to pop it out and inspect its hardware execution mechanics.
           </p>
         </div>
 
-        {/* 3D Core Stage & HUD Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-16">
-          {/* Left Column: Active Module Frosted Glass HUD */}
-          <div className="lg:col-span-4 order-2 lg:order-1">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeModule.id}
-                initial={{ opacity: 0, x: -15 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 15 }}
-                transition={{ duration: 0.25 }}
-                className="rounded-3xl border border-white/[0.12] bg-[#0c0d14]/90 backdrop-blur-xl p-6 sm:p-7 shadow-[0_12px_40px_rgba(0,0,0,0.6)] relative overflow-hidden"
-              >
-                {/* Accent glow corner */}
+        {/* 03 / Three-Column Desktop Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end min-h-[520px]">
+          {/* Left Column: Frosted White Card */}
+          <div className="lg:col-span-3 order-2 lg:order-1 w-full">
+            <div className="rounded-[24px] bg-white/80 backdrop-blur-xl border border-black/[0.06] p-6 shadow-[0_20px_45px_rgba(0,0,0,0.06)] relative overflow-hidden transition-all duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                {/* Mini Keycap */}
                 <div
-                  className="absolute -top-12 -left-12 w-32 h-32 rounded-full blur-2xl pointer-events-none opacity-25"
-                  style={{ background: activeModule.accent }}
-                />
+                  className="w-10 h-10 rounded-xl flex items-center justify-center font-clash font-bold text-base shadow-sm shrink-0"
+                  style={{
+                    backgroundColor: activeKey.color,
+                    color: activeKey.textColor,
+                    boxShadow: `0 4px 0 ${activeKey.sideColor}, 0 6px 12px rgba(0,0,0,0.08)`
+                  }}
+                >
+                  {activeKey.char}
+                </div>
 
-                <div className="flex items-center justify-between gap-4 mb-4">
-                  <div className="flex items-center gap-2.5">
-                    <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center border"
-                      style={{
-                        background: activeModule.bgAccent,
-                        borderColor: activeModule.borderAccent,
-                        color: activeModule.accent
-                      }}
-                    >
-                      <activeModule.icon size={20} strokeWidth={1.8} />
-                    </div>
-                    <div>
-                      <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest block">
-                        MODULE {activeModule.num}
-                      </span>
-                      <span className="font-mono text-xs font-semibold text-zinc-300">
-                        {activeModule.name}
-                      </span>
-                    </div>
-                  </div>
-
-                  <span className="px-2 py-0.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-[10px] font-mono flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    LIVE
+                <div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#5d6377] block font-clash">
+                    {activeKey.kicker}
+                  </span>
+                  <span className="text-xs font-bold text-[#0b0c10] block">
+                    {activeKey.moduleGroup}
                   </span>
                 </div>
+              </div>
 
-                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 tracking-tight">
-                  {activeModule.subtitle}
-                </h2>
+              <h2 className="font-clash font-bold text-lg sm:text-xl text-[#0b0c10] mb-2 leading-tight">
+                {activeKey.title}
+              </h2>
 
-                <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed mb-6 font-normal">
-                  {activeModule.description}
-                </p>
+              <p className="text-xs sm:text-sm text-[#5d6377] leading-relaxed mb-6 font-normal">
+                {activeKey.text}
+              </p>
 
-                {/* Algorithmic Blueprint Box */}
-                <div className="p-3 rounded-xl border border-white/[0.08] bg-[#07080c] font-mono text-xs text-zinc-300 mb-6">
-                  <div className="text-[10px] text-zinc-500 mb-1 uppercase tracking-wider">Schematic Preview</div>
-                  <div className="text-cyan-300 truncate font-semibold">{activeModule.schematic}</div>
-                </div>
-
-                {/* Specs Pill List */}
-                <div className="space-y-2 mb-6">
-                  <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400 pb-1.5 border-b border-white/[0.06]">
-                    <span className="text-zinc-500">Complexity</span>
-                    <span className="text-zinc-200">{activeModule.complexity}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400 pb-1.5 border-b border-white/[0.06]">
-                    <span className="text-zinc-500">Memory</span>
-                    <span className="text-zinc-200 truncate max-w-[180px]">{activeModule.memoryModel}</span>
-                  </div>
-                </div>
-
-                {/* CTA Action Button */}
-                <Link
-                  href={activeModule.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-white text-black font-semibold text-xs hover:bg-zinc-200 transition-all shadow-md group"
-                >
-                  <span>Launch Visualizer</span>
-                  <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </Link>
-
-                {/* Traversal Controls */}
-                <div className="flex items-center justify-between pt-4 mt-4 border-t border-white/[0.06] text-xs font-mono text-zinc-400">
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={handlePrev}
-                      className="p-1.5 rounded-lg border border-white/[0.08] hover:bg-white/[0.06] transition-colors"
-                      aria-label="Previous Module"
-                    >
-                      <ChevronLeft size={14} />
-                    </button>
-                    <button
-                      onClick={handleNext}
-                      className="p-1.5 rounded-lg border border-white/[0.08] hover:bg-white/[0.06] transition-colors"
-                      aria-label="Next Module"
-                    >
-                      <ChevronRight size={14} />
-                    </button>
-                  </div>
-
-                  <button
-                    onClick={() => selectModule(0)}
-                    className="inline-flex items-center gap-1.5 text-zinc-400 hover:text-white transition-colors"
-                  >
-                    <RotateCcw size={12} />
-                    <span>Reset Angle</span>
-                  </button>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+              {/* Action Button inside Card */}
+              <Link
+                href={activeKey.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full keycap-btn-black text-xs gap-1.5"
+              >
+                <span>Launch {activeKey.moduleGroup}</span>
+                <ArrowUpRight size={14} />
+              </Link>
+            </div>
           </div>
 
-          {/* Center Column: 3D Algorithm Ring Stage */}
-          <div className="lg:col-span-8 order-1 lg:order-2 flex flex-col items-center">
+          {/* Middle Column: The 3D Keycap Sphere */}
+          <div className="lg:col-span-6 order-1 lg:order-2 flex flex-col items-center justify-center">
             <div
-              className={`w-full max-w-2xl h-[420px] sm:h-[480px] flex items-center justify-center perspective-stage relative select-none touch-none cursor-grab ${
+              ref={stageRef}
+              className={`w-full max-w-[500px] h-[480px] sm:h-[540px] perspective-stage flex items-center justify-center relative touch-none select-none cursor-grab ${
                 isDragging ? "cursor-grabbing" : ""
               }`}
-              onPointerDown={handlePointerDown}
-              onPointerMove={handlePointerMove}
-              onPointerUp={handlePointerUp}
-              onPointerCancel={handlePointerUp}
+              onPointerDown={onPointerDown}
+              onPointerMove={onPointerMove}
+              onPointerUp={onPointerUp}
+              onPointerCancel={onPointerUp}
             >
-              {/* Subtle Ground Radial Glow */}
+              {/* Ground Shadow under the ball */}
               <div
-                className="absolute w-80 h-80 rounded-full blur-3xl pointer-events-none opacity-20"
-                style={{ background: activeModule.accent }}
+                className="absolute bottom-6 left-1/2 -translate-x-1/2 w-72 h-16 rounded-[50%] bg-[#0b0c10]/[0.08] blur-xl pointer-events-none"
+                style={{ transform: "scaleY(0.4)" }}
               />
 
-              {/* 3D Ring Container */}
-              <motion.div
-                className="preserve-3d relative w-[210px] h-[270px] flex items-center justify-center"
+              {/* The 3D Sphere of Keycaps */}
+              <div
+                className="preserve-3d relative w-0 h-0 flex items-center justify-center transition-transform duration-75"
                 style={{
-                  rotateY: reduced ? 0 : springYaw,
-                  rotateX: reduced ? 0 : springPitch
+                  transform: `rotateX(${pitch}deg) rotateY(${yaw}deg)`
                 }}
               >
-                {MODULES.map((mod, idx) => {
-                  const Icon = mod.icon;
-                  const angle = idx * 60;
-                  const isCurrent = active === idx;
+                {keys.map((k) => {
+                  const isHovered = hoveredKeyId === k.id;
+                  const isSelected = selectedKeyId === k.id;
+                  const isPopped = isHovered || isSelected;
+
+                  // Radius of the ball: 180px
+                  const radius = 180 + k.depthOffset;
 
                   return (
-                    <motion.div
-                      key={mod.id}
-                      className={`absolute inset-0 rounded-2xl preserve-3d border backdrop-blur-md p-5 flex flex-col justify-between transition-all duration-300 ${
-                        isCurrent
-                          ? "bg-[#11121c]/95 border-white/[0.3] shadow-[0_10px_35px_rgba(0,0,0,0.8)]"
-                          : "bg-[#0c0d14]/75 border-white/[0.08] hover:border-white/[0.2] opacity-80"
-                      }`}
+                    <div
+                      key={k.id}
+                      className="absolute preserve-3d"
                       style={{
-                        transform: `rotateY(${angle}deg) translateZ(${RADIUS}px) ${
-                          isCurrent ? "scale3d(1.08, 1.08, 1.08)" : ""
-                        }`,
-                        boxShadow: isCurrent ? `0 0 30px ${mod.bgAccent}` : undefined
+                        transform: `rotateY(${k.lng}deg) rotateX(${-k.lat}deg) translateZ(${radius}px) rotateZ(${k.twist}deg)`
                       }}
-                      onClick={() => selectModule(idx)}
                     >
-                      {/* Card Content Header */}
-                      <div className="flex items-center justify-between">
-                        <div
-                          className="w-9 h-9 rounded-xl flex items-center justify-center border text-sm"
-                          style={{
-                            background: mod.bgAccent,
-                            borderColor: mod.borderAccent,
-                            color: mod.accent
-                          }}
-                        >
-                          <Icon size={18} strokeWidth={1.8} />
-                        </div>
-                        <span className="font-mono text-[10px] text-zinc-500 font-bold">
-                          {mod.num}
-                        </span>
+                      {/* Chunky Keycap Body with 3D Pop Out */}
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          spinToKey(k);
+                        }}
+                        onPointerEnter={() => setHoveredKeyId(k.id)}
+                        onPointerLeave={() => setHoveredKeyId(null)}
+                        className="rounded-xl flex items-center justify-center font-clash font-bold text-center cursor-pointer select-none transition-all duration-200"
+                        style={{
+                          width: k.isLetter ? "50px" : "44px",
+                          height: k.isLetter ? "50px" : "44px",
+                          fontSize: k.isLetter ? "20px" : "11px",
+                          backgroundColor: k.color,
+                          color: k.textColor,
+                          boxShadow: isPopped
+                            ? `0 6px 0 ${k.sideColor}, 0 14px 28px rgba(0,0,0,0.2)`
+                            : `0 4px 0 ${k.sideColor}, 0 6px 12px rgba(0,0,0,0.08)`,
+                          transform: isPopped
+                            ? "translateZ(30px) scale(1.18)"
+                            : "translateZ(0px) scale(1.0)",
+                          outline: isSelected ? "2px solid #0b0c10" : "none",
+                          outlineOffset: "2px"
+                        }}
+                      >
+                        {k.char}
                       </div>
-
-                      {/* Card Center Info */}
-                      <div className="my-auto">
-                        <span className="font-mono text-[9px] uppercase tracking-wider text-zinc-500 block mb-0.5">
-                          ALGORITHM
-                        </span>
-                        <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                          {mod.name}
-                        </h3>
-                        <p className="text-[11px] text-zinc-400 line-clamp-2 mt-1 leading-snug">
-                          {mod.tagline}
-                        </p>
-                      </div>
-
-                      {/* Card Mini Footprint */}
-                      <div className="pt-2 border-t border-white/[0.08] flex items-center justify-between text-[9px] font-mono text-zinc-500">
-                        <span>{mod.keyTopics[0]}</span>
-                        <span
-                          className="font-bold"
-                          style={{ color: mod.accent }}
-                        >
-                          EXPLORE ↗
-                        </span>
-                      </div>
-                    </motion.div>
+                    </div>
                   );
                 })}
-              </motion.div>
-            </div>
-
-            {/* Interaction Bar & Quick Selectors */}
-            <div className="w-full flex flex-wrap items-center justify-between gap-3 px-2 pt-2 text-xs font-mono text-zinc-400">
-              <div className="flex items-center gap-1.5 text-zinc-500">
-                <Grip size={14} />
-                <span>Drag in 3D to spin algorithms</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setAutoRotate(!autoRotate)}
-                  className={`px-2.5 py-1 rounded-lg border text-[11px] transition-all flex items-center gap-1.5 ${
-                    autoRotate
-                      ? "border-cyan-500/40 bg-cyan-500/10 text-cyan-300"
-                      : "border-white/[0.08] hover:bg-white/[0.04] text-zinc-400"
-                  }`}
-                >
-                  <Play size={11} className={autoRotate ? "animate-spin" : ""} />
-                  <span>Auto-Orbit</span>
-                </button>
               </div>
             </div>
 
-            {/* Quick Algorithm Chip Navigator */}
-            <div className="w-full flex flex-wrap items-center justify-center gap-2 mt-6">
-              {MODULES.map((mod, idx) => (
-                <button
-                  key={mod.id}
-                  onClick={() => selectModule(idx)}
-                  className={`px-3 py-1.5 rounded-xl border text-xs font-mono transition-all flex items-center gap-2 ${
-                    active === idx
-                      ? "bg-white text-black font-semibold border-white shadow-sm"
-                      : "bg-white/[0.02] border-white/[0.08] text-zinc-400 hover:text-white hover:bg-white/[0.06]"
-                  }`}
-                >
-                  <span
-                    className="w-1.5 h-1.5 rounded-full"
-                    style={{ background: mod.accent }}
-                  />
-                  <span>{mod.name}</span>
-                </button>
-              ))}
+            <span className="text-[11px] font-medium text-[#5d6377] flex items-center gap-1.5 mt-2">
+              <Compass size={13} />
+              <span>Drag to spin freely &middot; Hover to pop out</span>
+            </span>
+          </div>
+
+          {/* Right Column: Stacked Keycap Buttons + Tag Chips */}
+          <div className="lg:col-span-3 order-3 w-full flex flex-col gap-5">
+            {/* Two Stacked Keycap Buttons */}
+            <div className="flex flex-col gap-3">
+              <Link
+                href="https://arrays-rho.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full keycap-btn-black text-xs gap-2"
+              >
+                <span>See all modules</span>
+                <span className="text-[10px] opacity-75 font-mono">⏎</span>
+              </Link>
+
+              <button
+                onClick={() => {
+                  yawRef.current = -12;
+                  pitchRef.current = 10;
+                  setYaw(-12);
+                  setPitch(10);
+                  setSelectedKeyId("key-A");
+                  lastInteractionRef.current = Date.now();
+                }}
+                className="w-full keycap-btn-white text-xs gap-2"
+              >
+                <span>Spell ALGORITHMS</span>
+                <span className="text-[10px] opacity-75 font-mono">↺</span>
+              </button>
+            </div>
+
+            {/* Clickable Tag Chips */}
+            <div className="p-5 rounded-[24px] bg-white/70 backdrop-blur-md border border-black/[0.06] shadow-sm">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#5d6377] block font-clash mb-3">
+                Quick Jump To Key
+              </span>
+
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  { label: "Arrays", char: "A" },
+                  { label: "Linked Lists", char: "L" },
+                  { label: "Graphs", char: "G" },
+                  { label: "Stacks", char: "S" },
+                  { label: "Trees", char: "T" },
+                  { label: "Recursion", char: "R" },
+                  { label: "Iteration", char: "I" },
+                  { label: "Memory", char: "M" },
+                  { label: "Big-O", char: "O" },
+                  { label: "Hash Tables", char: "H" },
+                  { label: "DP", char: "D" }
+                ].map((tag) => (
+                  <button
+                    key={tag.label}
+                    onClick={() => spinToLetter(tag.char)}
+                    className="px-2.5 py-1 rounded-lg bg-white border border-black/[0.08] hover:border-black hover:bg-black hover:text-white transition-all text-xs font-medium cursor-pointer shadow-xs"
+                  >
+                    {tag.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Catalog Section Below 3D Hero */}
-        <section className="pt-16 border-t border-white/[0.08]">
+        {/* Catalog Section Below */}
+        <section className="mt-28 pt-16 border-t border-black/[0.08]">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-lg font-mono font-semibold tracking-wider text-white uppercase">
-                All 6 Algorithm Systems
+              <h2 className="font-clash font-semibold text-xl text-[#0b0c10]">
+                All 6 Interactive Systems
               </h2>
-              <p className="text-xs text-zinc-500 font-mono mt-0.5">
-                Decoupled micro-frontend architecture for computer science mastery
+              <p className="text-xs text-[#5d6377] mt-0.5">
+                Decoupled micro-frontend architecture for computer science visual learning
               </p>
             </div>
-            <span className="text-xs font-mono text-zinc-500 hidden sm:inline">6 MODULES DEPLOYED</span>
+            <span className="text-xs font-semibold text-[#5d6377] hidden sm:inline">6 MODULES LIVE</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {MODULES.map((mod, idx) => {
-              const Icon = mod.icon;
-              return (
-                <div
-                  key={mod.id}
-                  onClick={() => {
-                    selectModule(idx);
-                    window.scrollTo({ top: 120, behavior: "smooth" });
-                  }}
-                  className="group p-5 rounded-2xl border border-white/[0.06] bg-[#0a0b10] hover:bg-[#0e0f16] hover:border-white/[0.14] transition-all cursor-pointer flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center border text-xs"
-                        style={{
-                          background: mod.bgAccent,
-                          borderColor: mod.borderAccent,
-                          color: mod.accent
-                        }}
-                      >
-                        <Icon size={16} strokeWidth={1.8} />
-                      </div>
-                      <span className="font-mono text-[10px] text-zinc-500 font-bold">{mod.num}</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[
+              {
+                title: "Arrays & Memory Allocations",
+                desc: "Contiguous RAM buffer layout, L1/L2 cache lines, two-pointer techniques, and sliding window.",
+                url: "https://arrays-rho.vercel.app",
+                char: "A",
+                color: "#3fe0a8"
+              },
+              {
+                title: "Linked Lists & Pointers",
+                desc: "Dynamic node traversal on the heap, pointer reversal mechanics, and Floyd's cycle detection.",
+                url: "https://linked-lists-xi.vercel.app/",
+                char: "L",
+                color: "#a77bff"
+              },
+              {
+                title: "Stacks, Queues & Call Frames",
+                desc: "LIFO execution call frames, circular ring buffers, and monotonic stack search invariants.",
+                url: "https://stacks-queues.vercel.app",
+                char: "S",
+                color: "#ff7a2e"
+              },
+              {
+                title: "Binary Trees & Hierarchies",
+                desc: "Balanced BST invariants, recursive traversals, and Euler tour lowest common ancestor resolution.",
+                url: "https://trees-eight-omega.vercel.app",
+                char: "T",
+                color: "#ffd23f"
+              },
+              {
+                title: "Graphs & Topological Paths",
+                desc: "Sparse and dense adjacency matrices, graph coloring cycle detection, and Dijkstra min-heap paths.",
+                url: "https://graphs-steel.vercel.app",
+                char: "G",
+                color: "#ff4fa3"
+              },
+              {
+                title: "Dynamic Programming & DAGs",
+                desc: "Overlapping subproblems, state compression, memoization cache grids, and 0/1 knapsack solvers.",
+                url: "https://dp-sigma-one.vercel.app",
+                char: "D",
+                color: "#38b6ff"
+              }
+            ].map((item) => (
+              <a
+                key={item.title}
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group p-6 rounded-[22px] bg-white border border-black/[0.06] shadow-sm hover:shadow-md hover:border-black/20 transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div
+                      className="w-9 h-9 rounded-xl flex items-center justify-center font-clash font-bold text-sm"
+                      style={{ backgroundColor: item.color, color: "#0b0c10" }}
+                    >
+                      {item.char}
                     </div>
-
-                    <h3 className="text-base font-bold text-white mb-1 group-hover:text-cyan-200 transition-colors">
-                      {mod.name}
-                    </h3>
-                    <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed mb-4">
-                      {mod.tagline}
-                    </p>
+                    <span className="text-[10px] font-bold text-[#5d6377] font-clash uppercase">LIVE SYSTEM</span>
                   </div>
 
-                  <div className="pt-3 border-t border-white/[0.05] flex items-center justify-between text-[10px] font-mono text-zinc-500">
-                    <span>{mod.complexity.split("·")[0]}</span>
-                    <span className="text-cyan-400 group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
-                      View in 3D →
-                    </span>
-                  </div>
+                  <h3 className="font-clash font-semibold text-base text-[#0b0c10] mb-1.5 group-hover:text-black">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-[#5d6377] leading-relaxed">
+                    {item.desc}
+                  </p>
                 </div>
-              );
-            })}
+
+                <div className="pt-4 mt-4 border-t border-black/[0.05] flex items-center justify-between text-xs font-semibold text-[#0b0c10]">
+                  <span>Explore Architecture</span>
+                  <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </div>
+              </a>
+            ))}
           </div>
         </section>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/[0.08] bg-[#050608] py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-zinc-500">
+      <footer className="border-t border-black/[0.06] bg-white py-8">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-[#5d6377]">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-cyan-400" />
-            <span>DSA UNIVERSE PLATFORM &middot; SPATIAL 3D ARCHITECTURE</span>
+            <span className="w-2 h-2 rounded-full bg-[#c8f03c]" />
+            <span className="font-clash font-semibold text-[#0b0c10]">DSA UNIVERSE &middot; 3D KEYCAP SPHERE</span>
           </div>
-          <div>Interactive Hardware-Level Computer Science</div>
+          <div>Bespoke Architectural Experience &middot; 2026</div>
         </div>
       </footer>
     </div>
