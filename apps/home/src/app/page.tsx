@@ -5,40 +5,24 @@ import Link from "next/link";
 import {
   ArrowUpRight,
   Sparkles,
-  Layers,
-  LayoutList,
-  Database,
-  Binary,
-  Network,
-  Cpu,
   Code2,
-  RotateCcw
+  Grip
 } from "lucide-react";
-import TactileMemoryStack, { MODULE_SYSTEMS } from "../components/TactileMemoryStack";
+import AlgorithmPrism3D, { ALGORITHM_FACETS } from "../components/AlgorithmPrism3D";
 import { OnboardingTour } from "../components/OnboardingTour";
-
-const SYSTEM_ICONS = {
-  arrays: Layers,
-  "linked-lists": LayoutList,
-  "stacks-queues": Database,
-  trees: Binary,
-  graphs: Network,
-  dp: Cpu
-};
 
 export default function Home() {
   const [activeId, setActiveId] = useState<string>("arrays");
-  const activeModule = MODULE_SYSTEMS.find((m) => m.id === activeId) || MODULE_SYSTEMS[0];
-  const ActiveIcon = SYSTEM_ICONS[activeModule.id as keyof typeof SYSTEM_ICONS] || Layers;
+  const activeFacet = ALGORITHM_FACETS.find((f) => f.id === activeId) || ALGORITHM_FACETS[0];
 
   return (
-    <div className="min-h-screen bg-[#fafafb] text-[#18181b] font-cabinet selection:bg-slate-200 selection:text-black relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#fafafb] text-[#18181b] font-cabinet selection:bg-slate-200 selection:text-black relative overflow-x-hidden flex flex-col justify-between">
       <OnboardingTour />
 
-      <header className="sticky top-0 z-50 border-b border-black/[0.06] bg-[#fafafb]/90 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-black/[0.06] bg-[#fafafb]/85 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 h-18 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center font-clash font-bold text-sm shadow-sm">
+            <div className="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center font-clash font-bold text-sm shadow-xs">
               DS
             </div>
             <div>
@@ -46,9 +30,25 @@ export default function Home() {
                 DSA UNIVERSE
               </span>
               <span className="text-[11px] text-[#71717a] block font-normal">
-                Hardware Memory &amp; Algorithm Visualizer
+                Kinetic 3D Algorithm Spatial Studio
               </span>
             </div>
+          </div>
+
+          <div className="hidden md:flex items-center gap-1 p-1 rounded-full bg-black/[0.03] border border-black/[0.06]">
+            {ALGORITHM_FACETS.map((facet) => (
+              <button
+                key={facet.id}
+                onClick={() => setActiveId(facet.id)}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${
+                  activeId === facet.id
+                    ? "bg-black text-white shadow-xs font-semibold"
+                    : "text-[#52525b] hover:text-black hover:bg-black/[0.04]"
+                }`}
+              >
+                {facet.name.split(" ")[0]}
+              </button>
+            ))}
           </div>
 
           <div className="flex items-center gap-3">
@@ -74,10 +74,11 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-8 pt-10 pb-28 relative z-10">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <span className="inline-block text-[11px] font-mono tracking-widest text-[#71717a] uppercase mb-3">
-            INTERACTIVE ALGORITHM STUDIO &middot; 2026
+      <main className="max-w-7xl mx-auto px-4 sm:px-8 pt-8 pb-16 w-full flex-1 flex flex-col justify-center relative z-10">
+        <div className="text-center max-w-2xl mx-auto mb-6">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono tracking-wider text-[#71717a] uppercase bg-black/[0.03] border border-black/[0.06] mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>KINETIC ALGORITHM PRISM &middot; 2026</span>
           </span>
 
           <h1
@@ -86,193 +87,149 @@ export default function Home() {
           >
             Algorithms in Silicon. <br />
             <span className="font-instrument italic font-normal text-[#18181b]">
-              Interactive hardware execution.
+              Interactive 3D geometry.
             </span>
           </h1>
 
-          <p className="text-sm sm:text-base text-[#52525b] max-w-lg mx-auto mt-4 font-normal leading-relaxed">
-            Examine contiguous cache lines, heap node mutations, and call stack frames across 6 dedicated interactive visualizers.
+          <p className="text-sm sm:text-base text-[#52525b] max-w-lg mx-auto mt-3 font-normal leading-relaxed">
+            Drag to rotate the algorithm prism. Click any facet to align its memory topology and step into the dedicated simulator.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-24">
-          <div className="lg:col-span-3 order-2 lg:order-1 flex flex-col gap-2">
-            <span className="text-[11px] font-mono tracking-wider text-[#71717a] uppercase block mb-1">
-              CHOOSE A SYSTEM
-            </span>
-
-            {MODULE_SYSTEMS.map((mod) => {
-              const isSelected = activeId === mod.id;
-              const IconComp = SYSTEM_ICONS[mod.id as keyof typeof SYSTEM_ICONS] || Layers;
-
-              return (
-                <button
-                  key={mod.id}
-                  onClick={() => setActiveId(mod.id)}
-                  className={`w-full text-left p-3 rounded-2xl transition-all cursor-pointer flex items-center justify-between border ${
-                    isSelected
-                      ? "bg-white border-black/[0.12] shadow-sm text-black"
-                      : "bg-transparent border-transparent hover:bg-black/[0.03] text-[#71717a]"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${
-                        isSelected ? "bg-black text-white" : "bg-black/[0.05] text-[#52525b]"
-                      }`}
-                    >
-                      <IconComp size={15} />
-                    </div>
-                    <div>
-                      <span className="text-xs font-semibold block leading-tight text-[#18181b]">
-                        {mod.name}
-                      </span>
-                      <span className="text-[10px] text-[#71717a] font-mono">
-                        {mod.category}
-                      </span>
-                    </div>
-                  </div>
-
-                  {isSelected && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-black shrink-0 mr-1" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="lg:col-span-6 order-1 lg:order-2 flex flex-col items-center">
-            <TactileMemoryStack
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center max-w-6xl mx-auto w-full my-4">
+          <div className="lg:col-span-8 flex flex-col items-center justify-center relative">
+            <AlgorithmPrism3D
               activeId={activeId}
-              onSelectModule={(id) => setActiveId(id)}
+              onSelectFacet={(id) => setActiveId(id)}
             />
+            <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#71717a] pointer-events-none mt-1">
+              <Grip size={13} />
+              <span>Drag to spin freely &middot; Click facet to align</span>
+            </div>
           </div>
 
-          <div className="lg:col-span-3 order-3">
-            <div className="rounded-[24px] bg-white border border-black/[0.08] p-6 shadow-[0_12px_32px_rgba(0,0,0,0.04)]">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider bg-black/[0.05] text-[#18181b]">
-                  SYSTEM {activeModule.index}
-                </span>
-                <span className="text-xs text-[#71717a] font-mono">
-                  {activeModule.category}
+          <div className="lg:col-span-4 flex flex-col justify-center">
+            <div className="rounded-[28px] bg-white/90 backdrop-blur-xl border border-black/[0.08] p-7 shadow-[0_20px_45px_rgba(0,0,0,0.06)] relative overflow-hidden transition-all duration-300">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2.5">
+                  <span
+                    className="w-3 h-3 rounded-full shadow-xs"
+                    style={{ backgroundColor: activeFacet.accent }}
+                  />
+                  <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#71717a]">
+                    FACET {activeFacet.index} &middot; {activeFacet.category}
+                  </span>
+                </div>
+                <span
+                  className="font-mono text-xs font-bold px-2 py-0.5 rounded-md"
+                  style={{
+                    backgroundColor: `${activeFacet.accent}15`,
+                    color: activeFacet.accent
+                  }}
+                >
+                  {activeFacet.symbol}
                 </span>
               </div>
 
-              <h2 className="font-clash font-bold text-xl text-[#0f172a] mb-2 leading-tight">
-                {activeModule.name}
+              <h2 className="font-clash font-bold text-2xl text-[#0f172a] mb-2 leading-tight">
+                {activeFacet.name}
               </h2>
 
-              <p className="text-xs sm:text-sm text-[#52525b] leading-relaxed mb-6">
-                {activeModule.tagline}
+              <p className="text-xs sm:text-sm text-[#52525b] leading-relaxed mb-6 font-normal">
+                {activeFacet.tagline}
               </p>
 
-              <div className="space-y-3 pt-4 border-t border-black/[0.06] mb-6">
-                <div>
-                  <span className="text-[10px] font-mono uppercase text-[#71717a] block mb-0.5">
-                    ASYMPTOTIC COMPLEXITY
-                  </span>
-                  <span className="text-xs font-mono font-medium text-[#18181b]">
-                    {activeModule.complexity}
-                  </span>
-                </div>
-
-                <div>
-                  <span className="text-[10px] font-mono uppercase text-[#71717a] block mb-0.5">
-                    MEMORY TOPOLOGY
-                  </span>
-                  <span className="text-xs font-mono font-medium text-[#18181b]">
-                    {activeModule.memory}
-                  </span>
-                </div>
+              <div className="p-3.5 rounded-2xl bg-[#f8f9fa] border border-black/[0.04] mb-6">
+                <span className="text-[10px] font-mono uppercase text-[#71717a] block mb-1">
+                  ASYMPTOTIC COMPLEXITY
+                </span>
+                <span className="text-xs font-mono font-semibold text-[#18181b]">
+                  {activeFacet.complexity}
+                </span>
               </div>
 
               <a
-                href={activeModule.url}
+                href={activeFacet.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-clash font-semibold bg-[#18181b] !text-white hover:bg-black transition-all cursor-pointer shadow-sm"
+                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl text-xs font-clash font-semibold bg-[#18181b] !text-white hover:bg-black transition-all cursor-pointer shadow-sm group"
               >
-                <span className="!text-white">Launch {activeModule.name}</span>
-                <ArrowUpRight size={14} className="!text-white" />
+                <span className="!text-white">Launch {activeFacet.name.split("&")[0].trim()} Visualizer</span>
+                <ArrowUpRight size={14} className="!text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </a>
             </div>
           </div>
         </div>
 
-        <section className="pt-16 border-t border-black/[0.06]">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+        <section className="pt-16 mt-8 border-t border-black/[0.06]">
+          <div className="flex items-center justify-between mb-6">
             <div>
-              <span className="text-[11px] font-mono uppercase tracking-widest text-[#71717a] block mb-1">
-                STANDALONE SIMULATORS
+              <span className="text-[11px] font-mono uppercase tracking-wider text-[#71717a] block">
+                CATALOG
               </span>
-              <h2 className="font-clash font-semibold text-2xl text-[#0f172a]">
-                All 6 Dedicated Visualizers
+              <h2 className="font-clash font-semibold text-xl text-[#0f172a]">
+                All 6 Dedicated Algorithm Simulators
               </h2>
             </div>
-            <span className="text-xs font-mono text-[#71717a]">
-              6 MICRO-FRONTENDS DEPLOYED
-            </span>
+            <span className="text-xs font-mono text-[#71717a]">6 LIVE MICRO-FRONTENDS</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {MODULE_SYSTEMS.map((item) => {
-              const IconComp = SYSTEM_ICONS[item.id as keyof typeof SYSTEM_ICONS] || Layers;
-
-              return (
-                <a
-                  key={item.id}
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group p-6 rounded-[22px] bg-white border border-black/[0.06] hover:border-black/[0.18] hover:shadow-[0_12px_28px_rgba(0,0,0,0.06)] transition-all flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-9 h-9 rounded-xl bg-black/[0.04] text-[#18181b] flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
-                        <IconComp size={16} />
-                      </div>
-                      <span className="text-[10px] font-mono uppercase text-[#71717a]">
-                        MODULE {item.index}
-                      </span>
-                    </div>
-
-                    <h3 className="font-clash font-semibold text-base text-[#0f172a] mb-1.5 group-hover:text-black">
-                      {item.name}
-                    </h3>
-
-                    <p className="text-xs text-[#52525b] leading-relaxed mb-4">
-                      {item.tagline}
-                    </p>
-
-                    <div className="py-2 px-3 rounded-lg bg-[#f8f9fa] border border-black/[0.04] text-[11px] font-mono text-[#52525b] mb-4">
-                      {item.complexity}
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {ALGORITHM_FACETS.map((facet) => (
+              <a
+                key={facet.id}
+                href={facet.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group p-5 rounded-2xl bg-white border border-black/[0.06] hover:border-black/[0.18] hover:shadow-[0_12px_24px_rgba(0,0,0,0.05)] transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span
+                      className="text-xs font-mono font-semibold px-2 py-0.5 rounded"
+                      style={{
+                        backgroundColor: `${facet.accent}15`,
+                        color: facet.accent
+                      }}
+                    >
+                      {facet.index} &middot; {facet.symbol}
+                    </span>
+                    <span className="text-[11px] font-mono text-[#71717a] uppercase">
+                      {facet.category}
+                    </span>
                   </div>
 
-                  <div className="pt-4 border-t border-black/[0.05] flex items-center justify-between text-xs font-semibold text-[#18181b]">
-                    <span>Open Visualizer</span>
-                    <ArrowUpRight
-                      size={14}
-                      className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
-                    />
-                  </div>
-                </a>
-              );
-            })}
+                  <h3 className="font-clash font-semibold text-base text-[#0f172a] mb-1 group-hover:text-black">
+                    {facet.name}
+                  </h3>
+
+                  <p className="text-xs text-[#52525b] leading-relaxed mb-3">
+                    {facet.tagline}
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-black/[0.05] flex items-center justify-between text-xs font-semibold text-[#18181b]">
+                  <span className="font-mono text-[11px] text-[#71717a]">{facet.complexity}</span>
+                  <ArrowUpRight
+                    size={14}
+                    className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+                  />
+                </div>
+              </a>
+            ))}
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-black/[0.06] bg-white py-8">
+      <footer className="border-t border-black/[0.06] bg-white py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#71717a]">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-black" />
             <span className="font-clash font-semibold text-[#0f172a]">
-              DSA UNIVERSE
+              DSA UNIVERSE &middot; 3D KINETIC PRISM
             </span>
           </div>
-          <div>Bespoke Architectural Experience &middot; 2026</div>
+          <div>Bespoke Spatial Architecture &middot; 2026</div>
         </div>
       </footer>
     </div>
