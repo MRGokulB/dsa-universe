@@ -11,9 +11,10 @@ import {
   Binary,
   Network,
   Cpu,
-  Code2
+  Code2,
+  RotateCcw
 } from "lucide-react";
-import AlgorithmicMemoryLattice, { MODULE_SYSTEMS } from "../components/AlgorithmicMemoryLattice";
+import TactileMemoryStack, { MODULE_SYSTEMS } from "../components/TactileMemoryStack";
 import { OnboardingTour } from "../components/OnboardingTour";
 
 const SYSTEM_ICONS = {
@@ -76,7 +77,7 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 sm:px-8 pt-10 pb-28 relative z-10">
         <div className="text-center max-w-2xl mx-auto mb-10">
           <span className="inline-block text-[11px] font-mono tracking-widest text-[#71717a] uppercase mb-3">
-            ALGORITHMIC MEMORY &middot; 2026
+            INTERACTIVE ALGORITHM STUDIO &middot; 2026
           </span>
 
           <h1
@@ -85,20 +86,19 @@ export default function Home() {
           >
             Algorithms in Silicon. <br />
             <span className="font-instrument italic font-normal text-[#18181b]">
-              Interactive memory execution.
+              Interactive hardware execution.
             </span>
           </h1>
 
           <p className="text-sm sm:text-base text-[#52525b] max-w-lg mx-auto mt-4 font-normal leading-relaxed">
-            Examine contiguous cache lines, heap node mutations, call stack registers, and dynamic programming memoization.
+            Examine contiguous cache lines, heap node mutations, and call stack frames across 6 dedicated interactive visualizers.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-24">
-          {/* Left Column: Systems Navigator */}
-          <div className="lg:col-span-4 flex flex-col gap-3">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-24">
+          <div className="lg:col-span-3 order-2 lg:order-1 flex flex-col gap-2">
             <span className="text-[11px] font-mono tracking-wider text-[#71717a] uppercase block mb-1">
-              SELECT MEMORY DOMAIN
+              CHOOSE A SYSTEM
             </span>
 
             {MODULE_SYSTEMS.map((mod) => {
@@ -109,7 +109,7 @@ export default function Home() {
                 <button
                   key={mod.id}
                   onClick={() => setActiveId(mod.id)}
-                  className={`w-full text-left p-3.5 rounded-2xl transition-all cursor-pointer flex items-center justify-between border ${
+                  className={`w-full text-left p-3 rounded-2xl transition-all cursor-pointer flex items-center justify-between border ${
                     isSelected
                       ? "bg-white border-black/[0.12] shadow-sm text-black"
                       : "bg-transparent border-transparent hover:bg-black/[0.03] text-[#71717a]"
@@ -117,18 +117,18 @@ export default function Home() {
                 >
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors ${
+                      className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${
                         isSelected ? "bg-black text-white" : "bg-black/[0.05] text-[#52525b]"
                       }`}
                     >
-                      <IconComp size={16} />
+                      <IconComp size={15} />
                     </div>
                     <div>
                       <span className="text-xs font-semibold block leading-tight text-[#18181b]">
                         {mod.name}
                       </span>
                       <span className="text-[10px] text-[#71717a] font-mono">
-                        {mod.category} &middot; {mod.complexity}
+                        {mod.category}
                       </span>
                     </div>
                   </div>
@@ -139,36 +139,64 @@ export default function Home() {
                 </button>
               );
             })}
+          </div>
 
-            {/* Quick Action card for the selected system */}
-            <div className="p-5 rounded-2xl bg-white border border-black/[0.08] shadow-xs mt-2">
-              <span className="text-[10px] font-mono text-[#71717a] uppercase block mb-1">
-                ACTIVE DOMAIN
-              </span>
-              <h3 className="font-clash font-bold text-base text-[#0f172a] mb-1">
+          <div className="lg:col-span-6 order-1 lg:order-2 flex flex-col items-center">
+            <TactileMemoryStack
+              activeId={activeId}
+              onSelectModule={(id) => setActiveId(id)}
+            />
+          </div>
+
+          <div className="lg:col-span-3 order-3">
+            <div className="rounded-[24px] bg-white border border-black/[0.08] p-6 shadow-[0_12px_32px_rgba(0,0,0,0.04)]">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider bg-black/[0.05] text-[#18181b]">
+                  SYSTEM {activeModule.index}
+                </span>
+                <span className="text-xs text-[#71717a] font-mono">
+                  {activeModule.category}
+                </span>
+              </div>
+
+              <h2 className="font-clash font-bold text-xl text-[#0f172a] mb-2 leading-tight">
                 {activeModule.name}
-              </h3>
-              <p className="text-xs text-[#52525b] leading-relaxed mb-4">
+              </h2>
+
+              <p className="text-xs sm:text-sm text-[#52525b] leading-relaxed mb-6">
                 {activeModule.tagline}
               </p>
+
+              <div className="space-y-3 pt-4 border-t border-black/[0.06] mb-6">
+                <div>
+                  <span className="text-[10px] font-mono uppercase text-[#71717a] block mb-0.5">
+                    ASYMPTOTIC COMPLEXITY
+                  </span>
+                  <span className="text-xs font-mono font-medium text-[#18181b]">
+                    {activeModule.complexity}
+                  </span>
+                </div>
+
+                <div>
+                  <span className="text-[10px] font-mono uppercase text-[#71717a] block mb-0.5">
+                    MEMORY TOPOLOGY
+                  </span>
+                  <span className="text-xs font-mono font-medium text-[#18181b]">
+                    {activeModule.memory}
+                  </span>
+                </div>
+              </div>
+
               <a
                 href={activeModule.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-clash font-semibold bg-[#18181b] !text-white hover:bg-black transition-all cursor-pointer shadow-xs"
+                className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-clash font-semibold bg-[#18181b] !text-white hover:bg-black transition-all cursor-pointer shadow-sm"
               >
-                <span className="!text-white">Launch Simulator</span>
+                <span className="!text-white">Launch {activeModule.name}</span>
                 <ArrowUpRight size={14} className="!text-white" />
               </a>
             </div>
-          </div>
-
-          {/* Right Column: Interactive Algorithmic Memory Lattice */}
-          <div className="lg:col-span-8 flex flex-col items-center w-full">
-            <AlgorithmicMemoryLattice
-              activeId={activeId}
-              onSelectModule={(id) => setActiveId(id)}
-            />
           </div>
         </div>
 
