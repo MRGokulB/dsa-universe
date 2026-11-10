@@ -600,10 +600,10 @@ export default function AlgorithmLabViewport({ activeId, onSelectModule }: Props
             href={activeModule.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black text-white hover:bg-zinc-800 transition-colors text-xs font-clash font-semibold shadow-xs"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black !text-white hover:bg-zinc-800 transition-colors text-xs font-clash font-semibold shadow-xs"
           >
-            <span>Launch Deep-Dive App</span>
-            <ArrowUpRight size={13} />
+            <span className="!text-white">Launch Deep-Dive App</span>
+            <ArrowUpRight size={13} className="!text-white" />
           </a>
         </div>
       </div>
