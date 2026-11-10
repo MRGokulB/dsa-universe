@@ -131,6 +131,174 @@ const REALM_ICONS = {
   dp: Cpu
 };
 
+function RealmSchematicViewport({ id }: { id: string }) {
+  if (id === "arrays") {
+    return (
+      <div className="w-full flex flex-col items-center justify-center gap-3">
+        <div className="flex items-center gap-1.5 w-full justify-center">
+          {[
+            { addr: "0x00", val: "12", isPtr: true, ptrName: "L" },
+            { addr: "0x08", val: "24", isPtr: false },
+            { addr: "0x10", val: "38", isPtr: false },
+            { addr: "0x18", val: "54", isPtr: true, ptrName: "MID" },
+            { addr: "0x20", val: "72", isPtr: false },
+            { addr: "0x28", val: "96", isPtr: true, ptrName: "R" }
+          ].map((cell, idx) => (
+            <div key={idx} className="flex flex-col items-center">
+              <span className="text-[9px] font-mono text-white/40 mb-1">{cell.addr}</span>
+              <div className={`w-10 h-12 rounded-lg border flex flex-col items-center justify-center ${
+                cell.isPtr 
+                  ? "bg-white/10 border-white/40 text-white font-semibold shadow-xs" 
+                  : "bg-white/[0.03] border-white/[0.08] text-white/60"
+              }`}>
+                <span className="text-xs font-mono">{cell.val}</span>
+              </div>
+              {cell.isPtr && (
+                <span className="text-[9px] font-mono text-emerald-400 mt-1 font-bold">
+                  {cell.ptrName}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="w-full px-4 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-between text-[10px] font-mono text-white/50">
+          <span>CACHE: 64B BOUNDARY</span>
+          <span className="text-emerald-400">L1 SEQUENTIAL HIT</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (id === "linked-lists") {
+    return (
+      <div className="w-full flex flex-col items-center justify-center gap-3">
+        <div className="flex items-center gap-2 justify-center w-full">
+          {[
+            { val: "0x4A", label: "HEAD", next: "0x9F" },
+            { val: "0x9F", label: "NODE", next: "0xDC" },
+            { val: "0xDC", label: "TAIL", next: "NULL" }
+          ].map((node, idx) => (
+            <div key={idx} className="flex items-center gap-1.5">
+              <div className="px-3 py-2 rounded-xl bg-white/[0.05] border border-white/20 flex flex-col items-center shadow-xs">
+                <span className="text-[9px] font-mono text-purple-400 font-bold">{node.label}</span>
+                <span className="text-xs font-mono font-semibold text-white">{node.val}</span>
+                <span className="text-[8px] font-mono text-white/40">ptr: {node.next}</span>
+              </div>
+              {idx < 2 && <span className="text-white/40 font-mono text-xs">→</span>}
+            </div>
+          ))}
+        </div>
+        <div className="w-full px-4 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-between text-[10px] font-mono text-white/50">
+          <span>FAST / SLOW POINTERS</span>
+          <span className="text-purple-400">CYCLE: SAFE</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (id === "stacks-queues") {
+    return (
+      <div className="w-full flex flex-col items-center justify-center gap-2.5">
+        <div className="w-48 flex flex-col gap-1.5">
+          <div className="p-2 rounded-lg bg-white/10 border border-white/30 flex items-center justify-between text-xs font-mono text-white">
+            <span className="text-emerald-400 font-bold">RSP →</span>
+            <span>evalExpr()</span>
+            <span className="text-[9px] text-white/40">0x7FF8</span>
+          </div>
+          <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-between text-xs font-mono text-white/70">
+            <span className="text-white/30">•</span>
+            <span>parseToken()</span>
+            <span className="text-[9px] text-white/40">0x7FF0</span>
+          </div>
+          <div className="p-2 rounded-lg bg-white/[0.02] border border-white/[0.06] flex items-center justify-between text-xs font-mono text-white/50">
+            <span className="text-white/20">•</span>
+            <span>main()</span>
+            <span className="text-[9px] text-white/40">0x7FE8</span>
+          </div>
+        </div>
+        <div className="w-full px-4 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-between text-[10px] font-mono text-white/50">
+          <span>LIFO ACTIVATION</span>
+          <span className="text-emerald-400">DEPTH: 3 FRAMES</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (id === "trees") {
+    return (
+      <div className="w-full flex flex-col items-center justify-center gap-2">
+        <div className="flex flex-col items-center">
+          <div className="w-9 h-9 rounded-full bg-white/10 border border-white/40 flex items-center justify-center text-xs font-mono font-bold text-white shadow-xs">
+            42
+          </div>
+          <div className="w-24 h-4 border-b border-l border-r border-white/20 flex justify-between px-1" />
+          <div className="flex justify-between w-32 mt-1">
+            <div className="w-8 h-8 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center text-xs font-mono text-white/70">
+              21
+            </div>
+            <div className="w-8 h-8 rounded-full bg-amber-400/20 border border-amber-400/40 flex items-center justify-center text-xs font-mono font-bold text-amber-300">
+              64
+            </div>
+          </div>
+        </div>
+        <div className="w-full px-4 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-between text-[10px] font-mono text-white/50 mt-2">
+          <span>BALANCED BST INVARIANT</span>
+          <span className="text-amber-400">HEIGHT: 2</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (id === "graphs") {
+    return (
+      <div className="w-full flex flex-col items-center justify-center gap-2">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-white/10 border border-white/30 flex items-center justify-center text-xs font-mono text-white">
+            U
+          </div>
+          <span className="text-rose-400 font-mono text-xs font-bold">--(w:4)→</span>
+          <div className="w-8 h-8 rounded-full bg-rose-400/20 border border-rose-400/40 flex items-center justify-center text-xs font-mono font-bold text-rose-300">
+            V
+          </div>
+          <span className="text-rose-400 font-mono text-xs font-bold">--(w:2)→</span>
+          <div className="w-8 h-8 rounded-full bg-white/10 border border-white/30 flex items-center justify-center text-xs font-mono text-white">
+            W
+          </div>
+        </div>
+        <div className="w-full px-4 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-between text-[10px] font-mono text-white/50 mt-3">
+          <span>DIJKSTRA MIN-HEAP</span>
+          <span className="text-rose-400">RELAXED: 3 EDGES</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full flex flex-col items-center justify-center gap-2">
+      <div className="grid grid-cols-4 gap-1.5 text-center font-mono text-xs">
+        {["0", "1", "2", "3"].map((col, idx) => (
+          <div key={idx} className="p-2 rounded bg-white/[0.03] text-white/40 text-[10px]">
+            w={col}
+          </div>
+        ))}
+        {["0", "12", "12", "24"].map((val, idx) => (
+          <div key={idx} className={`p-2 rounded border ${
+            idx === 3 
+              ? "bg-indigo-500/20 border-indigo-400 text-indigo-300 font-bold" 
+              : "bg-white/[0.05] border-white/10 text-white/70"
+          }`}>
+            {val}
+          </div>
+        ))}
+      </div>
+      <div className="w-full px-4 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-between text-[10px] font-mono text-white/50 mt-2">
+        <span>MEMOIZATION TABLE</span>
+        <span className="text-indigo-400">SLOT HIT: OPTIMAL</span>
+      </div>
+    </div>
+  );
+}
+
 interface SpatialObservatoryProps {
   activeId: string;
   onSelectRealm: (id: string) => void;
@@ -141,7 +309,7 @@ export default function SpatialObservatory({
   onSelectRealm
 }: SpatialObservatoryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 6, y: -4 });
+  const [tilt, setTilt] = useState({ x: 5, y: -3 });
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -152,23 +320,22 @@ export default function SpatialObservatory({
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
 
-    const tiltX = ((y - centerY) / centerY) * -8;
-    const tiltY = ((x - centerX) / centerX) * 10;
+    const tiltX = ((y - centerY) / centerY) * -6;
+    const tiltY = ((x - centerX) / centerX) * 8;
 
     setTilt({ x: tiltX, y: tiltY });
   }, []);
 
   const handleMouseLeave = useCallback(() => {
     setIsHovered(false);
-    setTilt({ x: 5, y: -3 });
+    setTilt({ x: 4, y: -2 });
   }, []);
 
   const activeRealm = REALM_SYSTEMS.find((r) => r.id === activeId) || REALM_SYSTEMS[0];
-  const IconComp = REALM_ICONS[activeRealm.id as keyof typeof REALM_ICONS] || Layers;
 
   return (
     <div className="w-full max-w-6xl mx-auto select-none">
-      <div className="flex items-center justify-between overflow-x-auto pb-4 mb-6 border-b border-black/[0.08] gap-2 scrollbar-none">
+      <div className="flex items-center justify-start sm:justify-center overflow-x-auto pb-4 mb-6 border-b border-black/[0.06] gap-2">
         {REALM_SYSTEMS.map((realm) => {
           const isSelected = realm.id === activeId;
           const TabIcon = REALM_ICONS[realm.id as keyof typeof REALM_ICONS] || Layers;
@@ -179,13 +346,13 @@ export default function SpatialObservatory({
               onClick={() => onSelectRealm(realm.id)}
               className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-mono transition-all cursor-pointer whitespace-nowrap border ${
                 isSelected
-                  ? "bg-[#18181b] text-white border-transparent shadow-sm"
+                  ? "bg-[#18181b] !text-white border-transparent shadow-sm"
                   : "bg-white text-[#71717a] border-black/[0.06] hover:border-black/[0.15] hover:text-[#18181b]"
               }`}
             >
-              <TabIcon size={14} className={isSelected ? "text-white" : "text-[#71717a]"} />
-              <span className="font-semibold tracking-tight">{realm.index}</span>
-              <span className="font-sans font-medium">{realm.shortName}</span>
+              <TabIcon size={14} className={isSelected ? "!text-white" : "text-[#71717a]"} />
+              <span className={`font-semibold tracking-tight ${isSelected ? "!text-white" : ""}`}>{realm.index}</span>
+              <span className={`font-sans font-medium ${isSelected ? "!text-white" : ""}`}>{realm.shortName}</span>
             </button>
           );
         })}
@@ -279,27 +446,19 @@ export default function SpatialObservatory({
 
             <div 
               style={{ transform: "translateZ(20px)", transformStyle: "preserve-3d" }}
-              className="lg:col-span-5 flex flex-col items-center justify-center p-6 rounded-2xl bg-black/40 border border-white/[0.08] relative min-h-[300px]"
+              className="lg:col-span-5 flex flex-col items-center justify-between p-6 rounded-2xl bg-black/50 border border-white/[0.1] relative min-h-[320px]"
             >
-              <div className="absolute top-3 left-4 text-[10px] font-mono text-white/40 tracking-wider">
-                SCHEMATIC VISUALIZATION
+              <div className="w-full flex items-center justify-between text-[10px] font-mono text-white/40 tracking-wider pb-3 border-b border-white/[0.06]">
+                <span>SCHEMATIC VIEWPORT</span>
+                <span className="text-emerald-400">RUNNING</span>
               </div>
               
-              <div className="w-16 h-16 rounded-2xl bg-white/[0.06] border border-white/[0.12] flex items-center justify-center text-white mb-6 shadow-inner">
-                <IconComp size={32} />
+              <div className="w-full my-auto py-4">
+                <RealmSchematicViewport id={activeRealm.id} />
               </div>
 
-              <div className="w-full text-center space-y-2">
-                <div className="font-mono text-xs text-white/80 bg-white/[0.05] py-2 px-4 rounded-xl border border-white/[0.08] inline-block max-w-full truncate">
-                  {activeRealm.schematicTag}
-                </div>
-                <p className="text-xs text-white/50 max-w-xs mx-auto">
-                  {activeRealm.tagline}
-                </p>
-              </div>
-
-              <div className="w-full pt-6 mt-6 border-t border-white/[0.08] flex items-center justify-between text-[11px] font-mono text-white/40">
-                <span>STAGE: ACTIVE RUNNER</span>
+              <div className="w-full pt-3 border-t border-white/[0.06] flex items-center justify-between text-[10px] font-mono text-white/40">
+                <span>STAGE: ACTIVE SPECIMEN</span>
                 <span>BUS: 64-BIT</span>
               </div>
             </div>
