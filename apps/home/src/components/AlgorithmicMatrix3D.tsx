@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import { 
   Layers, 
   LayoutList, 
@@ -12,7 +12,8 @@ import {
   Sparkles,
   Zap,
   Activity,
-  Compass
+  Compass,
+  CheckCircle2
 } from "lucide-react";
 
 export interface AlgorithmRealmMeta {
@@ -28,6 +29,7 @@ export interface AlgorithmRealmMeta {
   spaceComplexity: string;
   topology: string;
   schematic: string;
+  register: string;
   overview: string;
 }
 
@@ -45,6 +47,7 @@ export const REALM_SYSTEMS: AlgorithmRealmMeta[] = [
     spaceComplexity: "O(1) Auxiliary",
     topology: "Contiguous 64-Byte Cache Lines",
     schematic: "[ 0x00 | 0x08 | 0x10 | 0x18 | 0x20 ]",
+    register: "RSI: 0x7FFF0000 · STRIDE: 8B",
     overview: "Hardware-level memory modeling exploring CPU cache locality, sequential prefetching, and two-pointer array partitions."
   },
   {
@@ -60,6 +63,7 @@ export const REALM_SYSTEMS: AlgorithmRealmMeta[] = [
     spaceComplexity: "O(N) Pointer Overhead",
     topology: "Dispersed Heap Node Chain",
     schematic: "HEAD* -> [0x4A] -> [0x9F] -> NULL",
+    register: "PTR_DEREF: 0x004A · CYCLE: NONE",
     overview: "Dynamic pointer traversal across scattered heap addresses, pointer mutation safety, and fast/slow runner cycle traps."
   },
   {
@@ -75,6 +79,7 @@ export const REALM_SYSTEMS: AlgorithmRealmMeta[] = [
     spaceComplexity: "O(K) Frame Depth",
     topology: "RSP Stack Register / Ring Array",
     schematic: "PUSH [0x7FFF] | POP -> RSP - 8",
+    register: "RSP: 0x7FFFFFFF · FRAME: 0x03",
     overview: "CPU execution frame mechanics, stack overflow safety bounds, and amortized circular queue ring buffers."
   },
   {
@@ -90,6 +95,7 @@ export const REALM_SYSTEMS: AlgorithmRealmMeta[] = [
     spaceComplexity: "O(H) Recursion Stack",
     topology: "Balanced Hierarchical Tree",
     schematic: "(L) <--- [ ROOT: 42 ] ---> (R)",
+    register: "HEIGHT: 4 · BALANCE_FACTOR: 0",
     overview: "Logarithmic search invariants, AVL self-balancing rotations, and recursive depth-first tree traversals."
   },
   {
@@ -105,6 +111,7 @@ export const REALM_SYSTEMS: AlgorithmRealmMeta[] = [
     spaceComplexity: "O(V + E) Adjacency Storage",
     topology: "Topological Constellation",
     schematic: "U --(w:4)--> V --(w:2)--> W [MIN_HEAP]",
+    register: "HEAP_MIN: 2 · VISITED: 6/6",
     overview: "Weighted graph edge relaxation, priority queue wavefronts, and cycle isolation across sparse networks."
   },
   {
@@ -120,6 +127,7 @@ export const REALM_SYSTEMS: AlgorithmRealmMeta[] = [
     spaceComplexity: "O(W) 1D Tabulation Array",
     topology: "Directed Acyclic State Lattice",
     schematic: "DP[i][w] = max(DP[i-1][w], DP[i-1][w-k] + v)",
+    register: "MEMO_SLOTS: 256 · HIT_RATE: 98%",
     overview: "Optimal substructure analysis, overlapping subproblem memoization, and bottom-up topological transitions."
   }
 ];
@@ -143,7 +151,7 @@ export default function AlgorithmicMatrix3D({
   onSelectRealm
 }: AlgorithmicMatrix3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 12, y: -8 });
+  const [tilt, setTilt] = useState({ x: 10, y: -6 });
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -154,21 +162,21 @@ export default function AlgorithmicMatrix3D({
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
 
-    const tiltX = ((y - centerY) / centerY) * -14;
-    const tiltY = ((x - centerX) / centerX) * 16;
+    const tiltX = ((y - centerY) / centerY) * -12;
+    const tiltY = ((x - centerX) / centerX) * 14;
 
     setTilt({ x: tiltX, y: tiltY });
   }, []);
 
   const handleMouseLeave = useCallback(() => {
     setIsHovered(false);
-    setTilt({ x: 10, y: -6 });
+    setTilt({ x: 8, y: -5 });
   }, []);
 
   const activeRealm = REALM_SYSTEMS.find((r) => r.id === activeId) || REALM_SYSTEMS[0];
 
   return (
-    <div className="w-full max-w-4xl mx-auto py-6 select-none">
+    <div className="w-full max-w-5xl mx-auto py-6 select-none">
       <div 
         ref={containerRef}
         onMouseMove={handleMouseMove}
@@ -180,30 +188,44 @@ export default function AlgorithmicMatrix3D({
           style={{
             transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
             transformStyle: "preserve-3d",
-            transition: isHovered ? "transform 0.12s ease-out" : "transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)"
+            transition: isHovered ? "transform 0.1s ease-out" : "transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)"
           }}
-          className="relative w-full rounded-[32px] p-6 sm:p-8 bg-[#0b0d13] border border-white/[0.12] shadow-[0_32px_80px_rgba(0,0,0,0.35),0_0_0_1px_rgba(255,255,255,0.06)] overflow-hidden"
+          className="relative w-full rounded-[32px] p-6 sm:p-8 bg-[#0b0d13] border border-white/[0.12] shadow-[0_36px_90px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.06)] overflow-hidden"
         >
           <div 
-            className="absolute inset-0 opacity-[0.07] pointer-events-none"
+            className="absolute inset-0 opacity-[0.08] pointer-events-none"
             style={{
               backgroundImage: "radial-gradient(#ffffff 1px, transparent 1px), linear-gradient(to right, #ffffff08 1px, transparent 1px), linear-gradient(to bottom, #ffffff08 1px, transparent 1px)",
               backgroundSize: "24px 24px, 48px 48px, 48px 48px"
             }}
           />
 
-          <div className="absolute top-4 left-6 flex items-center gap-2 text-[10px] font-mono tracking-widest text-white/40 uppercase">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span>ALGORITHMIC MONOLITH WAFER · REV 4.2</span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08] relative z-20">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-black border border-white/20 text-white flex items-center justify-center font-clash font-bold text-sm shadow-md">
+                DS
+              </div>
+              <div>
+                <span className="text-xs font-mono font-semibold text-white tracking-wider block">
+                  SPATIAL ALGORITHMIC MONOLITH · WAFER 0x06
+                </span>
+                <span className="text-[11px] text-white/50 font-mono">
+                  64-BIT CONTIGUOUS BUS · HARDWARE CACHE SIMULATOR · DAG LATTICE
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 text-[10px] font-mono text-white/50">
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>CACHE: L1 SYNCHRONIZED</span>
+              </div>
+              <span className="hidden sm:inline">CYCLE: 0.2ms</span>
+            </div>
           </div>
 
-          <div className="absolute top-4 right-6 flex items-center gap-3 text-[10px] font-mono text-white/40">
-            <span>CLOCK: 4.80 GHZ</span>
-            <span className="hidden sm:inline">BUS: 64-BYTE CONTIGUOUS</span>
-          </div>
-
-          <div className="mt-8 mb-6 relative">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10" style={{ transformStyle: "preserve-3d" }}>
+          <div className="mt-6 mb-6 relative">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 relative z-10" style={{ transformStyle: "preserve-3d" }}>
               {REALM_SYSTEMS.map((realm) => {
                 const isSelected = realm.id === activeId;
                 const Icon = SECTOR_ICONS[realm.id as keyof typeof SECTOR_ICONS] || Layers;
@@ -283,7 +305,7 @@ export default function AlgorithmicMatrix3D({
           >
             <div className="flex items-center gap-3">
               <div 
-                className="w-3 h-3 rounded-full flex items-center justify-center"
+                className="w-3.5 h-3.5 rounded-full flex items-center justify-center"
                 style={{ backgroundColor: activeRealm.accent }}
               >
                 <div className="w-1.5 h-1.5 rounded-full bg-white" />
@@ -291,10 +313,10 @@ export default function AlgorithmicMatrix3D({
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-mono font-semibold text-white tracking-wide">
-                    ACTIVE SECTOR: {activeRealm.name.toUpperCase()}
+                    ROUTED DIE: {activeRealm.name.toUpperCase()}
                   </span>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/10 text-white/80">
-                    {activeRealm.topology}
+                    {activeRealm.register}
                   </span>
                 </div>
                 <p className="text-[11px] text-white/60 font-sans mt-0.5 line-clamp-1">
@@ -322,7 +344,7 @@ export default function AlgorithmicMatrix3D({
       
       <div className="text-center mt-3">
         <span className="text-[11px] font-mono text-[#71717a] tracking-wider uppercase">
-          ::: Spatial Gyroscope Active · Hover wafer to tilt in 3D · Select module to route
+          ::: Spatial Hardware Monolith Active · Hover wafer to tilt in 3D · Select module to route
         </span>
       </div>
     </div>

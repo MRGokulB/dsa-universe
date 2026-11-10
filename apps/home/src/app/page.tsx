@@ -85,14 +85,14 @@ export default function Home() {
             className="font-clash font-semibold text-[#0f172a] tracking-[-0.035em] leading-[1.08] text-center"
             style={{ fontSize: "clamp(38px, 4.5vw, 68px)" }}
           >
-            Algorithms in Space. <br />
+            Algorithms in Silicon. <br />
             <span className="font-instrument italic font-normal text-[#18181b]">
-              Interactive 3D constellation.
+              Spatial computation matrix.
             </span>
           </h1>
 
           <p className="text-sm sm:text-base text-[#52525b] max-w-lg mx-auto mt-4 font-normal leading-relaxed">
-            Orbit the spatial algorithmic constellation. Navigate across 6 core computational domains to launch their dedicated interactive visualizers.
+            Examine computational complexity, cache lines, and algorithmic pointer invariants. Navigate across 6 core hardware-aligned domains to launch their dedicated interactive visualizers.
           </p>
         </div>
 
@@ -205,9 +205,12 @@ export default function Home() {
                       <div className="w-9 h-9 rounded-xl bg-black/[0.04] text-[#18181b] flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
                         <IconComp size={16} />
                       </div>
-                      <span className="text-[10px] font-mono uppercase text-[#71717a]">
-                        MODULE {item.index}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        <span className="text-[10px] font-mono uppercase text-[#71717a]">
+                          DIE {item.index}
+                        </span>
+                      </div>
                     </div>
 
                     <h3 className="font-clash font-semibold text-base text-[#0f172a] mb-1.5 group-hover:text-black">
