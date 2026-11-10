@@ -434,7 +434,7 @@ export default function SpatialLattice3D({ activeId, onSelectRealm }: Props) {
   return (
     <div className="relative w-full h-[460px] sm:h-[500px] select-none flex items-center justify-center">
       <div ref={mountRef} className="w-full h-full" />
-      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 text-[11px] font-mono text-zinc-400 pointer-events-none">
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 text-[11px] font-mono text-zinc-400 pointer-events-none whitespace-nowrap">
         <Grip size={13} />
         <span>Drag to orbit constellation &middot; Click node to select realm</span>
       </div>
