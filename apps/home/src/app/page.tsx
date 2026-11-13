@@ -12,7 +12,8 @@ import {
   Network,
   Cpu,
   Code2,
-  RotateCcw
+  Terminal,
+  Activity
 } from "lucide-react";
 import SiliconCrucible3D, { MODULE_SYSTEMS } from "../components/SiliconCrucible3D";
 import { OnboardingTour } from "../components/OnboardingTour";
@@ -32,20 +33,23 @@ export default function Home() {
   const ActiveIcon = SYSTEM_ICONS[activeModule.id as keyof typeof SYSTEM_ICONS] || Layers;
 
   return (
-    <div className="min-h-screen bg-[#fafafb] text-[#18181b] font-cabinet selection:bg-slate-200 selection:text-black relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#08090d] text-[#f1f5f9] font-cabinet selection:bg-sky-500/20 selection:text-sky-300 relative overflow-x-hidden">
       <OnboardingTour />
 
-      <header className="sticky top-0 z-50 border-b border-black/[0.06] bg-[#fafafb]/90 backdrop-blur-md">
+      {/* Subtle Dark Vignette Background */}
+      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(56,189,248,0.08),transparent_70%)]" />
+
+      <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#08090d]/85 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 h-18 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center font-clash font-bold text-sm shadow-sm">
+            <div className="w-9 h-9 rounded-xl bg-white text-black flex items-center justify-center font-clash font-bold text-sm shadow-[0_0_20px_rgba(255,255,255,0.15)]">
               DS
             </div>
             <div>
-              <span className="font-clash font-semibold text-sm tracking-tight text-[#0f172a] block">
+              <span className="font-clash font-semibold text-sm tracking-tight text-white block">
                 DSA UNIVERSE
               </span>
-              <span className="text-[11px] text-[#71717a] block font-normal">
+              <span className="text-[11px] text-[#94a3b8] block font-normal">
                 Hardware Memory &amp; Algorithm Visualizer
               </span>
             </div>
@@ -54,9 +58,9 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => window.dispatchEvent(new CustomEvent("open-dsa-tour"))}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-black/[0.08] bg-white hover:bg-black hover:text-white transition-all text-xs font-medium text-[#18181b] shadow-xs cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/[0.1] bg-white/[0.04] hover:bg-white hover:text-black transition-all text-xs font-medium text-[#e2e8f0] cursor-pointer"
             >
-              <Sparkles size={13} className="text-amber-500" />
+              <Sparkles size={13} className="text-sky-400" />
               <span>Tour</span>
             </button>
 
@@ -64,7 +68,7 @@ export default function Home() {
               href="https://github.com/MRGokulB/dsa-universe"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-black/[0.08] bg-white hover:bg-black hover:text-white transition-all text-xs font-medium text-[#18181b] shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-white/[0.1] bg-white/[0.04] hover:bg-white hover:text-black transition-all text-xs font-medium text-[#e2e8f0]"
               aria-label="GitHub Repository"
             >
               <Code2 size={13} />
@@ -76,28 +80,28 @@ export default function Home() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-8 pt-10 pb-28 relative z-10">
         <div className="text-center max-w-2xl mx-auto mb-10">
-          <span className="inline-block text-[11px] font-mono tracking-widest text-[#71717a] uppercase mb-3">
+          <span className="inline-block text-[11px] font-mono tracking-widest text-[#94a3b8] uppercase mb-3">
             INTERACTIVE ALGORITHM STUDIO &middot; 2026
           </span>
 
           <h1
-            className="font-clash font-semibold text-[#0f172a] tracking-[-0.035em] leading-[1.08] text-center"
+            className="font-clash font-semibold text-white tracking-[-0.035em] leading-[1.08] text-center"
             style={{ fontSize: "clamp(38px, 4.5vw, 68px)" }}
           >
             Algorithms in Silicon. <br />
-            <span className="font-instrument italic font-normal text-[#18181b]">
+            <span className="font-instrument italic font-normal text-sky-200">
               Interactive hardware execution.
             </span>
           </h1>
 
-          <p className="text-sm sm:text-base text-[#52525b] max-w-lg mx-auto mt-4 font-normal leading-relaxed">
-            Examine contiguous cache lines, heap node mutations, and call stack frames across 6 dedicated interactive visualizers.
+          <p className="text-sm sm:text-base text-[#94a3b8] max-w-lg mx-auto mt-4 font-normal leading-relaxed">
+            Orbit the tactile 3D topic cards. Examine contiguous cache lines, heap node mutations, and call stack frames across 6 dedicated visualizers.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-24">
           <div className="lg:col-span-3 order-2 lg:order-1 flex flex-col gap-2">
-            <span className="text-[11px] font-mono tracking-wider text-[#71717a] uppercase block mb-1">
+            <span className="text-[11px] font-mono tracking-wider text-[#94a3b8] uppercase block mb-1">
               CHOOSE A SYSTEM
             </span>
 
@@ -111,30 +115,33 @@ export default function Home() {
                   onClick={() => setActiveId(mod.id)}
                   className={`w-full text-left p-3 rounded-2xl transition-all cursor-pointer flex items-center justify-between border ${
                     isSelected
-                      ? "bg-white border-black/[0.12] shadow-sm text-black"
-                      : "bg-transparent border-transparent hover:bg-black/[0.03] text-[#71717a]"
+                      ? "bg-[#141926] border-white/[0.18] shadow-sm text-white"
+                      : "bg-transparent border-transparent hover:bg-white/[0.04] text-[#94a3b8]"
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <div
                       className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${
-                        isSelected ? "bg-black text-white" : "bg-black/[0.05] text-[#52525b]"
+                        isSelected ? "bg-white text-black" : "bg-white/[0.06] text-[#94a3b8]"
                       }`}
                     >
                       <IconComp size={15} />
                     </div>
                     <div>
-                      <span className="text-xs font-semibold block leading-tight text-[#18181b]">
+                      <span className="text-xs font-semibold block leading-tight text-white">
                         {mod.name}
                       </span>
-                      <span className="text-[10px] text-[#71717a] font-mono">
+                      <span className="text-[10px] text-[#94a3b8] font-mono">
                         {mod.category}
                       </span>
                     </div>
                   </div>
 
                   {isSelected && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-black shrink-0 mr-1" />
+                    <div
+                      className="w-2 h-2 rounded-full shrink-0 mr-1 shadow-[0_0_8px_currentColor]"
+                      style={{ backgroundColor: mod.accent, color: mod.accent }}
+                    />
                   )}
                 </button>
               );
@@ -146,46 +153,64 @@ export default function Home() {
               activeId={activeId}
               onSelectModule={(id) => setActiveId(id)}
             />
-            <span className="text-[11px] text-[#71717a] font-mono mt-2 tracking-wide">
-              ::: Drag to find your angle &middot; Click module to focus
+            <span className="text-[11px] text-[#64748b] font-mono mt-2 tracking-wide">
+              ::: Drag to find your angle &middot; Click topic card to focus
             </span>
           </div>
 
           <div className="lg:col-span-3 order-3">
-            <div className="rounded-[24px] bg-white border border-black/[0.08] p-6 shadow-[0_12px_32px_rgba(0,0,0,0.04)]">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider bg-black/[0.05] text-[#18181b]">
-                  SYSTEM {activeModule.index}
-                </span>
-                <span className="text-xs text-[#71717a] font-mono">
-                  {activeModule.category}
-                </span>
+            <div className="rounded-[24px] bg-[#0e121a]/90 backdrop-blur-xl border border-white/[0.08] p-6 shadow-[0_12px_32px_rgba(0,0,0,0.4)]">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider bg-white/[0.08] text-white">
+                    SYSTEM {activeModule.index}
+                  </span>
+                  <span className="text-xs text-[#94a3b8] font-mono">
+                    {activeModule.category}
+                  </span>
+                </div>
+                <span
+                  className="w-2 h-2 rounded-full shadow-[0_0_10px_currentColor]"
+                  style={{ backgroundColor: activeModule.accent, color: activeModule.accent }}
+                />
               </div>
 
-              <h2 className="font-clash font-bold text-xl text-[#0f172a] mb-2 leading-tight">
+              <h2 className="font-clash font-bold text-xl text-white mb-2 leading-tight">
                 {activeModule.name}
               </h2>
 
-              <p className="text-xs sm:text-sm text-[#52525b] leading-relaxed mb-6">
+              <p className="text-xs sm:text-sm text-[#94a3b8] leading-relaxed mb-6">
                 {activeModule.tagline}
               </p>
 
-              <div className="space-y-3 pt-4 border-t border-black/[0.06] mb-6">
+              <div className="space-y-3 pt-4 border-t border-white/[0.06] mb-6">
                 <div>
-                  <span className="text-[10px] font-mono uppercase text-[#71717a] block mb-0.5">
+                  <span className="text-[10px] font-mono uppercase text-[#64748b] block mb-0.5">
                     ASYMPTOTIC COMPLEXITY
                   </span>
-                  <span className="text-xs font-mono font-medium text-[#18181b]">
+                  <span className="text-xs font-mono font-medium text-[#e2e8f0]">
                     {activeModule.complexity}
                   </span>
                 </div>
 
                 <div>
-                  <span className="text-[10px] font-mono uppercase text-[#71717a] block mb-0.5">
+                  <span className="text-[10px] font-mono uppercase text-[#64748b] block mb-0.5">
                     MEMORY TOPOLOGY
                   </span>
-                  <span className="text-xs font-mono font-medium text-[#18181b]">
+                  <span className="text-xs font-mono font-medium text-[#e2e8f0]">
                     {activeModule.memory}
+                  </span>
+                </div>
+
+                <div>
+                  <span className="text-[10px] font-mono uppercase text-[#64748b] block mb-0.5">
+                    SCHEMATIC INVARIANT
+                  </span>
+                  <span
+                    className="text-xs font-mono font-medium block"
+                    style={{ color: activeModule.accent }}
+                  >
+                    {activeModule.schematic}
                   </span>
                 </div>
               </div>
@@ -194,26 +219,26 @@ export default function Home() {
                 href={activeModule.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-clash font-semibold bg-[#18181b] !text-white hover:bg-black transition-all cursor-pointer shadow-sm"
+                className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-clash font-semibold bg-white !text-black hover:bg-zinc-200 transition-all cursor-pointer shadow-[0_4px_20px_rgba(255,255,255,0.15)]"
               >
-                <span className="!text-white">Launch {activeModule.name}</span>
-                <ArrowUpRight size={14} className="!text-white" />
+                <span className="!text-black">Launch {activeModule.name}</span>
+                <ArrowUpRight size={14} className="!text-black" />
               </a>
             </div>
           </div>
         </div>
 
-        <section className="pt-16 border-t border-black/[0.06]">
+        <section className="pt-16 border-t border-white/[0.06]">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
             <div>
-              <span className="text-[11px] font-mono uppercase tracking-widest text-[#71717a] block mb-1">
+              <span className="text-[11px] font-mono uppercase tracking-widest text-[#94a3b8] block mb-1">
                 STANDALONE SIMULATORS
               </span>
-              <h2 className="font-clash font-semibold text-2xl text-[#0f172a]">
+              <h2 className="font-clash font-semibold text-2xl text-white">
                 All 6 Dedicated Visualizers
               </h2>
             </div>
-            <span className="text-xs font-mono text-[#71717a]">
+            <span className="text-xs font-mono text-[#64748b]">
               6 MICRO-FRONTENDS DEPLOYED
             </span>
           </div>
@@ -228,32 +253,32 @@ export default function Home() {
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group p-6 rounded-[22px] bg-white border border-black/[0.06] hover:border-black/[0.18] hover:shadow-[0_12px_28px_rgba(0,0,0,0.06)] transition-all flex flex-col justify-between"
+                  className="group p-6 rounded-[22px] bg-[#0d1017] border border-white/[0.06] hover:border-white/[0.2] hover:bg-[#121622] hover:shadow-[0_12px_28px_rgba(0,0,0,0.4)] transition-all flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <div className="w-9 h-9 rounded-xl bg-black/[0.04] text-[#18181b] flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
+                      <div className="w-9 h-9 rounded-xl bg-white/[0.06] text-white flex items-center justify-center group-hover:bg-white group-hover:text-black transition-colors">
                         <IconComp size={16} />
                       </div>
-                      <span className="text-[10px] font-mono uppercase text-[#71717a]">
+                      <span className="text-[10px] font-mono uppercase text-[#94a3b8]">
                         MODULE {item.index}
                       </span>
                     </div>
 
-                    <h3 className="font-clash font-semibold text-base text-[#0f172a] mb-1.5 group-hover:text-black">
+                    <h3 className="font-clash font-semibold text-base text-white mb-1.5 group-hover:text-sky-300 transition-colors">
                       {item.name}
                     </h3>
 
-                    <p className="text-xs text-[#52525b] leading-relaxed mb-4">
+                    <p className="text-xs text-[#94a3b8] leading-relaxed mb-4">
                       {item.tagline}
                     </p>
 
-                    <div className="py-2 px-3 rounded-lg bg-[#f8f9fa] border border-black/[0.04] text-[11px] font-mono text-[#52525b] mb-4">
+                    <div className="py-2 px-3 rounded-lg bg-black/40 border border-white/[0.04] text-[11px] font-mono text-[#cbd5e1] mb-4">
                       {item.complexity}
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-black/[0.05] flex items-center justify-between text-xs font-semibold text-[#18181b]">
+                  <div className="pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs font-semibold text-white">
                     <span>Open Visualizer</span>
                     <ArrowUpRight
                       size={14}
@@ -267,11 +292,11 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="border-t border-black/[0.06] bg-white py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#71717a]">
+      <footer className="border-t border-white/[0.06] bg-[#06070a] py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#64748b]">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-black" />
-            <span className="font-clash font-semibold text-[#0f172a]">
+            <span className="w-2 h-2 rounded-full bg-sky-400" />
+            <span className="font-clash font-semibold text-white">
               DSA UNIVERSE
             </span>
           </div>
