@@ -12,11 +12,9 @@ export interface AlgorithmModuleMeta {
   tagline: string;
   url: string;
   accent: string;
-  accentHex: number;
+  chipColor: string;
   complexity: string;
   memory: string;
-  schematic: string;
-  codeSnippet: string;
 }
 
 export const MODULE_SYSTEMS: AlgorithmModuleMeta[] = [
@@ -24,190 +22,128 @@ export const MODULE_SYSTEMS: AlgorithmModuleMeta[] = [
     id: "arrays",
     index: "01",
     name: "Contiguous RAM & Arrays",
-    shortTitle: "Contiguous Arrays",
+    shortTitle: "ARRAYS",
     category: "Linear",
     tagline: "Sequential cache lines and two-pointer convergence",
     url: "https://arrays-rho.vercel.app",
-    accent: "#38bdf8",
-    accentHex: 0x38bdf8,
+    accent: "#2563eb",
+    chipColor: "#bfdbfe", // Soft sky blue ceramic
     complexity: "Access O(1) · Search O(N)",
-    memory: "Contiguous 64-bit Cache Lines",
-    schematic: "[ 0x00 | 0x08 | 0x10 | 0x18 ]",
-    codeSnippet: "arr[i] = *(base + i * 8)"
+    memory: "Contiguous 64-bit Cache Lines"
   },
   {
     id: "linked-lists",
     index: "02",
     name: "Linked Lists & Pointers",
-    shortTitle: "Linked Lists",
+    shortTitle: "LISTS",
     category: "Linear",
     tagline: "Dispersed heap nodes and Floyd cycle isolation",
     url: "https://linked-lists-xi.vercel.app/",
-    accent: "#c084fc",
-    accentHex: 0xc084fc,
+    accent: "#7c3aed",
+    chipColor: "#e9d5ff", // Soft lilac ceramic
     complexity: "Insert O(1) · Traversal O(N)",
-    memory: "Heap Allocated Pointer Chain",
-    schematic: "[ Node* ] -> [ Node* ] -> NULL",
-    codeSnippet: "curr = curr->next"
+    memory: "Heap Allocated Pointer Chain"
   },
   {
     id: "stacks-queues",
     index: "03",
     name: "Call Stacks & Buffers",
-    shortTitle: "Call Stacks",
+    shortTitle: "STACKS",
     category: "Linear",
     tagline: "LIFO execution frames and circular ring queues",
     url: "https://stacks-queues.vercel.app",
-    accent: "#34d399",
-    accentHex: 0x34d399,
+    accent: "#059669",
+    chipColor: "#bbf7d0", // Soft mint ceramic
     complexity: "Push/Pop O(1) · Enqueue O(1)",
-    memory: "RSP Stack Register & Ring Buffer",
-    schematic: "RSP -> [ Frame 3 ] [ Frame 2 ]",
-    codeSnippet: "push(rbp); mov(rsp, rbp)"
+    memory: "RSP Stack Register & Ring Buffer"
   },
   {
     id: "trees",
     index: "04",
     name: "Binary Trees & BSTs",
-    shortTitle: "Binary Trees",
+    shortTitle: "TREES",
     category: "Hierarchical",
     tagline: "Balanced BST invariants and recursive traversals",
     url: "https://trees-eight-omega.vercel.app",
-    accent: "#fbbf24",
-    accentHex: 0xfbbf24,
+    accent: "#d97706",
+    chipColor: "#fef08a", // Soft amber ceramic
     complexity: "Balanced O(log N) · Worst O(N)",
-    memory: "Recursive Node Hierarchy",
-    schematic: "( Root ) -> [ Left ] / [ Right ]",
-    codeSnippet: "left < node.val <= right"
+    memory: "Recursive Node Hierarchy"
   },
   {
     id: "graphs",
     index: "05",
     name: "Graph Networks & Dijkstra",
-    shortTitle: "Graph Networks",
+    shortTitle: "GRAPHS",
     category: "Topological",
     tagline: "Adjacency matrix traversal and priority queue shortest paths",
     url: "https://graphs-steel.vercel.app",
-    accent: "#fb7185",
-    accentHex: 0xfb7185,
+    accent: "#e11d48",
+    chipColor: "#fecdd3", // Soft rose ceramic
     complexity: "BFS O(V+E) · Dijkstra O(E log V)",
-    memory: "Sparse Adjacency Matrix & Heap",
-    schematic: "( A ) === ( B ) --- ( C )",
-    codeSnippet: "dist[v] = min(dist[v], d+w)"
+    memory: "Sparse Adjacency Matrix & Heap"
   },
   {
     id: "dp",
     index: "06",
     name: "Dynamic Programming",
-    shortTitle: "Dynamic Prog.",
+    shortTitle: "DP",
     category: "Topological",
     tagline: "DAG state lattices and 1D rolling tabulation",
     url: "https://dp-sigma-one.vercel.app",
-    accent: "#818cf8",
-    accentHex: 0x818cf8,
+    accent: "#4f46e5",
+    chipColor: "#c7d2fe", // Soft indigo ceramic
     complexity: "Pseudo-polynomial O(N * W)",
-    memory: "Contiguous DP Memoization Cache",
-    schematic: "dp[i][w] = max(dp[i-1], val)",
-    codeSnippet: "memo[k] ??= solve(sub)"
+    memory: "Contiguous DP Memoization Cache"
   }
 ];
 
-function createTopicCardCanvas(mod: AlgorithmModuleMeta, isSelected: boolean, isHovered: boolean): HTMLCanvasElement {
+function createCleanCardCanvas(mod: AlgorithmModuleMeta, isSelected: boolean, isHovered: boolean): HTMLCanvasElement {
   const canvas = document.createElement("canvas");
-  canvas.width = 1024;
-  canvas.height = 768;
+  canvas.width = 512;
+  canvas.height = 512;
   const ctx = canvas.getContext("2d");
   if (!ctx) return canvas;
 
-  // Background gradient (rich dark slate with subtle depth)
-  const bgGrad = ctx.createLinearGradient(0, 0, 1024, 768);
-  if (isSelected) {
-    bgGrad.addColorStop(0, "#131926");
-    bgGrad.addColorStop(1, "#0c1018");
-  } else if (isHovered) {
-    bgGrad.addColorStop(0, "#161b26");
-    bgGrad.addColorStop(1, "#0e121a");
-  } else {
-    bgGrad.addColorStop(0, "#10141d");
-    bgGrad.addColorStop(1, "#0a0c12");
-  }
+  // Solid clean pastel background
+  ctx.fillStyle = mod.chipColor;
+  ctx.fillRect(0, 0, 512, 512);
 
-  ctx.fillStyle = bgGrad;
-  ctx.fillRect(0, 0, 1024, 768);
+  // Subtle clean border
+  ctx.lineWidth = isSelected ? 16 : 8;
+  ctx.strokeStyle = isSelected ? "#0f172a" : isHovered ? "rgba(15, 23, 42, 0.4)" : "rgba(15, 23, 42, 0.15)";
+  ctx.strokeRect(8, 8, 496, 496);
 
-  // Outer border
-  ctx.lineWidth = isSelected ? 12 : 6;
-  ctx.strokeStyle = isSelected ? mod.accent : isHovered ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)";
-  ctx.strokeRect(20, 20, 984, 728);
+  // Top Index Badge
+  ctx.fillStyle = "#0f172a";
+  ctx.font = "bold 32px sans-serif";
+  ctx.fillText(mod.index, 40, 72);
 
-  // Top accent bar
-  ctx.fillStyle = mod.accent;
-  ctx.fillRect(20, 20, 984, 18);
-
-  // Header: Index & Category Pill
-  ctx.fillStyle = "rgba(255, 255, 255, 0.08)";
-  ctx.beginPath();
-  ctx.roundRect(60, 75, 220, 56, 28);
-  ctx.fill();
-
-  ctx.fillStyle = mod.accent;
-  ctx.font = "bold 26px sans-serif";
-  ctx.fillText(`${mod.index} · ${mod.category.toUpperCase()}`, 82, 112);
-
-  // Status LED dot
-  ctx.beginPath();
-  ctx.arc(930, 102, 14, 0, Math.PI * 2);
-  ctx.fillStyle = isSelected ? mod.accent : "rgba(255,255,255,0.3)";
-  ctx.fill();
-  if (isSelected) {
-    ctx.lineWidth = 4;
-    ctx.strokeStyle = "#ffffff";
-    ctx.stroke();
-  }
-
-  // Topic Title
-  ctx.fillStyle = "#ffffff";
-  ctx.font = "bold 64px sans-serif";
-  ctx.fillText(mod.shortTitle, 60, 220);
-
-  // Complexity & Memory Tag
-  ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
-  ctx.font = "500 32px monospace";
-  ctx.fillText(mod.complexity, 60, 285);
-
-  // Schematic / Code Box
-  ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
-  ctx.beginPath();
-  ctx.roundRect(60, 340, 904, 250, 20);
-  ctx.fill();
-  ctx.lineWidth = 3;
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
-  ctx.stroke();
-
-  // Box Header
-  ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
-  ctx.font = "bold 22px monospace";
-  ctx.fillText("HARDWARE TOPOLOGY / INVARIANT", 90, 385);
-
-  // Schematic content
-  ctx.fillStyle = mod.accent;
-  ctx.font = "bold 38px monospace";
-  ctx.fillText(mod.schematic, 90, 460);
-
-  // Code snippet
-  ctx.fillStyle = "#e2e8f0";
-  ctx.font = "32px monospace";
-  ctx.fillText(mod.codeSnippet, 90, 535);
-
-  // Footer Tagline
-  ctx.fillStyle = "rgba(255, 255, 255, 0.55)";
-  ctx.font = "400 28px sans-serif";
-  ctx.fillText(mod.tagline, 60, 660);
-
-  // Corner grid marks
-  ctx.fillStyle = "rgba(255, 255, 255, 0.25)";
+  // Category Tag
+  ctx.fillStyle = "rgba(15, 23, 42, 0.65)";
   ctx.font = "bold 20px monospace";
-  ctx.fillText("DSA-UNIVERSE · CORE-SYS", 710, 660);
+  ctx.fillText(mod.category.toUpperCase(), 40, 108);
+
+  // Status indicator dot
+  ctx.beginPath();
+  ctx.arc(460, 64, 14, 0, Math.PI * 2);
+  ctx.fillStyle = isSelected ? "#0f172a" : "rgba(15, 23, 42, 0.25)";
+  ctx.fill();
+
+  // Primary Bold Short Title (e.g. ARRAYS, LISTS, STACKS)
+  ctx.fillStyle = "#0f172a";
+  ctx.font = "bold 64px sans-serif";
+  ctx.fillText(mod.shortTitle, 40, 280);
+
+  // Subtitle / category indicator
+  ctx.fillStyle = "rgba(15, 23, 42, 0.6)";
+  ctx.font = "500 24px monospace";
+  ctx.fillText(mod.complexity.split("·")[0].trim(), 40, 330);
+
+  // Bottom corner branding
+  ctx.fillStyle = "rgba(15, 23, 42, 0.35)";
+  ctx.font = "bold 18px monospace";
+  ctx.fillText("DSA · 2026", 40, 460);
 
   return canvas;
 }
@@ -236,8 +172,8 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
     scene.background = null;
 
     const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 100);
-    camera.position.set(0, 5.2, 7.8);
-    camera.lookAt(0, -0.3, 0);
+    camera.position.set(0, 4.8, 7.6);
+    camera.lookAt(0, -0.2, 0);
 
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -249,14 +185,14 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMappingExposure = 1.05;
     container.appendChild(renderer.domElement);
 
     // Studio Lighting
-    const ambientLight = new THREE.AmbientLight(0x181e2b, 1.8);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.9);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.6);
+    const keyLight = new THREE.DirectionalLight(0xfffbf2, 2.4);
     keyLight.position.set(5, 9, 6);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 1024;
@@ -264,29 +200,24 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
     keyLight.shadow.bias = -0.0005;
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0x38bdf8, 1.2);
+    const fillLight = new THREE.DirectionalLight(0xe8f0fe, 1.2);
     fillLight.position.set(-6, 5, -3);
     scene.add(fillLight);
 
-    const rimLight = new THREE.PointLight(0xffffff, 0.9, 15);
+    const rimLight = new THREE.PointLight(0xffffff, 0.8, 15);
     rimLight.position.set(0, 6, -5);
     scene.add(rimLight);
-
-    // Active Accent Point Light
-    const activePointLight = new THREE.PointLight(0x38bdf8, 2.5, 8);
-    activePointLight.position.set(0, 2.5, 0);
-    scene.add(activePointLight);
 
     const stageGroup = new THREE.Group();
     scene.add(stageGroup);
 
-    // Dark Titanium Substrate Base Slab
-    const slabGeo = new THREE.BoxGeometry(6.4, 0.22, 4.4);
+    // Soft Ceramic Substrate Base Slab
+    const slabGeo = new THREE.BoxGeometry(5.8, 0.22, 4.2);
     const slabMat = new THREE.MeshPhysicalMaterial({
-      color: 0x0e1118,
-      metalness: 0.85,
-      roughness: 0.35,
-      clearcoat: 0.4,
+      color: 0xf1f3f7,
+      metalness: 0.08,
+      roughness: 0.45,
+      clearcoat: 0.35,
       clearcoatRoughness: 0.2
     });
     const slabMesh = new THREE.Mesh(slabGeo, slabMat);
@@ -294,31 +225,30 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
     slabMesh.receiveShadow = true;
     stageGroup.add(slabMesh);
 
-    // Contact Shadow
+    // Diffuse Ground Contact Shadow
     const shadowGeo = new THREE.PlaneGeometry(14, 12);
-    const shadowMat = new THREE.ShadowMaterial({ opacity: 0.35 });
+    const shadowMat = new THREE.ShadowMaterial({ opacity: 0.16 });
     const shadowMesh = new THREE.Mesh(shadowGeo, shadowMat);
     shadowMesh.rotation.x = -Math.PI / 2;
     shadowMesh.position.y = -0.23;
     shadowMesh.receiveShadow = true;
     scene.add(shadowMesh);
 
-    // 6 Topic Card Meshes (2 rows x 3 columns)
+    // 6 Tactile Ceramic Cards (2 rows x 3 columns)
     const cardMeshes: {
       id: string;
       mesh: THREE.Mesh;
       baseY: number;
       targetY: number;
       topMat: THREE.MeshPhysicalMaterial;
-      sideMat: THREE.MeshPhysicalMaterial;
       mod: AlgorithmModuleMeta;
       texture: THREE.CanvasTexture;
     }[] = [];
 
-    const cardGeo = new THREE.BoxGeometry(1.82, 0.22, 1.38);
+    const cardGeo = new THREE.BoxGeometry(1.58, 0.26, 1.58);
     const cols = 3;
-    const spacingX = 2.0;
-    const spacingZ = 1.62;
+    const spacingX = 1.82;
+    const spacingZ = 1.78;
 
     MODULE_SYSTEMS.forEach((mod, idx) => {
       const col = idx % cols;
@@ -328,29 +258,28 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
       const z = (row - 0.5) * spacingZ;
 
       const isSelected = mod.id === activeIdRef.current;
-      const canvas = createTopicCardCanvas(mod, isSelected, false);
+      const canvas = createCleanCardCanvas(mod, isSelected, false);
       const texture = new THREE.CanvasTexture(canvas);
       texture.anisotropy = 8;
 
       const sideMat = new THREE.MeshPhysicalMaterial({
-        color: 0x141824,
-        metalness: 0.8,
-        roughness: 0.3,
-        clearcoat: 0.4
+        color: new THREE.Color(mod.chipColor).multiplyScalar(0.92),
+        metalness: 0.1,
+        roughness: 0.35,
+        clearcoat: 0.5
       });
 
       const topMat = new THREE.MeshPhysicalMaterial({
         map: texture,
-        metalness: 0.2,
-        roughness: 0.35,
-        clearcoat: 0.6,
-        clearcoatRoughness: 0.2
+        metalness: 0.12,
+        roughness: 0.32,
+        clearcoat: 0.7,
+        clearcoatRoughness: 0.18
       });
 
-      // BoxGeometry material array: [right, left, top, bottom, front, back]
       const materials = [sideMat, sideMat, topMat, sideMat, sideMat, sideMat];
       const mesh = new THREE.Mesh(cardGeo, materials);
-      mesh.position.set(x, 0.11, z);
+      mesh.position.set(x, 0.13, z);
       mesh.castShadow = true;
       mesh.receiveShadow = true;
       mesh.userData = { id: mod.id };
@@ -359,10 +288,9 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
       cardMeshes.push({
         id: mod.id,
         mesh,
-        baseY: 0.11,
-        targetY: 0.11,
+        baseY: 0.13,
+        targetY: 0.13,
         topMat,
-        sideMat,
         mod,
         texture
       });
@@ -372,7 +300,7 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
       cardMeshes.forEach((item) => {
         const isSel = item.id === activeModId;
         const isHov = item.id === hoveredModId;
-        const canvas = createTopicCardCanvas(item.mod, isSel, isHov);
+        const canvas = createCleanCardCanvas(item.mod, isSel, isHov);
         item.texture.image = canvas;
         item.texture.needsUpdate = true;
       });
@@ -457,22 +385,12 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
         updateCardTextures(activeIdRef.current, hoveredId);
       }
 
-      const activeMod = MODULE_SYSTEMS.find((m) => m.id === activeIdRef.current);
-      if (activeMod) {
-        activePointLight.color.setHex(activeMod.accentHex);
-      }
-
       cardMeshes.forEach((item) => {
         const isActive = item.id === activeIdRef.current;
         const isHovered = item.id === hoveredId;
 
         item.targetY = isActive ? item.baseY + 0.38 : isHovered ? item.baseY + 0.18 : item.baseY;
         item.mesh.position.y = THREE.MathUtils.damp(item.mesh.position.y, item.targetY, 9, delta);
-
-        if (isActive) {
-          activePointLight.position.x = THREE.MathUtils.damp(activePointLight.position.x, item.mesh.position.x, 8, delta);
-          activePointLight.position.z = THREE.MathUtils.damp(activePointLight.position.z, item.mesh.position.z, 8, delta);
-        }
       });
 
       renderer.render(scene, camera);
@@ -512,7 +430,7 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
   }, []);
 
   return (
-    <div className="relative w-full h-[480px] sm:h-[520px] select-none flex items-center justify-center">
+    <div className="relative w-full h-[480px] sm:h-[560px] select-none flex items-center justify-center">
       <div ref={mountRef} className="w-full h-full" />
     </div>
   );
