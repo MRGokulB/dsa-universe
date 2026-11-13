@@ -18,11 +18,7 @@ export function OnboardingTour() {
   }, []);
 
   useEffect(() => {
-    const hasSeenTour = localStorage.getItem("dsa_tour_seen");
-    if (!hasSeenTour) {
-      const timer = setTimeout(() => setIsOpen(true), 2500);
-      return () => clearTimeout(timer);
-    }
+    // Only open if explicitly requested or via custom event
   }, []);
 
   const completeTour = () => {
