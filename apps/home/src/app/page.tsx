@@ -34,6 +34,9 @@ export default function Home() {
     <div className="min-h-screen bg-[#fafafb] text-[#0f172a] font-cabinet selection:bg-slate-200 selection:text-black relative overflow-x-hidden">
       <OnboardingTour />
 
+      {/* Subtle Studio Lighting Wash */}
+      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(ellipse_75%_55%_at_50%_25%,rgba(241,245,249,0.9),transparent_75%)]" />
+
       <header className="sticky top-0 z-50 border-b border-black/[0.06] bg-[#fafafb]/90 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 h-18 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -98,6 +101,14 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-20">
           {/* Main 3D Stage Column */}
           <div className="lg:col-span-8 flex flex-col items-center">
+            <div className="flex items-center justify-between w-full max-w-2xl px-2 mb-1 text-[11px] font-mono text-[#64748b]">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="tracking-wide uppercase">Computational Crucible &middot; 3D Stage</span>
+              </div>
+              <span className="hidden sm:inline">6 TACTILE MODULES &middot; 38&deg; VIEW</span>
+            </div>
+
             <SiliconCrucible3D
               activeId={activeId}
               onSelectModule={(id) => setActiveId(id)}

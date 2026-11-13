@@ -15,6 +15,7 @@ export interface AlgorithmModuleMeta {
   chipColor: string;
   complexity: string;
   memory: string;
+  glyph: string;
 }
 
 export const MODULE_SYSTEMS: AlgorithmModuleMeta[] = [
@@ -29,7 +30,8 @@ export const MODULE_SYSTEMS: AlgorithmModuleMeta[] = [
     accent: "#2563eb",
     chipColor: "#bfdbfe", // Soft sky blue ceramic
     complexity: "Access O(1) · Search O(N)",
-    memory: "Contiguous 64-bit Cache Lines"
+    memory: "Contiguous 64-bit Cache Lines",
+    glyph: "[ 0x00 | 0x08 | 0x10 | 0x18 ]"
   },
   {
     id: "linked-lists",
@@ -42,7 +44,8 @@ export const MODULE_SYSTEMS: AlgorithmModuleMeta[] = [
     accent: "#7c3aed",
     chipColor: "#e9d5ff", // Soft lilac ceramic
     complexity: "Insert O(1) · Traversal O(N)",
-    memory: "Heap Allocated Pointer Chain"
+    memory: "Heap Allocated Pointer Chain",
+    glyph: "[ Node* ] -> [ Node* ] -> ∅"
   },
   {
     id: "stacks-queues",
@@ -55,7 +58,8 @@ export const MODULE_SYSTEMS: AlgorithmModuleMeta[] = [
     accent: "#059669",
     chipColor: "#bbf7d0", // Soft mint ceramic
     complexity: "Push/Pop O(1) · Enqueue O(1)",
-    memory: "RSP Stack Register & Ring Buffer"
+    memory: "RSP Stack Register & Ring Buffer",
+    glyph: "RSP -> [ Frame 3 ] [ Frame 2 ]"
   },
   {
     id: "trees",
@@ -68,7 +72,8 @@ export const MODULE_SYSTEMS: AlgorithmModuleMeta[] = [
     accent: "#d97706",
     chipColor: "#fef08a", // Soft amber ceramic
     complexity: "Balanced O(log N) · Worst O(N)",
-    memory: "Recursive Node Hierarchy"
+    memory: "Recursive Node Hierarchy",
+    glyph: "( Root ) -> [ L ] / [ R ]"
   },
   {
     id: "graphs",
@@ -81,7 +86,8 @@ export const MODULE_SYSTEMS: AlgorithmModuleMeta[] = [
     accent: "#e11d48",
     chipColor: "#fecdd3", // Soft rose ceramic
     complexity: "BFS O(V+E) · Dijkstra O(E log V)",
-    memory: "Sparse Adjacency Matrix & Heap"
+    memory: "Sparse Adjacency Matrix & Heap",
+    glyph: "( A ) === ( B ) --- ( C )"
   },
   {
     id: "dp",
@@ -94,11 +100,12 @@ export const MODULE_SYSTEMS: AlgorithmModuleMeta[] = [
     accent: "#4f46e5",
     chipColor: "#c7d2fe", // Soft indigo ceramic
     complexity: "Pseudo-polynomial O(N * W)",
-    memory: "Contiguous DP Memoization Cache"
+    memory: "Contiguous DP Memoization Cache",
+    glyph: "dp[i][w] = max(dp[i-1], val)"
   }
 ];
 
-function createCleanCardCanvas(mod: AlgorithmModuleMeta, isSelected: boolean, isHovered: boolean): HTMLCanvasElement {
+function createTactileCardCanvas(mod: AlgorithmModuleMeta, isSelected: boolean, isHovered: boolean): HTMLCanvasElement {
   const canvas = document.createElement("canvas");
   canvas.width = 512;
   canvas.height = 512;
@@ -109,43 +116,105 @@ function createCleanCardCanvas(mod: AlgorithmModuleMeta, isSelected: boolean, is
   ctx.fillStyle = mod.chipColor;
   ctx.fillRect(0, 0, 512, 512);
 
-  // Subtle clean border
-  ctx.lineWidth = isSelected ? 16 : 8;
-  ctx.strokeStyle = isSelected ? "#0f172a" : isHovered ? "rgba(15, 23, 42, 0.4)" : "rgba(15, 23, 42, 0.15)";
-  ctx.strokeRect(8, 8, 496, 496);
+  // Outer border with subtle corner chamfer
+  ctx.lineWidth = isSelected ? 14 : 7;
+  ctx.strokeStyle = isSelected ? "#0f172a" : isHovered ? "rgba(15, 23, 42, 0.45)" : "rgba(15, 23, 42, 0.18)";
+  ctx.strokeRect(10, 10, 492, 492);
 
   // Top Index Badge
   ctx.fillStyle = "#0f172a";
   ctx.font = "bold 32px sans-serif";
-  ctx.fillText(mod.index, 40, 72);
+  ctx.fillText(mod.index, 38, 70);
 
   // Category Tag
   ctx.fillStyle = "rgba(15, 23, 42, 0.65)";
-  ctx.font = "bold 20px monospace";
-  ctx.fillText(mod.category.toUpperCase(), 40, 108);
+  ctx.font = "bold 18px monospace";
+  ctx.fillText(mod.category.toUpperCase(), 38, 104);
 
-  // Status indicator dot
-  ctx.beginPath();
-  ctx.arc(460, 64, 14, 0, Math.PI * 2);
+  // Gold contact pad in top-right corner
   ctx.fillStyle = isSelected ? "#0f172a" : "rgba(15, 23, 42, 0.25)";
-  ctx.fill();
+  ctx.fillRect(436, 36, 36, 18);
+  ctx.fillStyle = "#d97706";
+  ctx.fillRect(440, 40, 28, 10);
 
-  // Primary Bold Short Title (e.g. ARRAYS, LISTS, STACKS)
+  // Primary Bold Short Title
   ctx.fillStyle = "#0f172a";
-  ctx.font = "bold 64px sans-serif";
-  ctx.fillText(mod.shortTitle, 40, 280);
+  ctx.font = "bold 60px sans-serif";
+  ctx.fillText(mod.shortTitle, 38, 255);
 
-  // Subtitle / category indicator
-  ctx.fillStyle = "rgba(15, 23, 42, 0.6)";
-  ctx.font = "500 24px monospace";
-  ctx.fillText(mod.complexity.split("·")[0].trim(), 40, 330);
+  // Invariant schematic line
+  ctx.fillStyle = "rgba(15, 23, 42, 0.7)";
+  ctx.font = "bold 20px monospace";
+  ctx.fillText(mod.glyph, 38, 305);
+
+  // Complexity indicator
+  ctx.fillStyle = "rgba(15, 23, 42, 0.55)";
+  ctx.font = "500 22px monospace";
+  ctx.fillText(mod.complexity.split("·")[0].trim(), 38, 360);
+
+  // Bottom hairline decorative bar
+  ctx.fillStyle = "rgba(15, 23, 42, 0.12)";
+  ctx.fillRect(38, 420, 436, 2);
 
   // Bottom corner branding
-  ctx.fillStyle = "rgba(15, 23, 42, 0.35)";
-  ctx.font = "bold 18px monospace";
-  ctx.fillText("DSA · 2026", 40, 460);
+  ctx.fillStyle = "rgba(15, 23, 42, 0.4)";
+  ctx.font = "bold 17px monospace";
+  ctx.fillText("DSA · LAB SPEC 2026", 38, 460);
 
   return canvas;
+}
+
+function createGroundTelemetryTexture(): THREE.CanvasTexture {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1024;
+  canvas.height = 1024;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return new THREE.CanvasTexture(canvas);
+
+  const cx = 512;
+  const cy = 512;
+
+  // Concentric architectural hairline rings
+  ctx.strokeStyle = "rgba(15, 23, 42, 0.05)";
+  ctx.lineWidth = 1.5;
+
+  [180, 280, 380, 460].forEach((r) => {
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.stroke();
+  });
+
+  // Crosshair coordinate axes
+  ctx.strokeStyle = "rgba(15, 23, 42, 0.04)";
+  ctx.beginPath();
+  ctx.moveTo(cx, 60);
+  ctx.lineTo(cx, 964);
+  ctx.moveTo(60, cy);
+  ctx.lineTo(964, cy);
+  ctx.stroke();
+
+  // Degree ticks and micro-labels
+  ctx.fillStyle = "rgba(15, 23, 42, 0.18)";
+  ctx.font = "bold 13px monospace";
+  ctx.fillText("00° N · STAGE REF", cx + 12, 120);
+  ctx.fillText("90° E · MEM BUS", 840, cy - 10);
+  ctx.fillText("180° S · CACHE L1", cx + 12, 920);
+  ctx.fillText("270° W · HEAP REG", 70, cy - 10);
+
+  // Small corner grid tick marks
+  for (let i = 0; i < 36; i++) {
+    const angle = (i * 10 * Math.PI) / 180;
+    const r1 = 380;
+    const r2 = i % 3 === 0 ? 395 : 388;
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(angle) * r1, cy + Math.sin(angle) * r1);
+    ctx.lineTo(cx + Math.cos(angle) * r2, cy + Math.sin(angle) * r2);
+    ctx.stroke();
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.anisotropy = 8;
+  return texture;
 }
 
 interface Props {
@@ -192,7 +261,7 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.9);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xfffbf2, 2.4);
+    const keyLight = new THREE.DirectionalLight(0xfffbf2, 2.5);
     keyLight.position.set(5, 9, 6);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 1024;
@@ -204,9 +273,45 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
     fillLight.position.set(-6, 5, -3);
     scene.add(fillLight);
 
-    const rimLight = new THREE.PointLight(0xffffff, 0.8, 15);
+    const rimLight = new THREE.PointLight(0xffffff, 0.9, 15);
     rimLight.position.set(0, 6, -5);
     scene.add(rimLight);
+
+    // Architectural Ground Ring Plane with Telemetry
+    const telemetryTexture = createGroundTelemetryTexture();
+    const telemetryGeo = new THREE.PlaneGeometry(12, 12);
+    const telemetryMat = new THREE.MeshBasicMaterial({
+      map: telemetryTexture,
+      transparent: true,
+      opacity: 0.85
+    });
+    const telemetryMesh = new THREE.Mesh(telemetryGeo, telemetryMat);
+    telemetryMesh.rotation.x = -Math.PI / 2;
+    telemetryMesh.position.y = -0.235;
+    scene.add(telemetryMesh);
+
+    // Floating Spatial Depth Particles (~45 ambient motes)
+    const particleCount = 45;
+    const particleGeo = new THREE.BufferGeometry();
+    const particlePositions = new Float32Array(particleCount * 3);
+    const particleSpeeds = new Float32Array(particleCount);
+
+    for (let i = 0; i < particleCount; i++) {
+      particlePositions[i * 3] = (Math.random() - 0.5) * 10;
+      particlePositions[i * 3 + 1] = Math.random() * 4 + 0.2;
+      particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 8;
+      particleSpeeds[i] = 0.2 + Math.random() * 0.4;
+    }
+
+    particleGeo.setAttribute("position", new THREE.BufferAttribute(particlePositions, 3));
+    const particleMat = new THREE.PointsMaterial({
+      color: 0x94a3b8,
+      size: 0.05,
+      transparent: true,
+      opacity: 0.45
+    });
+    const particles = new THREE.Points(particleGeo, particleMat);
+    scene.add(particles);
 
     const stageGroup = new THREE.Group();
     scene.add(stageGroup);
@@ -258,13 +363,13 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
       const z = (row - 0.5) * spacingZ;
 
       const isSelected = mod.id === activeIdRef.current;
-      const canvas = createCleanCardCanvas(mod, isSelected, false);
+      const canvas = createTactileCardCanvas(mod, isSelected, false);
       const texture = new THREE.CanvasTexture(canvas);
       texture.anisotropy = 8;
 
       const sideMat = new THREE.MeshPhysicalMaterial({
         color: new THREE.Color(mod.chipColor).multiplyScalar(0.92),
-        metalness: 0.1,
+        metalness: 0.12,
         roughness: 0.35,
         clearcoat: 0.5
       });
@@ -300,7 +405,7 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
       cardMeshes.forEach((item) => {
         const isSel = item.id === activeModId;
         const isHov = item.id === hoveredModId;
-        const canvas = createCleanCardCanvas(item.mod, isSel, isHov);
+        const canvas = createTactileCardCanvas(item.mod, isSel, isHov);
         item.texture.image = canvas;
         item.texture.needsUpdate = true;
       });
@@ -316,6 +421,10 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
     let targetRotationY = -0.22;
     let targetRotationX = 0.38;
 
+    // Subtle pointer parallax offsets
+    let parallaxTargetX = 0;
+    let parallaxTargetY = 0;
+
     const onPointerDown = (e: MouseEvent) => {
       isDragging = true;
       prevMouseX = e.clientX;
@@ -324,8 +433,14 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
 
     const onPointerMove = (e: MouseEvent) => {
       const rect = container.getBoundingClientRect();
-      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+      const rawX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      const rawY = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+      mouse.x = rawX;
+      mouse.y = rawY;
+
+      // Subtle parallax response when moving across stage
+      parallaxTargetX = rawX * 0.12;
+      parallaxTargetY = rawY * 0.08;
 
       if (isDragging) {
         const dx = e.clientX - prevMouseX;
@@ -365,8 +480,19 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
         targetRotationY += 0.0012;
       }
 
-      stageGroup.rotation.y = THREE.MathUtils.damp(stageGroup.rotation.y, targetRotationY, 4, delta);
-      stageGroup.rotation.x = THREE.MathUtils.damp(stageGroup.rotation.x, targetRotationX, 4, delta);
+      // Smooth camera orbit + natural pointer parallax
+      const combinedTargetY = targetRotationY + parallaxTargetX;
+      const combinedTargetX = targetRotationX - parallaxTargetY;
+
+      stageGroup.rotation.y = THREE.MathUtils.damp(stageGroup.rotation.y, combinedTargetY, 4, delta);
+      stageGroup.rotation.x = THREE.MathUtils.damp(stageGroup.rotation.x, combinedTargetX, 4, delta);
+
+      // Animate floating spatial dust motes
+      const positions = particleGeo.attributes.position.array as Float32Array;
+      for (let i = 0; i < particleCount; i++) {
+        positions[i * 3 + 1] += Math.sin(currentTime * 0.001 + i) * 0.003;
+      }
+      particleGeo.attributes.position.needsUpdate = true;
 
       raycaster.setFromCamera(mouse, camera);
       const intersects = raycaster.intersectObjects(cardMeshes.map((b) => b.mesh));
@@ -420,6 +546,9 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
       cardMeshes.forEach((item) => {
         item.texture.dispose();
       });
+      telemetryTexture.dispose();
+      particleGeo.dispose();
+      particleMat.dispose();
 
       scene.clear();
       renderer.dispose();
