@@ -123,8 +123,14 @@ export default function Home() {
       <header className="sticky top-0 z-50 border-b border-black/[0.08] bg-[#f3f4f7]/95 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 h-18 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-zinc-900 text-emerald-400 flex items-center justify-center font-clash font-bold text-sm shadow-sm border border-zinc-700">
-              DS
+            <div className="w-10 h-10 rounded-xl bg-zinc-950 flex items-center justify-center shadow-sm border border-zinc-800 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/15 to-transparent pointer-events-none" />
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-10">
+                <path d="M12 2L3 7V17L12 22L21 17V7L12 2Z" stroke="#10b981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M12 22V12" stroke="#10b981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M21 7L12 12L3 7" stroke="#10b981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="12" cy="12" r="2.2" fill="#34d399" />
+              </svg>
             </div>
             <div>
               <span className="font-clash font-bold text-sm tracking-tight text-[#0f172a] block">
