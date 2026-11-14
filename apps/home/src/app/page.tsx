@@ -114,27 +114,30 @@ export default function Home() {
 
           <div className="relative z-20 w-full flex flex-col lg:flex-row items-end lg:items-end justify-between gap-4 pointer-events-none mt-auto">
             <div className="w-full lg:w-auto pointer-events-auto flex flex-col items-start gap-2">
-              <div className="flex items-center gap-1.5 sm:gap-2 p-1.5 rounded-2xl bg-white/90 backdrop-blur-xl border border-black/[0.08] shadow-[0_12px_28px_rgba(0,0,0,0.06)] overflow-x-auto no-scrollbar max-w-full">
+              <div className="flex items-center gap-1 sm:gap-1.5 p-1.5 rounded-2xl bg-white/90 backdrop-blur-xl border border-black/[0.08] shadow-[0_12px_28px_rgba(0,0,0,0.06)] overflow-x-auto no-scrollbar max-w-full">
                 {MODULE_SYSTEMS.map((mod) => {
                   const isSelected = activeId === mod.id;
                   return (
-                    <motion.button
+                    <button
                       key={mod.id}
                       onClick={() => setActiveId(mod.id)}
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 shrink-0 relative ${
-                        isSelected
-                          ? "bg-black text-white shadow-xs font-semibold"
-                          : "text-[#475569] hover:bg-black/[0.04] hover:text-black"
-                      }`}
+                      className="relative px-3.5 py-1.5 rounded-xl text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 z-10"
                     >
+                      {isSelected && (
+                        <motion.div
+                          layoutId="dsa-active-pill"
+                          transition={{ type: "spring", stiffness: 450, damping: 35 }}
+                          className="absolute inset-0 bg-black rounded-xl -z-10 shadow-xs"
+                        />
+                      )}
                       <span
                         className="w-2 h-2 rounded-full shrink-0"
                         style={{ backgroundColor: mod.chipColor }}
                       />
-                      <span>{mod.shortTitle}</span>
-                    </motion.button>
+                      <span className={isSelected ? "text-white font-semibold" : "text-[#475569] hover:text-black"}>
+                        {mod.shortTitle}
+                      </span>
+                    </button>
                   );
                 })}
               </div>
@@ -201,10 +204,10 @@ export default function Home() {
                     href={activeModule.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-clash font-semibold bg-[#0f172a] !text-white hover:bg-black transition-all cursor-pointer shadow-sm"
+                    className="group w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-clash font-semibold bg-[#0f172a] !text-white hover:bg-black transition-all cursor-pointer shadow-sm"
                   >
                     <span className="!text-white">Launch {activeModule.name}</span>
-                    <ArrowUpRight size={14} className="!text-white" />
+                    <ArrowUpRight size={14} className="!text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                   </a>
                 </motion.div>
               </AnimatePresence>
