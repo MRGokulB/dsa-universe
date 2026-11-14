@@ -113,13 +113,20 @@ export default function Home() {
       <header className="sticky top-0 z-50 border-b border-slate-200/80 dark:border-slate-800/80 bg-white/80 dark:bg-[#07090e]/85 backdrop-blur-xl transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 h-18 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-zinc-950 flex items-center justify-center shadow-sm border border-zinc-800 relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/15 to-transparent pointer-events-none" />
+            <div className="w-10 h-10 rounded-xl bg-zinc-950 flex items-center justify-center shadow-sm border border-indigo-500/30 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 via-transparent to-transparent pointer-events-none" />
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-10">
-                <path d="M12 2L3 7V17L12 22L21 17V7L12 2Z" stroke="#10b981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M12 22V12" stroke="#10b981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M21 7L12 12L3 7" stroke="#10b981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="12" cy="12" r="2.2" fill="#34d399" />
+                <path d="M12 2.5L20.2 7.25V16.75L12 21.5L3.8 16.75V7.25Z" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M12 2.5V21.5" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" />
+                <path d="M3.8 7.25L20.2 16.75" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" />
+                <path d="M3.8 16.75L20.2 7.25" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" />
+                <circle cx="12" cy="2.5" r="2.2" fill="#818cf8" />
+                <circle cx="20.2" cy="7.25" r="2.2" fill="#818cf8" />
+                <circle cx="20.2" cy="16.75" r="2.2" fill="#818cf8" />
+                <circle cx="12" cy="21.5" r="2.2" fill="#818cf8" />
+                <circle cx="3.8" cy="16.75" r="2.2" fill="#818cf8" />
+                <circle cx="3.8" cy="7.25" r="2.2" fill="#818cf8" />
+                <circle cx="12" cy="12" r="2.8" fill="#818cf8" />
               </svg>
             </div>
             <div>
