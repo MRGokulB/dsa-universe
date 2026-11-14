@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import SiliconCrucible3D, { MODULE_SYSTEMS, AlgorithmModuleMeta } from "../components/SiliconCrucible3D";
 import { OnboardingTour } from "../components/OnboardingTour";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 const SYSTEM_ICONS = {
   arrays: Layers,
@@ -36,7 +37,7 @@ function RackModuleUnit({ item, IconComp }: { item: AlgorithmModuleMeta; IconCom
       href={item.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative p-6 rounded-2xl bg-white border border-slate-200/80 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between overflow-hidden cursor-pointer"
+      className="group relative p-6 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md transition-all flex flex-col justify-between overflow-hidden cursor-pointer"
     >
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-4">
@@ -46,28 +47,28 @@ function RackModuleUnit({ item, IconComp }: { item: AlgorithmModuleMeta; IconCom
           >
             <IconComp size={18} style={{ color: item.accent }} />
           </div>
-          <span className="text-[10px] font-mono font-semibold uppercase text-slate-400 tracking-wider px-2 py-0.5 rounded bg-slate-100 border border-slate-200/60">
+          <span className="text-[10px] font-mono font-semibold uppercase text-slate-400 dark:text-slate-500 tracking-wider px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700">
             MOD {item.index}
           </span>
         </div>
 
-        <h3 className="font-clash font-bold text-lg text-slate-900 mb-1.5 group-hover:text-emerald-700 transition-colors">
+        <h3 className="font-clash font-bold text-lg text-slate-900 dark:text-white mb-1.5 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
           {item.name}
         </h3>
 
-        <p className="text-xs text-slate-600 leading-relaxed mb-4">
+        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
           {item.tagline}
         </p>
 
-        <div className="py-2 px-3 rounded-lg bg-slate-50 border border-slate-200/80 text-[11px] font-mono text-slate-600 mb-4 flex items-center justify-between">
+        <div className="py-2 px-3 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800 text-[11px] font-mono text-slate-600 dark:text-slate-400 mb-4 flex items-center justify-between">
           <span className="truncate">{item.complexity.split("·")[0].trim()}</span>
-          <span className="text-[10px] text-emerald-700 font-bold px-1.5 py-0.5 rounded bg-emerald-50">
+          <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60">
             {item.category}
           </span>
         </div>
       </div>
 
-      <div className="relative z-10 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-700 group-hover:text-emerald-700 transition-colors">
+      <div className="relative z-10 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
         <span>Launch Visualizer</span>
         <ArrowUpRight
           size={14}
@@ -99,7 +100,7 @@ export default function Home() {
   }, [activeId]);
 
   return (
-    <div className="min-h-screen bg-[#f3f4f7] text-[#0f172a] font-cabinet selection:bg-emerald-100 selection:text-black relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#fafafb] dark:bg-[#07090e] text-slate-900 dark:text-slate-100 font-cabinet selection:bg-emerald-100 selection:text-black relative overflow-x-hidden transition-colors duration-200">
       <OnboardingTour />
 
       <a
@@ -109,7 +110,7 @@ export default function Home() {
         Skip to visualizer
       </a>
 
-      <header className="sticky top-0 z-50 border-b border-black/[0.08] bg-[#f3f4f7]/95 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-slate-200/80 dark:border-slate-800/80 bg-white/80 dark:bg-[#07090e]/85 backdrop-blur-xl transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 h-18 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-zinc-950 flex items-center justify-center shadow-sm border border-zinc-800 relative overflow-hidden group">
@@ -122,21 +123,23 @@ export default function Home() {
               </svg>
             </div>
             <div>
-              <span className="font-clash font-bold text-sm tracking-tight text-[#0f172a] block">
+              <span className="font-clash font-bold text-sm tracking-tight text-slate-900 dark:text-white block">
                 DSA UNIVERSE
               </span>
-              <span className="text-[11px] text-[#64748b] font-mono block">
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono block">
                 Silicon Hardware Architecture &amp; Precision Visualizers
               </span>
             </div>
           </div>
 
           <div className="flex items-center gap-2.5">
+            <ThemeToggle />
+
             <button
               onClick={() => window.dispatchEvent(new CustomEvent("open-dsa-tour"))}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition-all text-xs font-semibold text-slate-700 shadow-xs cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-xs cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
             >
-              <Compass size={14} className="text-slate-600" />
+              <Compass size={14} className="text-slate-600 dark:text-slate-400" />
               <span>Tour</span>
             </button>
 
@@ -144,7 +147,7 @@ export default function Home() {
               href="https://github.com/MRGokulB/dsa-universe"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 transition-all text-xs font-semibold !text-white shadow-xs"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 transition-all text-xs font-semibold !text-white shadow-xs"
               aria-label="GitHub Repository"
             >
               <Code2 size={14} className="!text-white" />
@@ -158,20 +161,20 @@ export default function Home() {
         <section className="mb-10">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
             <div className="max-w-2xl">
-              <h1 className="font-clash font-bold text-4xl sm:text-6xl text-slate-900 tracking-tight leading-tight">
+              <h1 className="font-clash font-bold text-4xl sm:text-6xl text-slate-900 dark:text-white tracking-tight leading-tight">
                 Master Data Structures, <br />
-                <span className="font-instrument italic font-normal text-slate-500">
+                <span className="font-instrument italic font-normal text-slate-500 dark:text-slate-400">
                   from first principles.
                 </span>
               </h1>
             </div>
 
-            <p className="text-sm sm:text-base text-slate-600 max-w-md leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-md leading-relaxed">
               Step through contiguous memory lines, pointer dereferences, recursive search trees, and dynamic programming with minimal interactive models.
             </p>
           </div>
 
-          <div className="p-2 sm:p-2.5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-start gap-2">
+          <div className="p-2 sm:p-2.5 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-wrap items-center justify-start gap-2">
             {MODULE_SYSTEMS.map((mod) => {
               const isSelected = activeId === mod.id;
               const IconComp = SYSTEM_ICONS[mod.id as keyof typeof SYSTEM_ICONS] || Layers;
@@ -182,8 +185,8 @@ export default function Home() {
                   onClick={() => setActiveId(mod.id)}
                   className={`px-3.5 py-2 min-h-[40px] rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
                     isSelected
-                      ? "bg-slate-900 text-white shadow-sm"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                      ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm"
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
                   }`}
                 >
                   <IconComp size={14} style={{ color: isSelected ? "#10b981" : mod.accent }} />
@@ -201,17 +204,17 @@ export default function Home() {
           />
         </section>
 
-        <section className="pt-12 border-t border-slate-200/80">
+        <section className="pt-12 border-t border-slate-200/80 dark:border-slate-800">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
             <div>
-              <span className="text-[11px] font-mono uppercase tracking-widest text-emerald-600 font-bold block mb-1">
+              <span className="text-[11px] font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-bold block mb-1">
                 CURATED LEARNING PATH
               </span>
-              <h2 className="font-clash font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+              <h2 className="font-clash font-bold text-2xl sm:text-3xl text-slate-900 dark:text-white tracking-tight">
                 6 Visual Algorithm Adventures
               </h2>
             </div>
-            <span className="text-xs text-slate-500 font-medium">
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
               Click any module to launch the dedicated standalone visualizer
             </span>
           </div>
@@ -231,24 +234,24 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="border-t border-slate-200/80 bg-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <footer className="border-t border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#07090e] py-12 transition-colors duration-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span className="font-bold text-slate-800">DSA Universe</span>
+            <span className="font-bold text-slate-800 dark:text-slate-200">DSA Universe</span>
             <span>&copy; 2026 &middot; Visual Data Structures &amp; Algorithms</span>
           </div>
           <div className="flex items-center gap-6 text-xs font-medium">
-            <a href="https://arrays-rho.vercel.app" target="_blank" rel="noopener noreferrer" className="hover:text-slate-900">
+            <a href="https://arrays-rho.vercel.app" target="_blank" rel="noopener noreferrer" className="hover:text-slate-900 dark:hover:text-white">
               Arrays
             </a>
-            <a href="https://linked-lists-xi.vercel.app/" target="_blank" rel="noopener noreferrer" className="hover:text-slate-900">
+            <a href="https://linked-lists-xi.vercel.app/" target="_blank" rel="noopener noreferrer" className="hover:text-slate-900 dark:hover:text-white">
               Linked Lists
             </a>
-            <a href="https://graphs-steel.vercel.app" target="_blank" rel="noopener noreferrer" className="hover:text-slate-900">
+            <a href="https://graphs-steel.vercel.app" target="_blank" rel="noopener noreferrer" className="hover:text-slate-900 dark:hover:text-white">
               Graphs
             </a>
-            <a href="https://github.com/MRGokulB/dsa-universe" target="_blank" rel="noopener noreferrer" className="hover:text-slate-900">
+            <a href="https://github.com/MRGokulB/dsa-universe" target="_blank" rel="noopener noreferrer" className="hover:text-slate-900 dark:hover:text-white">
               GitHub
             </a>
           </div>

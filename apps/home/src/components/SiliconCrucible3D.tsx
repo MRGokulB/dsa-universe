@@ -175,11 +175,11 @@ function ArrayInteractiveStage() {
                     ? "bg-blue-600 text-white border-blue-700 shadow-md scale-105"
                     : isLeft || isRight
                     ? "bg-blue-500 text-white border-blue-600 shadow-sm scale-102"
-                    : "bg-white text-slate-800 border-slate-200/80 shadow-xs"
+                    : "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 border-slate-200/80 dark:border-slate-700 shadow-xs"
                 }`}
               >
                 <span className="text-base sm:text-xl font-bold">{val}</span>
-                <span className={`text-[10px] ${isLeft || isRight ? "text-blue-100" : "text-slate-400"}`}>
+                <span className={`text-[10px] ${isLeft || isRight ? "text-blue-100" : "text-slate-400 dark:text-slate-500"}`}>
                   idx {i}
                 </span>
               </div>
@@ -188,7 +188,7 @@ function ArrayInteractiveStage() {
         })}
       </div>
 
-      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 text-xs text-slate-700 flex items-center justify-between">
+      <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 flex items-center justify-between">
         <span>{current.msg}</span>
         <button
           onClick={() => setStep((s) => s + 1)}
@@ -231,11 +231,11 @@ function ListInteractiveStage() {
               className={`p-4 rounded-2xl border transition-all duration-300 flex flex-col justify-between h-24 ${
                 isActive
                   ? "bg-purple-600 text-white border-purple-700 shadow-md scale-102"
-                  : "bg-white text-slate-800 border-slate-200/80 shadow-xs"
+                  : "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 border-slate-200/80 dark:border-slate-700 shadow-xs"
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className={`text-[10px] font-bold uppercase tracking-wider ${isActive ? "text-purple-200" : "text-slate-400"}`}>
+                <span className={`text-[10px] font-bold uppercase tracking-wider ${isActive ? "text-purple-200" : "text-slate-400 dark:text-slate-500"}`}>
                   Node {n.id}
                 </span>
                 {isActive && (
@@ -243,7 +243,7 @@ function ListInteractiveStage() {
                 )}
               </div>
               <div className="text-xl font-bold">{n.val}</div>
-              <div className={`text-[10px] ${isActive ? "text-purple-200" : "text-purple-600 font-semibold"}`}>
+              <div className={`text-[10px] ${isActive ? "text-purple-200" : "text-purple-600 dark:text-purple-400 font-semibold"}`}>
                 &rarr; {n.next}
               </div>
             </div>
@@ -251,7 +251,7 @@ function ListInteractiveStage() {
         })}
       </div>
 
-      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 text-xs text-slate-700 flex items-center justify-between">
+      <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 flex items-center justify-between">
         <span>
           Following pointer reference from Node {nodes[curr].id} to {nodes[curr].next}.
         </span>
@@ -285,12 +285,12 @@ function StackInteractiveStage() {
         <span className="text-xs font-semibold text-slate-500">
           Last-In, First-Out (LIFO) Call Stack
         </span>
-        <span className="text-xs font-mono font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60">
+        <span className="text-xs font-mono font-medium text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400 px-2 py-0.5 rounded-md border border-slate-200/60 dark:border-slate-700">
           Depth: {frames.length} Frame{frames.length > 1 ? "s" : ""}
         </span>
       </div>
 
-      <div className="flex flex-col-reverse gap-2 bg-slate-50 p-4 rounded-2xl border border-slate-200/80 min-h-[140px] justify-end">
+      <div className="flex flex-col-reverse gap-2 bg-slate-50 dark:bg-slate-900/60 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 min-h-[140px] justify-end">
         {frames.map((frame, i) => {
           const isTop = i === frames.length - 1;
           return (
@@ -299,11 +299,11 @@ function StackInteractiveStage() {
               className={`p-2.5 px-4 rounded-xl text-xs font-semibold flex items-center justify-between transition-all ${
                 isTop
                   ? "bg-emerald-600 text-white shadow-sm"
-                  : "bg-white text-slate-700 border border-slate-200/80"
+                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700"
               }`}
             >
               <span className="font-mono">{frame}</span>
-              <span className={`text-[10px] ${isTop ? "text-emerald-100" : "text-slate-400"}`}>
+              <span className={`text-[10px] ${isTop ? "text-emerald-100" : "text-slate-400 dark:text-slate-500"}`}>
                 {isTop ? "Top of Stack (Executing)" : `Frame #${i + 1}`}
               </span>
             </div>
@@ -311,7 +311,7 @@ function StackInteractiveStage() {
         })}
       </div>
 
-      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 text-xs text-slate-700 flex items-center justify-between">
+      <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 flex items-center justify-between">
         <span>
           {frames.length >= 4
             ? "Stack limit reached. Click to unwind execution frames."
@@ -423,7 +423,7 @@ function TreeInteractiveStage() {
         </svg>
       </div>
 
-      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 text-xs text-slate-700 flex items-center justify-between">
+      <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 flex items-center justify-between">
         <span>{current.desc}</span>
         <button
           onClick={() => setStep((s) => s + 1)}
@@ -454,7 +454,7 @@ function GraphInteractiveStage() {
         <span className="text-xs font-semibold text-slate-500">
           Dijkstra Shortest Path Exploration
         </span>
-        <span className="text-xs font-mono font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60">
+        <span className="text-xs font-mono font-medium text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400 px-2 py-0.5 rounded-md border border-slate-200/60 dark:border-slate-700">
           Vertex {current.active} (Cost: {current.cost})
         </span>
       </div>
@@ -471,12 +471,12 @@ function GraphInteractiveStage() {
                 isActive
                   ? "bg-rose-600 text-white border-rose-700 shadow-md scale-102"
                   : isVisited
-                  ? "bg-rose-50 text-rose-900 border-rose-200 shadow-xs"
-                  : "bg-white text-slate-700 border-slate-200/80 shadow-xs"
+                  ? "bg-rose-50 dark:bg-rose-950/60 text-rose-900 dark:text-rose-200 border-rose-200 dark:border-rose-900/60 shadow-xs"
+                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200/80 dark:border-slate-700 shadow-xs"
               }`}
             >
               <div className="text-xl font-bold font-mono">{vertex}</div>
-              <div className={`text-[10px] mt-1 ${isActive ? "text-rose-100" : "text-slate-400"}`}>
+              <div className={`text-[10px] mt-1 ${isActive ? "text-rose-100" : "text-slate-400 dark:text-slate-500"}`}>
                 {i === 0 ? "Start" : i === 3 ? "Target" : `Node ${i}`}
               </div>
             </div>
@@ -484,7 +484,7 @@ function GraphInteractiveStage() {
         })}
       </div>
 
-      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 text-xs text-slate-700 flex items-center justify-between">
+      <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 flex items-center justify-between">
         <span>{current.text}</span>
         <button
           onClick={() => setStep((s) => s + 1)}
@@ -512,7 +512,7 @@ function DpInteractiveStage() {
         <span className="text-xs font-semibold text-slate-500">
           Fibonacci 1D Tabulation Memoization
         </span>
-        <span className="text-xs font-mono font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60">
+        <span className="text-xs font-mono font-medium text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400 px-2 py-0.5 rounded-md border border-slate-200/60 dark:border-slate-700">
           dp[{idx}] = {dpTable[idx - 1]} + {dpTable[idx - 2]} = {dpTable[idx]}
         </span>
       </div>
@@ -529,11 +529,11 @@ function DpInteractiveStage() {
                 isCurrent
                   ? "bg-indigo-600 text-white border-indigo-700 shadow-md scale-105"
                   : isComputed
-                  ? "bg-indigo-50 text-indigo-900 border-indigo-200 shadow-xs"
-                  : "bg-white text-slate-300 border-slate-200/60 shadow-xs"
+                  ? "bg-indigo-50 dark:bg-indigo-950/60 text-indigo-900 dark:text-indigo-200 border-indigo-200 dark:border-indigo-900/60 shadow-xs"
+                  : "bg-white dark:bg-slate-800 text-slate-300 dark:text-slate-600 border-slate-200/60 dark:border-slate-700 shadow-xs"
               }`}
             >
-              <div className={`text-[10px] font-mono ${isCurrent ? "text-indigo-200" : "text-slate-400"}`}>
+              <div className={`text-[10px] font-mono ${isCurrent ? "text-indigo-200" : "text-slate-400 dark:text-slate-500"}`}>
                 i={i}
               </div>
               <div className="text-base sm:text-lg font-bold font-mono">
@@ -544,7 +544,7 @@ function DpInteractiveStage() {
         })}
       </div>
 
-      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 text-xs text-slate-700 flex items-center justify-between">
+      <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 flex items-center justify-between">
         <span>
           Computing dp[{idx}] by adding previous two cached subproblems. Zero redundant calls.
         </span>
@@ -571,8 +571,8 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
   }, [activeId]);
 
   return (
-    <div className="w-full rounded-3xl border border-slate-200/90 bg-white shadow-sm p-6 sm:p-8 transition-all">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-slate-100">
+    <div className="w-full rounded-3xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900/90 shadow-sm p-6 sm:p-8 transition-all">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-slate-100 dark:border-slate-800">
         <div>
           <div className="flex items-center gap-2 mb-1.5">
             <span
@@ -584,17 +584,17 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
             </span>
           </div>
 
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+          <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             {activeModule.name}
           </h3>
 
-          <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-xl">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-xl">
             {activeModule.tagline}
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="px-3.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs font-mono font-medium text-slate-600">
+          <div className="px-3.5 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-xs font-mono font-medium text-slate-600 dark:text-slate-300">
             {activeModule.complexity}
           </div>
 
@@ -602,7 +602,7 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
             href={activeModule.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 !text-white font-semibold text-xs flex items-center gap-1.5 shadow-xs transition-all hover:shadow cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 !text-white font-semibold text-xs flex items-center gap-1.5 shadow-xs transition-all hover:shadow cursor-pointer"
           >
             <span className="!text-white">Launch Visualizer</span>
             <ArrowUpRight size={14} className="!text-white" />
@@ -610,7 +610,7 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
         </div>
       </div>
 
-      <div className="rounded-2xl bg-white border border-slate-200/80 p-5 sm:p-6 shadow-xs">
+      <div className="rounded-2xl bg-white dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/80 p-5 sm:p-6 shadow-xs">
         {activeId === "arrays" && <ArrayInteractiveStage />}
         {activeId === "linked-lists" && <ListInteractiveStage />}
         {activeId === "stacks-queues" && <StackInteractiveStage />}
