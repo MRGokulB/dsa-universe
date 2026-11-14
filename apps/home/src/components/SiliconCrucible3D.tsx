@@ -156,13 +156,17 @@ function createTactileCardCanvas(mod: AlgorithmModuleMeta, isSelected: boolean, 
 
 interface Props {
   activeId: string;
+  viewMode?: "orbit" | "focus" | "top";
   onSelectModule: (id: string) => void;
 }
 
-export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
+export default function SiliconCrucible3D({ activeId, viewMode = "orbit", onSelectModule }: Props) {
   const mountRef = useRef<HTMLDivElement>(null);
   const activeIdRef = useRef<string>(activeId);
   activeIdRef.current = activeId;
+
+  const viewModeRef = useRef<"orbit" | "focus" | "top">(viewMode);
+  viewModeRef.current = viewMode;
 
   const onSelectRef = useRef(onSelectModule);
   onSelectRef.current = onSelectModule;
@@ -192,26 +196,6 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
     renderer.toneMappingExposure = 1.05;
     container.appendChild(renderer.domElement);
 
-    const applyResponsiveCamera = () => {
-      if (!container) return;
-      const w = container.clientWidth;
-      const h = container.clientHeight;
-      const aspect = w / h;
-      camera.aspect = aspect;
-
-      if (aspect < 1.0) {
-        const extraDist = (1.0 - aspect) * 4.8;
-        camera.position.set(0, 4.6 + extraDist * 0.35, 7.8 + extraDist);
-      } else {
-        camera.position.set(0, 4.5, 7.5);
-      }
-      camera.lookAt(0, -0.15, 0);
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
-    };
-
-    applyResponsiveCamera();
-
     const ambientLight = new THREE.AmbientLight(0xffffff, 2.0);
     scene.add(ambientLight);
 
@@ -227,14 +211,14 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
     fillLight.position.set(-6, 5, -3);
     scene.add(fillLight);
 
-    const rimLight = new THREE.PointLight(0xffffff, 1.0, 16);
-    rimLight.position.set(0, 6, -5);
-    scene.add(rimLight);
+    const activeSpotLight = new THREE.PointLight(0x2563eb, 2.2, 8);
+    activeSpotLight.position.set(0, 3, 0);
+    scene.add(activeSpotLight);
 
     const stageGroup = new THREE.Group();
     scene.add(stageGroup);
 
-    const slabGeo = new THREE.BoxGeometry(6.2, 0.22, 4.6);
+    const slabGeo = new THREE.BoxGeometry(6.4, 0.22, 4.8);
     const slabMat = new THREE.MeshPhysicalMaterial({
       color: 0xf1f3f7,
       metalness: 0.08,
@@ -255,9 +239,64 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
     shadowMesh.receiveShadow = true;
     scene.add(shadowMesh);
 
+    const busGroup = new THREE.Group();
+    stageGroup.add(busGroup);
+
+    const traceMat = new THREE.MeshStandardMaterial({
+      color: 0xd97706,
+      metalness: 0.9,
+      roughness: 0.2
+    });
+
+    const createTrace = (x1: number, z1: number, x2: number, z2: number) => {
+      const dx = x2 - x1;
+      const dz = z2 - z1;
+      const len = Math.hypot(dx, dz);
+      const traceGeo = new THREE.BoxGeometry(len, 0.015, 0.035);
+      const mesh = new THREE.Mesh(traceGeo, traceMat);
+      mesh.position.set((x1 + x2) / 2, 0.005, (z1 + z2) / 2);
+      mesh.rotation.y = -Math.atan2(dz, dx);
+      busGroup.add(mesh);
+    };
+
+    createTrace(-1.95, -0.96, 0, -0.96);
+    createTrace(0, -0.96, 1.95, -0.96);
+    createTrace(-1.95, 0.96, 0, 0.96);
+    createTrace(0, 0.96, 1.95, 0.96);
+    createTrace(-1.95, -0.96, -1.95, 0.96);
+    createTrace(0, -0.96, 0, 0.96);
+    createTrace(1.95, -0.96, 1.95, 0.96);
+
+    const pulseCount = 6;
+    const pulseGeo = new THREE.SphereGeometry(0.045, 12, 12);
+    const pulseMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+    const pulses: { mesh: THREE.Mesh; progress: number; p1: THREE.Vector3; p2: THREE.Vector3 }[] = [];
+
+    const traceSegments = [
+      { p1: new THREE.Vector3(-1.95, 0.02, -0.96), p2: new THREE.Vector3(0, 0.02, -0.96) },
+      { p1: new THREE.Vector3(0, 0.02, -0.96), p2: new THREE.Vector3(1.95, 0.02, -0.96) },
+      { p1: new THREE.Vector3(-1.95, 0.02, 0.96), p2: new THREE.Vector3(0, 0.02, 0.96) },
+      { p1: new THREE.Vector3(0, 0.02, 0.96), p2: new THREE.Vector3(1.95, 0.02, 0.96) },
+      { p1: new THREE.Vector3(-1.95, 0.02, -0.96), p2: new THREE.Vector3(-1.95, 0.02, 0.96) },
+      { p1: new THREE.Vector3(1.95, 0.02, -0.96), p2: new THREE.Vector3(1.95, 0.02, 0.96) }
+    ];
+
+    traceSegments.forEach((seg, idx) => {
+      const pMesh = new THREE.Mesh(pulseGeo, pulseMat);
+      busGroup.add(pMesh);
+      pulses.push({
+        mesh: pMesh,
+        progress: idx / pulseCount,
+        p1: seg.p1,
+        p2: seg.p2
+      });
+    });
+
     const cardMeshes: {
       id: string;
       mesh: THREE.Mesh;
+      baseX: number;
+      baseZ: number;
       baseY: number;
       targetY: number;
       topMat: THREE.MeshPhysicalMaterial;
@@ -310,6 +349,8 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
       cardMeshes.push({
         id: mod.id,
         mesh,
+        baseX: x,
+        baseZ: z,
         baseY: 0.13,
         targetY: 0.13,
         topMat,
@@ -353,8 +394,8 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
       mouse.x = rawX;
       mouse.y = rawY;
 
-      parallaxTargetX = rawX * 0.1;
-      parallaxTargetY = rawY * 0.06;
+      parallaxTargetX = rawX * 0.12;
+      parallaxTargetY = rawY * 0.08;
 
       if (isDragging) {
         const dx = e.clientX - prevMouseX;
@@ -390,8 +431,38 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
       const delta = Math.min((currentTime - lastTime) / 1000, 0.1);
       lastTime = currentTime;
 
-      if (!isDragging) {
-        targetRotationY += 0.001;
+      const currentMode = viewModeRef.current;
+      const activeItem = cardMeshes.find((c) => c.id === activeIdRef.current) || cardMeshes[0];
+
+      let camTargetX = 0;
+      let camTargetY = 4.5;
+      let camTargetZ = 7.5;
+      let lookTargetX = 0;
+      let lookTargetY = -0.15;
+      let lookTargetZ = 0;
+
+      if (currentMode === "focus") {
+        camTargetX = activeItem.baseX * 0.45;
+        camTargetY = 3.2;
+        camTargetZ = 5.2;
+        lookTargetX = activeItem.baseX * 0.55;
+        lookTargetZ = activeItem.baseZ * 0.55;
+      } else if (currentMode === "top") {
+        camTargetX = 0;
+        camTargetY = 8.5;
+        camTargetZ = 0.5;
+        lookTargetX = 0;
+        lookTargetY = 0;
+        lookTargetZ = 0;
+      }
+
+      camera.position.x = THREE.MathUtils.damp(camera.position.x, camTargetX, 4, delta);
+      camera.position.y = THREE.MathUtils.damp(camera.position.y, camTargetY, 4, delta);
+      camera.position.z = THREE.MathUtils.damp(camera.position.z, camTargetZ, 4, delta);
+      camera.lookAt(lookTargetX, lookTargetY, lookTargetZ);
+
+      if (!isDragging && currentMode === "orbit") {
+        targetRotationY += 0.0012;
       }
 
       const combinedTargetY = targetRotationY + parallaxTargetX;
@@ -399,6 +470,11 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
 
       stageGroup.rotation.y = THREE.MathUtils.damp(stageGroup.rotation.y, combinedTargetY, 4, delta);
       stageGroup.rotation.x = THREE.MathUtils.damp(stageGroup.rotation.x, combinedTargetX, 4, delta);
+
+      pulses.forEach((pulse) => {
+        pulse.progress = (pulse.progress + delta * 0.6) % 1.0;
+        pulse.mesh.position.lerpVectors(pulse.p1, pulse.p2, pulse.progress);
+      });
 
       raycaster.setFromCamera(mouse, camera);
       const intersects = raycaster.intersectObjects(cardMeshes.map((b) => b.mesh));
@@ -417,6 +493,9 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
         updateCardTextures(activeIdRef.current, hoveredId);
       }
 
+      activeSpotLight.position.x = THREE.MathUtils.damp(activeSpotLight.position.x, activeItem.mesh.position.x, 6, delta);
+      activeSpotLight.position.z = THREE.MathUtils.damp(activeSpotLight.position.z, activeItem.mesh.position.z, 6, delta);
+
       cardMeshes.forEach((item) => {
         const isActive = item.id === activeIdRef.current;
         const isHovered = item.id === hoveredId;
@@ -430,11 +509,20 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
 
     animId = requestAnimationFrame(animate);
 
-    window.addEventListener("resize", applyResponsiveCamera);
+    const onResize = () => {
+      if (!container) return;
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    };
+
+    window.addEventListener("resize", onResize);
 
     return () => {
       cancelAnimationFrame(animId);
-      window.removeEventListener("resize", applyResponsiveCamera);
+      window.removeEventListener("resize", onResize);
       container.removeEventListener("mousedown", onPointerDown);
       window.removeEventListener("mousemove", onPointerMove);
       window.removeEventListener("mouseup", onPointerUp);

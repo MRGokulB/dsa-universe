@@ -12,9 +12,12 @@ import {
   Binary,
   Network,
   Cpu,
-  Code2
+  Code2,
+  Rotate3d,
+  Crosshair,
+  Grid3X3
 } from "lucide-react";
-import SiliconCrucible3D, { MODULE_SYSTEMS } from "../components/SiliconCrucible3D";
+import SiliconCrucible3D, { MODULE_SYSTEMS, AlgorithmModuleMeta } from "../components/SiliconCrucible3D";
 import { OnboardingTour } from "../components/OnboardingTour";
 
 const SYSTEM_ICONS = {
@@ -26,10 +29,74 @@ const SYSTEM_ICONS = {
   dp: Cpu
 };
 
+function SpotlightBentoCard({ item, IconComp }: { item: AlgorithmModuleMeta; IconComp: any }) {
+  const [mousePos, setMousePos] = useState({ x: -999, y: -999 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <a
+      href={item.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      onMouseMove={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="group relative p-6 rounded-[24px] bg-white border border-black/[0.08] hover:border-black/[0.22] hover:shadow-[0_18px_40px_rgba(0,0,0,0.08)] transition-all flex flex-col justify-between overflow-hidden"
+    >
+      <div
+        className="pointer-events-none absolute -inset-px transition-opacity duration-300 rounded-[24px]"
+        style={{
+          opacity: isHovered ? 1 : 0,
+          background: `radial-gradient(350px circle at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,0.045), transparent 75%)`
+        }}
+      />
+
+      <div className="relative z-10">
+        <div className="flex items-center justify-between mb-4">
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center font-clash font-semibold text-sm transition-transform duration-300 group-hover:scale-105"
+            style={{ backgroundColor: `${item.chipColor}` }}
+          >
+            <IconComp size={18} />
+          </div>
+          <span className="text-[10px] font-mono uppercase text-[#64748b] tracking-wider px-2 py-0.5 rounded-full bg-black/[0.04]">
+            MODULE {item.index}
+          </span>
+        </div>
+
+        <h3 className="font-clash font-semibold text-base text-[#0f172a] mb-1.5 group-hover:text-black transition-colors">
+          {item.name}
+        </h3>
+
+        <p className="text-xs text-[#475569] leading-relaxed mb-4">
+          {item.tagline}
+        </p>
+
+        <div className="py-2 px-3 rounded-lg bg-[#f8f9fa] border border-black/[0.04] text-[11px] font-mono text-[#475569] mb-4 flex items-center justify-between">
+          <span>{item.complexity.split("·")[0].trim()}</span>
+          <span className="text-[10px] text-[#94a3b8]">{item.category}</span>
+        </div>
+      </div>
+
+      <div className="relative z-10 pt-4 border-t border-black/[0.05] flex items-center justify-between text-xs font-semibold text-[#0f172a]">
+        <span>Open Visualizer</span>
+        <ArrowUpRight
+          size={14}
+          className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+        />
+      </div>
+    </a>
+  );
+}
+
 export default function Home() {
   const [activeId, setActiveId] = useState<string>("arrays");
+  const [viewMode, setViewMode] = useState<"orbit" | "focus" | "top">("orbit");
+
   const activeModule = MODULE_SYSTEMS.find((m) => m.id === activeId) || MODULE_SYSTEMS[0];
-  const ActiveIcon = SYSTEM_ICONS[activeModule.id as keyof typeof SYSTEM_ICONS] || Layers;
 
   return (
     <div className="min-h-screen bg-[#fafafb] text-[#0f172a] font-cabinet selection:bg-slate-200 selection:text-black relative overflow-x-hidden">
@@ -95,20 +162,51 @@ export default function Home() {
         </div>
 
         <section className="relative w-full rounded-[32px] bg-gradient-to-b from-white to-[#f4f6fa] border border-black/[0.06] shadow-[0_24px_64px_rgba(0,0,0,0.06)] overflow-hidden mb-24 min-h-[580px] sm:min-h-[660px] lg:min-h-[740px] flex flex-col justify-between p-4 sm:p-6 lg:p-8">
-          <div className="relative z-20 flex items-center justify-between w-full pointer-events-none">
+          <div className="relative z-20 flex flex-wrap items-center justify-between gap-3 w-full">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-black/[0.06] text-[11px] font-mono text-[#475569] shadow-xs">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>COMPUTATIONAL CRUCIBLE &middot; 3D STAGE</span>
             </div>
-            <span className="hidden sm:inline-block text-[11px] font-mono text-[#64748b] bg-white/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-black/[0.06]">
-              6 TACTILE MODULES &middot; 36&deg; VIEW
-            </span>
+
+            <div className="flex items-center gap-1.5 p-1 rounded-full bg-white/90 backdrop-blur-md border border-black/[0.06] shadow-xs text-xs font-mono">
+              <button
+                onClick={() => setViewMode("orbit")}
+                className={`px-2.5 py-1 rounded-full flex items-center gap-1.5 transition-all cursor-pointer ${
+                  viewMode === "orbit" ? "bg-black text-white font-semibold" : "text-[#64748b] hover:text-black"
+                }`}
+              >
+                <Rotate3d size={12} />
+                <span>Orbit</span>
+              </button>
+              <button
+                onClick={() => setViewMode("focus")}
+                className={`px-2.5 py-1 rounded-full flex items-center gap-1.5 transition-all cursor-pointer ${
+                  viewMode === "focus" ? "bg-black text-white font-semibold" : "text-[#64748b] hover:text-black"
+                }`}
+              >
+                <Crosshair size={12} />
+                <span>Focus</span>
+              </button>
+              <button
+                onClick={() => setViewMode("top")}
+                className={`px-2.5 py-1 rounded-full flex items-center gap-1.5 transition-all cursor-pointer ${
+                  viewMode === "top" ? "bg-black text-white font-semibold" : "text-[#64748b] hover:text-black"
+                }`}
+              >
+                <Grid3X3 size={12} />
+                <span>Top</span>
+              </button>
+            </div>
           </div>
 
           <div className="absolute inset-0 z-10 flex items-center justify-center">
             <SiliconCrucible3D
               activeId={activeId}
-              onSelectModule={(id) => setActiveId(id)}
+              viewMode={viewMode}
+              onSelectModule={(id) => {
+                setActiveId(id);
+                setViewMode("focus");
+              }}
             />
           </div>
 
@@ -233,49 +331,12 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {MODULE_SYSTEMS.map((item) => {
               const IconComp = SYSTEM_ICONS[item.id as keyof typeof SYSTEM_ICONS] || Layers;
-
               return (
-                <a
+                <SpotlightBentoCard
                   key={item.id}
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group p-6 rounded-[22px] bg-white border border-black/[0.06] hover:border-black/[0.18] hover:shadow-[0_12px_28px_rgba(0,0,0,0.06)] transition-all flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <div
-                        className="w-9 h-9 rounded-xl flex items-center justify-center font-clash font-semibold text-sm transition-colors"
-                        style={{ backgroundColor: `${item.chipColor}` }}
-                      >
-                        <IconComp size={16} />
-                      </div>
-                      <span className="text-[10px] font-mono uppercase text-[#64748b]">
-                        MODULE {item.index}
-                      </span>
-                    </div>
-
-                    <h3 className="font-clash font-semibold text-base text-[#0f172a] mb-1.5 group-hover:text-black">
-                      {item.name}
-                    </h3>
-
-                    <p className="text-xs text-[#475569] leading-relaxed mb-4">
-                      {item.tagline}
-                    </p>
-
-                    <div className="py-2 px-3 rounded-lg bg-[#f8f9fa] border border-black/[0.04] text-[11px] font-mono text-[#475569] mb-4">
-                      {item.complexity}
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t border-black/[0.05] flex items-center justify-between text-xs font-semibold text-[#0f172a]">
-                    <span>Open Visualizer</span>
-                    <ArrowUpRight
-                      size={14}
-                      className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
-                    />
-                  </div>
-                </a>
+                  item={item}
+                  IconComp={IconComp}
+                />
               );
             })}
           </div>
