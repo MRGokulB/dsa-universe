@@ -113,6 +113,13 @@ export default function Home() {
     <div className="min-h-screen bg-[#f3f4f7] text-[#0f172a] font-cabinet selection:bg-emerald-100 selection:text-black relative overflow-x-hidden">
       <OnboardingTour />
 
+      <a
+        href="#main-visualizer"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 px-4 py-2 bg-emerald-600 text-white rounded-lg shadow-lg text-xs font-mono font-bold"
+      >
+        Skip to visualizer
+      </a>
+
       <header className="sticky top-0 z-50 border-b border-black/[0.08] bg-[#f3f4f7]/95 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 h-18 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -163,7 +170,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-8 pt-8 sm:pt-10 pb-28 relative z-10">
+      <main id="main-visualizer" className="max-w-7xl mx-auto px-4 sm:px-8 pt-8 sm:pt-10 pb-28 relative z-10">
         <section className="mb-10">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-4">
             <div>
@@ -194,7 +201,7 @@ export default function Home() {
                   <button
                     key={mod.id}
                     onClick={() => setActiveId(mod.id)}
-                    className={`skeuo-channel-key px-3.5 py-2 rounded-xl text-xs font-clash font-bold flex items-center gap-2 cursor-pointer ${
+                    className={`skeuo-channel-key px-4 py-2.5 min-h-[44px] rounded-xl text-xs font-clash font-bold flex items-center gap-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none ${
                       isSelected ? "active" : ""
                     }`}
                   >

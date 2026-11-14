@@ -252,7 +252,7 @@ function ArraysHardwareSim() {
 
       <button
         onClick={advance}
-        className="w-full py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:translate-y-0.5"
+        className="w-full py-2.5 px-3 min-h-[44px] rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:translate-y-0.5 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
       >
         <Play size={12} />
         <span>Step Pointers [ i={left}, j={right} ]</span>
@@ -299,7 +299,7 @@ function ListsHardwareSim() {
 
       <button
         onClick={() => setCurr((c) => (c + 1) % nodes.length)}
-        className="w-full py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:translate-y-0.5"
+        className="w-full py-2.5 px-3 min-h-[44px] rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:translate-y-0.5 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none"
       >
         <Play size={12} />
         <span>Dereference Next Pointer &rarr; Node {nodes[(curr + 1) % nodes.length].id}</span>
@@ -344,7 +344,7 @@ function StacksHardwareSim() {
 
       <button
         onClick={pushFrame}
-        className="w-full py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:translate-y-0.5"
+        className="w-full py-2.5 px-3 min-h-[44px] rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:translate-y-0.5 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
       >
         <Play size={12} />
         <span>{frames.length >= 5 ? "Purge Stack Frame (Return)" : "Push New Stack Frame"}</span>
@@ -375,7 +375,7 @@ function TreesHardwareSim() {
 
       <button
         onClick={() => setStep((s) => s + 1)}
-        className="w-full py-2 px-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:translate-y-0.5"
+        className="w-full py-2.5 px-3 min-h-[44px] rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:translate-y-0.5 focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:outline-none"
       >
         <Play size={12} />
         <span>Traverse BST Branch</span>
@@ -402,7 +402,7 @@ function GraphsHardwareSim() {
 
       <button
         onClick={() => setStep((s) => s + 1)}
-        className="w-full py-2 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:translate-y-0.5"
+        className="w-full py-2.5 px-3 min-h-[44px] rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:translate-y-0.5 focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:outline-none"
       >
         <Play size={12} />
         <span>Relax Next Adjacent Edge</span>
@@ -442,7 +442,7 @@ function DpHardwareSim() {
 
       <button
         onClick={() => setIdx((i) => (i < 6 ? i + 1 : 2))}
-        className="w-full py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:translate-y-0.5"
+        className="w-full py-2.5 px-3 min-h-[44px] rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:translate-y-0.5 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
       >
         <Play size={12} />
         <span>Calculate Tabulation dp[{idx < 6 ? idx + 1 : 2}]</span>
@@ -485,7 +485,7 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
               <button
                 key={s}
                 onClick={() => setNScale(s)}
-                className={`px-2.5 py-0.5 rounded text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 min-h-[36px] rounded-lg text-xs font-mono font-bold transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none ${
                   nScale === s
                     ? "bg-emerald-500 text-black shadow-[0_0_8px_#10b981]"
                     : "bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-700"
@@ -538,7 +538,7 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
                 href={activeModule.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 rounded-xl bg-zinc-900 hover:bg-black !text-white font-mono text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm active:translate-y-0.5"
+                className="px-4 py-2.5 min-h-[40px] rounded-xl bg-zinc-900 hover:bg-black !text-white font-mono text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm active:translate-y-0.5 focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:outline-none"
               >
                 <span className="!text-white font-bold">Full Workbench ↗</span>
               </a>
