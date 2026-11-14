@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowUpRight,
   Sparkles,
+  ArrowUpRight,
   Layers,
   LayoutList,
   Database,
@@ -13,9 +13,7 @@ import {
   Network,
   Cpu,
   Code2,
-  Rotate3d,
-  Crosshair,
-  Grid3X3
+  RotateCcw
 } from "lucide-react";
 import SiliconCrucible3D, { MODULE_SYSTEMS, AlgorithmModuleMeta } from "../components/SiliconCrucible3D";
 import { OnboardingTour } from "../components/OnboardingTour";
@@ -28,6 +26,19 @@ const SYSTEM_ICONS = {
   graphs: Network,
   dp: Cpu
 };
+
+const DSA_TAG_CHIPS = [
+  { label: "O(1)", modId: "arrays" },
+  { label: "CacheLines", modId: "arrays" },
+  { label: "Pointers", modId: "linked-lists" },
+  { label: "FloydCycle", modId: "linked-lists" },
+  { label: "RSPStack", modId: "stacks-queues" },
+  { label: "RingBuffer", modId: "stacks-queues" },
+  { label: "BST", modId: "trees" },
+  { label: "Dijkstra", modId: "graphs" },
+  { label: "Lattice", modId: "dp" },
+  { label: "Tabulation", modId: "dp" }
+];
 
 function SpotlightBentoCard({ item, IconComp }: { item: AlgorithmModuleMeta; IconComp: any }) {
   const [mousePos, setMousePos] = useState({ x: -999, y: -999 });
@@ -50,7 +61,7 @@ function SpotlightBentoCard({ item, IconComp }: { item: AlgorithmModuleMeta; Ico
         className="pointer-events-none absolute -inset-px transition-opacity duration-300 rounded-[24px]"
         style={{
           opacity: isHovered ? 1 : 0,
-          background: `radial-gradient(350px circle at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,0.045), transparent 75%)`
+          background: `radial-gradient(350px circle at ${mousePos.x}px ${mousePos.y}px, rgba(56,189,248,0.08), transparent 75%)`
         }}
       />
 
@@ -76,7 +87,7 @@ function SpotlightBentoCard({ item, IconComp }: { item: AlgorithmModuleMeta; Ico
         </p>
 
         <div className="py-2 px-3 rounded-lg bg-[#f8f9fa] border border-black/[0.04] text-[11px] font-mono text-[#475569] mb-4 flex items-center justify-between">
-          <span>{item.complexity.split("·")[0].trim()}</span>
+          <span className="truncate">{item.complexity.split("·")[0].trim()}</span>
           <span className="text-[10px] text-[#94a3b8]">{item.category}</span>
         </div>
       </div>
@@ -94,15 +105,16 @@ function SpotlightBentoCard({ item, IconComp }: { item: AlgorithmModuleMeta; Ico
 
 export default function Home() {
   const [activeId, setActiveId] = useState<string>("arrays");
-  const [viewMode, setViewMode] = useState<"orbit" | "focus" | "top">("orbit");
 
-  const activeModule = MODULE_SYSTEMS.find((m) => m.id === activeId) || MODULE_SYSTEMS[0];
+  const activeModule = useMemo<AlgorithmModuleMeta>(() => {
+    return MODULE_SYSTEMS.find((m) => m.id === activeId) || MODULE_SYSTEMS[0];
+  }, [activeId]);
 
   return (
-    <div className="min-h-screen bg-[#fafafb] text-[#0f172a] font-cabinet selection:bg-slate-200 selection:text-black relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#fafafb] text-[#0f172a] font-cabinet selection:bg-sky-100 selection:text-black relative overflow-x-hidden">
       <OnboardingTour />
 
-      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_60%_at_50%_15%,rgba(241,245,249,0.9),transparent_75%)]" />
+      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_60%_at_50%_15%,rgba(241,245,249,0.95),transparent_75%)]" />
 
       <header className="sticky top-0 z-50 border-b border-black/[0.06] bg-[#fafafb]/90 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 h-18 flex items-center justify-between">
@@ -144,10 +156,13 @@ export default function Home() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-8 pt-8 sm:pt-10 pb-28 relative z-10">
-        <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-10 px-2">
-          <span className="inline-block text-[11px] font-mono tracking-widest text-[#64748b] uppercase mb-2 sm:mb-3">
-            INTERACTIVE ALGORITHM STUDIO &middot; 2026
-          </span>
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10 px-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-black/[0.08] shadow-xs mb-3">
+            <span className="w-2 h-2 rounded-full bg-[#38b6ff]" />
+            <span className="text-[11px] font-mono tracking-widest text-[#0f172a] uppercase font-semibold">
+              ALGORITHM HARDWARE ARCHITECTURE WORKBENCH &middot; 2026
+            </span>
+          </div>
 
           <h1 className="font-clash font-semibold text-[#0f172a] tracking-tight leading-[1.08] text-center text-3xl sm:text-5xl md:text-6xl">
             Algorithms in Silicon. <br />
@@ -156,157 +171,196 @@ export default function Home() {
             </span>
           </h1>
 
-          <p className="text-xs sm:text-base text-[#475569] max-w-lg mx-auto mt-3 sm:mt-4 font-normal leading-relaxed">
-            Orbit the tactile 3D topic cards. Examine contiguous cache lines, heap node mutations, and call stack frames across 6 dedicated visualizers.
+          <p className="text-xs sm:text-base text-[#475569] max-w-xl mx-auto mt-3 sm:mt-4 font-normal leading-relaxed">
+            Interactive memory architecture workbench. Inspect contiguous cache line strides, heap pointer dereferences, recursive call stack frames, and dynamic programming tabulation across 6 dedicated visualizers.
           </p>
         </div>
 
-        <section className="relative w-full rounded-[32px] bg-gradient-to-b from-white to-[#f4f6fa] border border-black/[0.06] shadow-[0_24px_64px_rgba(0,0,0,0.06)] overflow-hidden mb-24 min-h-[580px] sm:min-h-[660px] lg:min-h-[740px] flex flex-col justify-between p-4 sm:p-6 lg:p-8">
-          <div className="relative z-20 flex flex-wrap items-center justify-between gap-3 w-full">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-black/[0.06] text-[11px] font-mono text-[#475569] shadow-xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>COMPUTATIONAL CRUCIBLE &middot; 3D STAGE</span>
-            </div>
-
-            <div className="flex items-center gap-1.5 p-1 rounded-full bg-white/90 backdrop-blur-md border border-black/[0.06] shadow-xs text-xs font-mono">
-              <button
-                onClick={() => setViewMode("orbit")}
-                className={`px-2.5 py-1 rounded-full flex items-center gap-1.5 transition-all cursor-pointer ${
-                  viewMode === "orbit" ? "bg-black text-white font-semibold" : "text-[#64748b] hover:text-black"
-                }`}
-              >
-                <Rotate3d size={12} />
-                <span>Orbit</span>
-              </button>
-              <button
-                onClick={() => setViewMode("focus")}
-                className={`px-2.5 py-1 rounded-full flex items-center gap-1.5 transition-all cursor-pointer ${
-                  viewMode === "focus" ? "bg-black text-white font-semibold" : "text-[#64748b] hover:text-black"
-                }`}
-              >
-                <Crosshair size={12} />
-                <span>Focus</span>
-              </button>
-              <button
-                onClick={() => setViewMode("top")}
-                className={`px-2.5 py-1 rounded-full flex items-center gap-1.5 transition-all cursor-pointer ${
-                  viewMode === "top" ? "bg-black text-white font-semibold" : "text-[#64748b] hover:text-black"
-                }`}
-              >
-                <Grid3X3 size={12} />
-                <span>Top</span>
-              </button>
-            </div>
+        <section className="relative w-full rounded-[36px] bg-gradient-to-b from-white to-[#f4f6fa] border border-black/[0.08] shadow-[0_24px_64px_rgba(0,0,0,0.06)] overflow-hidden mb-24 p-4 sm:p-6 lg:p-8">
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden z-0 select-none">
+            <span className="font-clash font-bold text-[15vw] sm:text-[13vw] tracking-tighter text-black/[0.038] uppercase leading-none whitespace-nowrap">
+              ALGORITHMS
+            </span>
           </div>
 
-          <div className="absolute inset-0 z-10 flex items-center justify-center">
-            <SiliconCrucible3D
-              activeId={activeId}
-              viewMode={viewMode}
-              onSelectModule={(id) => {
-                setActiveId(id);
-                setViewMode("focus");
-              }}
-            />
-          </div>
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-end">
+            <div className="lg:col-span-3 order-2 lg:order-1 flex flex-col justify-end">
+              <div className="p-4 sm:p-5 rounded-[24px] bg-white/95 backdrop-blur-xl border border-black/[0.08] shadow-[0_12px_32px_rgba(0,0,0,0.06)]">
+                <div className="flex items-center justify-between mb-3 px-1">
+                  <span className="text-[11px] font-mono tracking-wider text-[#64748b] uppercase">
+                    CHOOSE A SYSTEM
+                  </span>
+                  <span className="text-[10px] font-mono text-sky-600 font-semibold">
+                    6 SYSTEMS
+                  </span>
+                </div>
 
-          <div className="relative z-20 w-full flex flex-col lg:flex-row items-end lg:items-end justify-between gap-4 pointer-events-none mt-auto">
-            <div className="w-full lg:w-auto pointer-events-auto flex flex-col items-start gap-2">
-              <div className="flex items-center gap-1 sm:gap-1.5 p-1.5 rounded-2xl bg-white/90 backdrop-blur-xl border border-black/[0.08] shadow-[0_12px_28px_rgba(0,0,0,0.06)] overflow-x-auto no-scrollbar max-w-full">
-                {MODULE_SYSTEMS.map((mod) => {
-                  const isSelected = activeId === mod.id;
-                  return (
-                    <button
-                      key={mod.id}
-                      onClick={() => setActiveId(mod.id)}
-                      className="relative px-3.5 py-1.5 rounded-xl text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 z-10"
-                    >
-                      {isSelected && (
-                        <motion.div
-                          layoutId="dsa-active-pill"
-                          transition={{ type: "spring", stiffness: 450, damping: 35 }}
-                          className="absolute inset-0 bg-black rounded-xl -z-10 shadow-xs"
-                        />
-                      )}
-                      <span
-                        className="w-2 h-2 rounded-full shrink-0"
-                        style={{ backgroundColor: mod.chipColor }}
-                      />
-                      <span className={isSelected ? "text-white font-semibold" : "text-[#475569] hover:text-black"}>
-                        {mod.shortTitle}
-                      </span>
-                    </button>
-                  );
-                })}
+                <div className="flex flex-col gap-1.5 max-h-[380px] overflow-y-auto no-scrollbar pr-0.5">
+                  {MODULE_SYSTEMS.map((mod) => {
+                    const isSelected = activeId === mod.id;
+                    const IconComp = SYSTEM_ICONS[mod.id as keyof typeof SYSTEM_ICONS] || Layers;
+
+                    return (
+                      <button
+                        key={mod.id}
+                        onClick={() => setActiveId(mod.id)}
+                        className={`w-full text-left p-2.5 rounded-xl transition-all cursor-pointer flex items-center justify-between border ${
+                          isSelected
+                            ? "bg-[#0f172a] text-white border-[#0f172a] shadow-xs"
+                            : "bg-[#f8f9fa] text-[#0f172a] border-black/[0.04] hover:bg-white hover:border-black/[0.12]"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div
+                            className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs shrink-0 transition-colors ${
+                              isSelected ? "bg-white text-black" : "text-black"
+                            }`}
+                            style={{ backgroundColor: isSelected ? "#ffffff" : mod.chipColor }}
+                          >
+                            <IconComp size={14} />
+                          </div>
+
+                          <div className="min-w-0 flex-1">
+                            <span className="block text-xs font-semibold font-clash leading-snug">
+                              {mod.name}
+                            </span>
+                            <span
+                              className={`block text-[10px] font-mono ${
+                                isSelected ? "text-slate-300" : "text-[#64748b]"
+                              }`}
+                            >
+                              {mod.category}
+                            </span>
+                          </div>
+                        </div>
+
+                        {isSelected && (
+                          <div className="w-2 h-2 rounded-full bg-sky-400 shrink-0 ml-1.5 shadow-[0_0_8px_#38b6ff]" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-
-              <span className="text-[10px] sm:text-[11px] text-[#64748b] font-mono tracking-wide px-1">
-                ::: Drag stage to orbit &middot; Click any card to inspect
-              </span>
             </div>
 
-            <div className="w-full sm:max-w-md pointer-events-auto">
+            <div className="lg:col-span-6 order-1 lg:order-2 flex flex-col items-center justify-center">
+              <SiliconCrucible3D
+                activeId={activeId}
+                onSelectModule={(id) => setActiveId(id)}
+              />
+            </div>
+
+            <div className="lg:col-span-3 order-3 flex flex-col justify-end">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeId}
-                  initial={{ opacity: 0, y: 16, scale: 0.97 }}
+                  initial={{ opacity: 0, y: 14, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 12, scale: 0.97 }}
-                  transition={{ type: "spring", stiffness: 350, damping: 28 }}
-                  className="rounded-[24px] bg-white/92 backdrop-blur-xl border border-black/[0.08] p-5 sm:p-6 shadow-[0_16px_40px_rgba(0,0,0,0.08)]"
+                  exit={{ opacity: 0, y: -10, scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  className="rounded-[24px] bg-white/95 backdrop-blur-xl border border-black/[0.08] p-5 sm:p-6 shadow-[0_16px_40px_rgba(0,0,0,0.06)] flex flex-col gap-4"
                 >
-                  <div className="flex items-center justify-between mb-3.5">
-                    <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider bg-black/[0.05] text-[#0f172a] font-semibold">
-                        SYSTEM {activeModule.index}
-                      </span>
-                      <span className="text-xs text-[#64748b] font-mono">
-                        {activeModule.category}
-                      </span>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider bg-black/[0.06] text-[#0f172a] font-semibold">
+                          SYSTEM {activeModule.index}
+                        </span>
+                        <span className="text-xs text-[#64748b] font-mono">
+                          {activeModule.category}
+                        </span>
+                      </div>
+                      <div
+                        className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor]"
+                        style={{ backgroundColor: activeModule.accent, color: activeModule.accent }}
+                      />
                     </div>
-                    <div
-                      className="w-3 h-3 rounded-full border border-black/15 shadow-xs"
-                      style={{ backgroundColor: activeModule.chipColor }}
-                    />
+
+                    <h2 className="font-clash font-bold text-lg text-[#0f172a] leading-tight mb-1">
+                      {activeModule.name}
+                    </h2>
+
+                    <p className="text-xs text-[#475569] leading-relaxed">
+                      {activeModule.tagline}
+                    </p>
                   </div>
 
-                  <h2 className="font-clash font-bold text-lg sm:text-xl text-[#0f172a] mb-1 leading-tight">
-                    {activeModule.name}
-                  </h2>
-
-                  <p className="text-xs text-[#475569] leading-relaxed mb-4 font-normal">
-                    {activeModule.tagline}
-                  </p>
-
-                  <div className="grid grid-cols-2 gap-2.5 pt-3.5 border-t border-black/[0.06] mb-4">
+                  <div className="space-y-2 pt-3 border-t border-black/[0.06]">
                     <div>
                       <span className="text-[10px] font-mono uppercase text-[#64748b] block mb-0.5">
-                        COMPLEXITY
+                        ASYMPTOTIC COMPLEXITY
                       </span>
                       <span className="text-xs font-mono font-semibold text-[#0f172a]">
-                        {activeModule.complexity.split("·")[0].trim()}
+                        {activeModule.complexity}
                       </span>
                     </div>
 
                     <div>
                       <span className="text-[10px] font-mono uppercase text-[#64748b] block mb-0.5">
-                        TOPOLOGY
+                        MEMORY TOPOLOGY
                       </span>
-                      <span className="text-xs font-mono font-medium text-[#0f172a] truncate block">
-                        {activeModule.memory.split(" ")[0]}
+                      <span className="text-xs font-mono font-medium text-[#0f172a]">
+                        {activeModule.memory}
                       </span>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] font-mono uppercase text-[#64748b] block mb-1">
+                        SCHEMATIC INVARIANT
+                      </span>
+                      <div className="py-2 px-3 rounded-xl bg-[#0b0c10] text-sky-300 font-mono text-[11px] border border-black/10 overflow-x-auto no-scrollbar">
+                        {activeModule.glyph}
+                      </div>
                     </div>
                   </div>
 
-                  <a
-                    href={activeModule.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-clash font-semibold bg-[#0f172a] !text-white hover:bg-black transition-all cursor-pointer shadow-sm"
-                  >
-                    <span className="!text-white">Launch {activeModule.name}</span>
-                    <ArrowUpRight size={14} className="!text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                  </a>
+                  <div className="flex flex-col gap-2.5 pt-2">
+                    <a
+                      href={activeModule.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="keycap-btn-black w-full text-xs px-4 flex items-center justify-between"
+                    >
+                      <span>Launch {activeModule.shortTitle}</span>
+                      <div className="flex items-center gap-1.5">
+                        <ArrowUpRight size={14} />
+                        <span className="text-[10px] opacity-60 font-mono">⏎</span>
+                      </div>
+                    </a>
+
+                    <button
+                      onClick={() => setActiveId("arrays")}
+                      className="keycap-btn-white w-full text-xs px-4 flex items-center justify-between"
+                    >
+                      <div className="flex items-center gap-2">
+                        <RotateCcw size={13} />
+                        <span>Reset To Arrays</span>
+                      </div>
+                      <span className="text-[10px] opacity-60 font-mono">↺</span>
+                    </button>
+                  </div>
+
+                  <div className="pt-2 border-t border-black/[0.05]">
+                    <span className="text-[10px] font-mono uppercase text-[#94a3b8] block mb-1.5">
+                      INTERACTIVE HOTKEYS
+                    </span>
+                    <div className="flex flex-wrap gap-1">
+                      {DSA_TAG_CHIPS.map((chip, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setActiveId(chip.modId)}
+                          className={`px-2 py-0.5 rounded-md text-[10px] font-mono transition-all cursor-pointer ${
+                            activeId === chip.modId
+                              ? "bg-sky-400 text-black font-semibold shadow-xs"
+                              : "bg-[#f1f3f7] text-[#475569] hover:bg-slate-200"
+                          }`}
+                        >
+                          {chip.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -351,7 +405,7 @@ export default function Home() {
               DSA UNIVERSE
             </span>
           </div>
-          <div>Bespoke Architectural Experience &middot; 2026</div>
+          <div>Bespoke Kinetic Architectural Experience &middot; 2026</div>
         </div>
       </footer>
     </div>

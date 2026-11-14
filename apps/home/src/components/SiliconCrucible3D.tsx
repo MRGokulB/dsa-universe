@@ -1,7 +1,20 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import * as THREE from "three";
+import { useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Layers,
+  LayoutList,
+  Database,
+  Binary,
+  Network,
+  Cpu,
+  Sparkles,
+  ArrowRight,
+  CheckCircle2,
+  Play,
+  RotateCcw
+} from "lucide-react";
 
 export interface AlgorithmModuleMeta {
   id: string;
@@ -99,450 +112,467 @@ export const MODULE_SYSTEMS: AlgorithmModuleMeta[] = [
     url: "https://dp-sigma-one.vercel.app",
     accent: "#4f46e5",
     chipColor: "#c7d2fe",
-    complexity: "Pseudo-polynomial O(N * W)",
+    complexity: "Subproblems O(N) · Space O(1)",
     memory: "Contiguous DP Memoization Cache",
-    glyph: "dp[i][w] = max(dp[i-1], val)"
+    glyph: "memo[i] = min(cost + memo[i-1])"
   }
 ];
 
-function createTactileCardCanvas(mod: AlgorithmModuleMeta, isSelected: boolean, isHovered: boolean): HTMLCanvasElement {
-  const canvas = document.createElement("canvas");
-  canvas.width = 1024;
-  canvas.height = 1024;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return canvas;
+function ArraysMemoryWidget() {
+  const [left, setLeft] = useState(0);
+  const [right, setRight] = useState(4);
 
-  ctx.fillStyle = mod.chipColor;
-  ctx.fillRect(0, 0, 1024, 1024);
+  const cells = [
+    { addr: "0x00", val: 12 },
+    { addr: "0x08", val: 24 },
+    { addr: "0x10", val: 36 },
+    { addr: "0x18", val: 48 },
+    { addr: "0x20", val: 60 }
+  ];
 
-  ctx.lineWidth = isSelected ? 24 : 12;
-  ctx.strokeStyle = isSelected ? "#0f172a" : isHovered ? "rgba(15, 23, 42, 0.45)" : "rgba(15, 23, 42, 0.18)";
-  ctx.strokeRect(18, 18, 988, 988);
+  const advancePointers = () => {
+    if (left < right) {
+      setLeft((l) => l + 1);
+    } else {
+      setLeft(0);
+      setRight(4);
+    }
+  };
 
-  ctx.fillStyle = "#0f172a";
-  ctx.font = "bold 60px sans-serif";
-  ctx.fillText(mod.index, 70, 130);
+  return (
+    <div className="w-full flex flex-col gap-3 font-mono text-xs">
+      <div className="p-3.5 rounded-2xl bg-white border border-black/[0.08] shadow-xs">
+        <div className="flex items-center justify-between mb-2.5">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-sky-700 bg-sky-50 px-2 py-0.5 rounded-md">
+            CONTIGUOUS 64-BIT CACHE LINE MEMORY
+          </span>
+          <span className="text-[10px] text-sky-600 font-semibold">Stride: 8 Bytes</span>
+        </div>
 
-  ctx.fillStyle = "rgba(15, 23, 42, 0.65)";
-  ctx.font = "bold 32px monospace";
-  ctx.fillText(mod.category.toUpperCase(), 70, 195);
+        <div className="grid grid-cols-5 gap-2 mb-3">
+          {cells.map((cell, idx) => {
+            const isLeft = left === idx;
+            const isRight = right === idx;
+            return (
+              <div
+                key={idx}
+                className={`p-2 rounded-xl text-center border transition-all ${
+                  isLeft || isRight
+                    ? "bg-sky-100/70 border-sky-400 shadow-xs"
+                    : "bg-[#f8f9fc] border-black/[0.04]"
+                }`}
+              >
+                <div className="text-[9px] text-[#94a3b8]">{cell.addr}</div>
+                <div className="font-bold text-sm text-[#0f172a] my-0.5">{cell.val}</div>
+                <div className="text-[8px] font-bold">
+                  {isLeft && isRight ? (
+                    <span className="text-amber-600">Match!</span>
+                  ) : isLeft ? (
+                    <span className="text-sky-600">&larr; Left (i)</span>
+                  ) : isRight ? (
+                    <span className="text-indigo-600">Right (j) &rarr;</span>
+                  ) : (
+                    <span className="text-transparent">-</span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
-  ctx.fillStyle = isSelected ? "#0f172a" : "rgba(15, 23, 42, 0.25)";
-  ctx.fillRect(860, 70, 72, 36);
-  ctx.fillStyle = "#d97706";
-  ctx.fillRect(868, 78, 56, 20);
+        <div className="flex items-center justify-between pt-2 border-t border-black/[0.05]">
+          <span className="text-[10px] text-[#64748b]">
+            Direct pointer arithmetic: base + (index &times; 8) &rarr; O(1) Cache Hit
+          </span>
+          <button
+            onClick={advancePointers}
+            className="px-2.5 py-1 rounded-lg bg-sky-600 text-white font-semibold text-[11px] hover:bg-sky-700 transition-colors cursor-pointer"
+          >
+            Advance Pointers
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-  ctx.fillStyle = "#0f172a";
-  ctx.font = "bold 112px sans-serif";
-  ctx.fillText(mod.shortTitle, 70, 500);
+function LinkedListWidget() {
+  const [fastPos, setFastPos] = useState(1);
 
-  ctx.fillStyle = "rgba(15, 23, 42, 0.75)";
-  ctx.font = "bold 38px monospace";
-  ctx.fillText(mod.glyph, 70, 595);
+  const nodes = [
+    { addr: "0x3F", val: "A" },
+    { addr: "0x8A", val: "B" },
+    { addr: "0xC2", val: "C" },
+    { addr: "0xFA", val: "D" }
+  ];
 
-  ctx.fillStyle = "rgba(15, 23, 42, 0.55)";
-  ctx.font = "500 40px monospace";
-  ctx.fillText(mod.complexity.split("·")[0].trim(), 70, 705);
+  return (
+    <div className="w-full flex flex-col gap-3 font-mono text-xs">
+      <div className="p-3.5 rounded-2xl bg-white border border-black/[0.08] shadow-xs">
+        <div className="flex items-center justify-between mb-2.5">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md">
+            HEAP POINTER CHAIN &middot; FLOYD CYCLE DETECTION
+          </span>
+          <span className="text-[10px] text-purple-600 font-semibold">Torque: Slow (1x) vs Fast (2x)</span>
+        </div>
 
-  ctx.fillStyle = "rgba(15, 23, 42, 0.12)";
-  ctx.fillRect(70, 830, 884, 4);
+        <div className="flex items-center justify-between gap-1 overflow-x-auto no-scrollbar py-2">
+          {nodes.map((node, idx) => (
+            <div key={idx} className="flex items-center gap-1 shrink-0">
+              <div
+                className={`p-2 rounded-xl border text-center min-w-[70px] ${
+                  fastPos === idx ? "bg-purple-100/70 border-purple-400" : "bg-[#f8f9fc] border-black/[0.04]"
+                }`}
+              >
+                <div className="text-[8px] text-[#94a3b8]">{node.addr}</div>
+                <div className="font-bold text-sm text-[#0f172a]">{node.val}</div>
+                <div className="text-[8px] text-purple-600">
+                  {fastPos === idx ? "Fast &bull;" : "next &rarr;"}
+                </div>
+              </div>
+              {idx < nodes.length - 1 && <ArrowRight size={12} className="text-purple-400 shrink-0" />}
+            </div>
+          ))}
+        </div>
 
-  ctx.fillStyle = "rgba(15, 23, 42, 0.4)";
-  ctx.font = "bold 32px monospace";
-  ctx.fillText("DSA · LAB SPEC 2026", 70, 910);
+        <div className="flex items-center justify-between pt-2 border-t border-black/[0.05]">
+          <span className="text-[10px] text-[#64748b]">Heap allocated nodes connected via 64-bit pointers</span>
+          <button
+            onClick={() => setFastPos((p) => (p < nodes.length - 1 ? p + 1 : 0))}
+            className="px-2.5 py-1 rounded-lg bg-purple-600 text-white font-semibold text-[11px] hover:bg-purple-700 transition-colors cursor-pointer"
+          >
+            Step Fast Pointer
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-  return canvas;
+function StacksQueuesWidget() {
+  const [frames, setFrames] = useState(["solve()", "dfs(node)", "main()"]);
+
+  const pushFrame = () => {
+    if (frames.length < 5) {
+      setFrames(["helper(" + frames.length + ")", ...frames]);
+    }
+  };
+
+  const popFrame = () => {
+    if (frames.length > 1) {
+      setFrames(frames.slice(1));
+    }
+  };
+
+  return (
+    <div className="w-full flex flex-col gap-3 font-mono text-xs">
+      <div className="p-3.5 rounded-2xl bg-white border border-black/[0.08] shadow-xs">
+        <div className="flex items-center justify-between mb-2.5">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
+            LIFO CALL STACK &middot; RSP REGISTER
+          </span>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={pushFrame}
+              className="px-2 py-0.5 rounded bg-emerald-600 text-white font-semibold text-[10px] hover:bg-emerald-700 cursor-pointer"
+            >
+              + Push
+            </button>
+            <button
+              onClick={popFrame}
+              className="px-2 py-0.5 rounded bg-[#0f172a] text-white font-semibold text-[10px] hover:bg-black cursor-pointer"
+            >
+              - Pop
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-1">
+          {frames.map((frame, idx) => (
+            <div
+              key={idx}
+              className={`p-1.5 rounded-lg border flex items-center justify-between ${
+                idx === 0 ? "bg-emerald-100/70 border-emerald-400 font-bold" : "bg-[#f8f9fc] border-black/[0.04]"
+              }`}
+            >
+              <span className="text-[11px] text-[#0f172a]">{frame}</span>
+              <span className="text-[9px] text-emerald-700">
+                {idx === 0 ? "RSP &rarr; Top of Stack" : `Frame -${idx * 16}`}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-[10px] text-[#64748b] bg-[#f8f9fc] p-2 rounded-xl mt-2 flex items-center justify-between">
+          <span>Stack frames allocate O(1) by decrementing the stack pointer (RSP)</span>
+          <span className="font-semibold text-emerald-600">Frames: {frames.length}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TreesWidget() {
+  const [traversal, setTraversal] = useState("IN-ORDER");
+
+  return (
+    <div className="w-full flex flex-col gap-3 font-mono text-xs">
+      <div className="p-3.5 rounded-2xl bg-white border border-black/[0.08] shadow-xs">
+        <div className="flex items-center justify-between mb-2.5">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md">
+            BINARY SEARCH TREE TOPOLOGY
+          </span>
+          <span className="text-[10px] text-amber-700 font-bold">{traversal}</span>
+        </div>
+
+        <div className="p-3 rounded-xl bg-[#f8f9fc] border border-black/[0.04] flex flex-col items-center gap-2">
+          <div className="w-9 h-9 rounded-full bg-amber-400 text-black font-bold flex items-center justify-center text-xs shadow-xs">
+            50
+          </div>
+          <div className="flex items-center gap-12 sm:gap-20">
+            <div className="w-8 h-8 rounded-full bg-amber-200 text-black font-bold flex items-center justify-center text-xs">
+              25
+            </div>
+            <div className="w-8 h-8 rounded-full bg-amber-200 text-black font-bold flex items-center justify-center text-xs">
+              75
+            </div>
+          </div>
+          <div className="flex items-center gap-4 sm:gap-8">
+            <div className="w-7 h-7 rounded-full bg-amber-100 text-[#0f172a] font-semibold flex items-center justify-center text-[10px]">
+              12
+            </div>
+            <div className="w-7 h-7 rounded-full bg-amber-100 text-[#0f172a] font-semibold flex items-center justify-center text-[10px]">
+              35
+            </div>
+            <div className="w-7 h-7 rounded-full bg-amber-100 text-[#0f172a] font-semibold flex items-center justify-center text-[10px]">
+              65
+            </div>
+            <div className="w-7 h-7 rounded-full bg-amber-100 text-[#0f172a] font-semibold flex items-center justify-center text-[10px]">
+              90
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between pt-2 border-t border-black/[0.05]">
+          <span className="text-[10px] text-[#64748b]">Balanced search invariant: Left &lt; Root &lt; Right</span>
+          <div className="flex gap-1">
+            {["IN-ORDER", "PRE-ORDER", "LEVEL"].map((m) => (
+              <button
+                key={m}
+                onClick={() => setTraversal(m)}
+                className={`px-2 py-0.5 rounded text-[10px] font-semibold transition-all cursor-pointer ${
+                  traversal === m ? "bg-amber-500 text-white shadow-xs" : "bg-slate-100 text-[#475569]"
+                }`}
+              >
+                {m}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GraphsWidget() {
+  const [visitedCount, setVisitedCount] = useState(2);
+
+  const graphNodes = [
+    { id: "A", dist: "0" },
+    { id: "B", dist: "4" },
+    { id: "C", dist: "2" },
+    { id: "D", dist: "5" }
+  ];
+
+  return (
+    <div className="w-full flex flex-col gap-3 font-mono text-xs">
+      <div className="p-3.5 rounded-2xl bg-white border border-black/[0.08] shadow-xs">
+        <div className="flex items-center justify-between mb-2.5">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md">
+            DIJKSTRA SHORTEST PATH PRIORITY QUEUE
+          </span>
+          <span className="text-[10px] text-rose-600 font-semibold">Min-Heap Greedy</span>
+        </div>
+
+        <div className="grid grid-cols-4 gap-2 mb-2">
+          {graphNodes.map((node, idx) => {
+            const isVisited = idx < visitedCount;
+            return (
+              <div
+                key={node.id}
+                className={`p-2 rounded-xl text-center border transition-all ${
+                  isVisited ? "bg-rose-100/70 border-rose-400" : "bg-[#f8f9fc] border-black/[0.04]"
+                }`}
+              >
+                <div className="font-bold text-sm text-[#0f172a]">Node {node.id}</div>
+                <div className="text-[10px] text-rose-700">dist = {node.dist}</div>
+                <div className="text-[8px] text-[#64748b]">{isVisited ? "Settled" : "Queue"}</div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="flex items-center justify-between pt-2 border-t border-black/[0.05]">
+          <span className="text-[10px] text-[#64748b]">Time: O(E log V) using Fibonacci / Binary Min-Heap</span>
+          <button
+            onClick={() => setVisitedCount((c) => (c < graphNodes.length ? c + 1 : 1))}
+            className="px-2.5 py-1 rounded-lg bg-rose-600 text-white font-semibold text-[11px] hover:bg-rose-700 transition-colors cursor-pointer"
+          >
+            Relax Next Node
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DynamicProgrammingWidget() {
+  const [step, setStep] = useState(4);
+
+  const dpArray = [0, 1, 1, 2, 3, 5, 8, 13];
+
+  return (
+    <div className="w-full flex flex-col gap-3 font-mono text-xs">
+      <div className="p-3.5 rounded-2xl bg-white border border-black/[0.08] shadow-xs">
+        <div className="flex items-center justify-between mb-2.5">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md">
+            1D ROLLING TABULATION MEMOIZATION
+          </span>
+          <span className="text-[10px] text-indigo-600 font-semibold">dp[i] = dp[i-1] + dp[i-2]</span>
+        </div>
+
+        <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 mb-2">
+          {dpArray.map((val, idx) => {
+            const isComputed = idx <= step;
+            const isCurrent = idx === step;
+            return (
+              <div
+                key={idx}
+                className={`p-1.5 rounded-lg text-center border transition-all ${
+                  isCurrent
+                    ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
+                    : isComputed
+                    ? "bg-indigo-100/60 border-indigo-300 text-[#0f172a]"
+                    : "bg-[#f8f9fc] border-black/[0.04] text-[#94a3b8]"
+                }`}
+              >
+                <div className="text-[8px] opacity-75">i={idx}</div>
+                <div className="font-bold text-xs">{isComputed ? val : "?"}</div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="flex items-center justify-between pt-2 border-t border-black/[0.05]">
+          <span className="text-[10px] text-[#64748b]">Transforms exponential recursion O(2^N) into linear O(N)</span>
+          <button
+            onClick={() => setStep((s) => (s < dpArray.length - 1 ? s + 1 : 2))}
+            className="px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-semibold text-[11px] hover:bg-indigo-700 transition-colors cursor-pointer"
+          >
+            Tabulate Next
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 interface Props {
   activeId: string;
-  viewMode?: "orbit" | "focus" | "top";
   onSelectModule: (id: string) => void;
 }
 
-export default function SiliconCrucible3D({ activeId, viewMode = "orbit", onSelectModule }: Props) {
-  const mountRef = useRef<HTMLDivElement>(null);
-  const activeIdRef = useRef<string>(activeId);
-  activeIdRef.current = activeId;
+export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
 
-  const viewModeRef = useRef<"orbit" | "focus" | "top">(viewMode);
-  viewModeRef.current = viewMode;
+  const activeModule = MODULE_SYSTEMS.find((m) => m.id === activeId) || MODULE_SYSTEMS[0];
 
-  const onSelectRef = useRef(onSelectModule);
-  onSelectRef.current = onSelectModule;
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setTilt({ x: -(y * 8), y: x * 10 });
+  };
 
-  useEffect(() => {
-    const container = mountRef.current;
-    if (!container) return;
-
-    const width = container.clientWidth;
-    const height = container.clientHeight;
-
-    const scene = new THREE.Scene();
-    scene.background = null;
-
-    const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);
-
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: true,
-      powerPreference: "high-performance"
-    });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFShadowMap;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.05;
-    container.appendChild(renderer.domElement);
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 2.0);
-    scene.add(ambientLight);
-
-    const keyLight = new THREE.DirectionalLight(0xfffbf2, 2.6);
-    keyLight.position.set(5, 9, 6);
-    keyLight.castShadow = true;
-    keyLight.shadow.mapSize.width = 1024;
-    keyLight.shadow.mapSize.height = 1024;
-    keyLight.shadow.bias = -0.0005;
-    scene.add(keyLight);
-
-    const fillLight = new THREE.DirectionalLight(0xe8f0fe, 1.3);
-    fillLight.position.set(-6, 5, -3);
-    scene.add(fillLight);
-
-    const activeSpotLight = new THREE.PointLight(0x2563eb, 2.2, 8);
-    activeSpotLight.position.set(0, 3, 0);
-    scene.add(activeSpotLight);
-
-    const stageGroup = new THREE.Group();
-    scene.add(stageGroup);
-
-    const slabGeo = new THREE.BoxGeometry(6.4, 0.22, 4.8);
-    const slabMat = new THREE.MeshPhysicalMaterial({
-      color: 0xf1f3f7,
-      metalness: 0.08,
-      roughness: 0.45,
-      clearcoat: 0.35,
-      clearcoatRoughness: 0.2
-    });
-    const slabMesh = new THREE.Mesh(slabGeo, slabMat);
-    slabMesh.position.y = -0.11;
-    slabMesh.receiveShadow = true;
-    stageGroup.add(slabMesh);
-
-    const shadowGeo = new THREE.PlaneGeometry(14, 12);
-    const shadowMat = new THREE.ShadowMaterial({ opacity: 0.18 });
-    const shadowMesh = new THREE.Mesh(shadowGeo, shadowMat);
-    shadowMesh.rotation.x = -Math.PI / 2;
-    shadowMesh.position.y = -0.23;
-    shadowMesh.receiveShadow = true;
-    scene.add(shadowMesh);
-
-    const busGroup = new THREE.Group();
-    stageGroup.add(busGroup);
-
-    const traceMat = new THREE.MeshStandardMaterial({
-      color: 0xd97706,
-      metalness: 0.9,
-      roughness: 0.2
-    });
-
-    const createTrace = (x1: number, z1: number, x2: number, z2: number) => {
-      const dx = x2 - x1;
-      const dz = z2 - z1;
-      const len = Math.hypot(dx, dz);
-      const traceGeo = new THREE.BoxGeometry(len, 0.015, 0.035);
-      const mesh = new THREE.Mesh(traceGeo, traceMat);
-      mesh.position.set((x1 + x2) / 2, 0.005, (z1 + z2) / 2);
-      mesh.rotation.y = -Math.atan2(dz, dx);
-      busGroup.add(mesh);
-    };
-
-    createTrace(-1.95, -0.96, 0, -0.96);
-    createTrace(0, -0.96, 1.95, -0.96);
-    createTrace(-1.95, 0.96, 0, 0.96);
-    createTrace(0, 0.96, 1.95, 0.96);
-    createTrace(-1.95, -0.96, -1.95, 0.96);
-    createTrace(0, -0.96, 0, 0.96);
-    createTrace(1.95, -0.96, 1.95, 0.96);
-
-    const pulseCount = 6;
-    const pulseGeo = new THREE.SphereGeometry(0.045, 12, 12);
-    const pulseMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
-    const pulses: { mesh: THREE.Mesh; progress: number; p1: THREE.Vector3; p2: THREE.Vector3 }[] = [];
-
-    const traceSegments = [
-      { p1: new THREE.Vector3(-1.95, 0.02, -0.96), p2: new THREE.Vector3(0, 0.02, -0.96) },
-      { p1: new THREE.Vector3(0, 0.02, -0.96), p2: new THREE.Vector3(1.95, 0.02, -0.96) },
-      { p1: new THREE.Vector3(-1.95, 0.02, 0.96), p2: new THREE.Vector3(0, 0.02, 0.96) },
-      { p1: new THREE.Vector3(0, 0.02, 0.96), p2: new THREE.Vector3(1.95, 0.02, 0.96) },
-      { p1: new THREE.Vector3(-1.95, 0.02, -0.96), p2: new THREE.Vector3(-1.95, 0.02, 0.96) },
-      { p1: new THREE.Vector3(1.95, 0.02, -0.96), p2: new THREE.Vector3(1.95, 0.02, 0.96) }
-    ];
-
-    traceSegments.forEach((seg, idx) => {
-      const pMesh = new THREE.Mesh(pulseGeo, pulseMat);
-      busGroup.add(pMesh);
-      pulses.push({
-        mesh: pMesh,
-        progress: idx / pulseCount,
-        p1: seg.p1,
-        p2: seg.p2
-      });
-    });
-
-    const cardMeshes: {
-      id: string;
-      mesh: THREE.Mesh;
-      baseX: number;
-      baseZ: number;
-      baseY: number;
-      targetY: number;
-      topMat: THREE.MeshPhysicalMaterial;
-      mod: AlgorithmModuleMeta;
-      texture: THREE.CanvasTexture;
-    }[] = [];
-
-    const cardGeo = new THREE.BoxGeometry(1.68, 0.26, 1.68);
-    const cols = 3;
-    const spacingX = 1.95;
-    const spacingZ = 1.92;
-
-    MODULE_SYSTEMS.forEach((mod, idx) => {
-      const col = idx % cols;
-      const row = Math.floor(idx / cols);
-
-      const x = (col - 1) * spacingX;
-      const z = (row - 0.5) * spacingZ;
-
-      const isSelected = mod.id === activeIdRef.current;
-      const canvas = createTactileCardCanvas(mod, isSelected, false);
-      const texture = new THREE.CanvasTexture(canvas);
-      texture.anisotropy = 16;
-      texture.generateMipmaps = true;
-      texture.minFilter = THREE.LinearMipmapLinearFilter;
-
-      const sideMat = new THREE.MeshPhysicalMaterial({
-        color: new THREE.Color(mod.chipColor).multiplyScalar(0.92),
-        metalness: 0.12,
-        roughness: 0.35,
-        clearcoat: 0.5
-      });
-
-      const topMat = new THREE.MeshPhysicalMaterial({
-        map: texture,
-        metalness: 0.12,
-        roughness: 0.32,
-        clearcoat: 0.7,
-        clearcoatRoughness: 0.18
-      });
-
-      const materials = [sideMat, sideMat, topMat, sideMat, sideMat, sideMat];
-      const mesh = new THREE.Mesh(cardGeo, materials);
-      mesh.position.set(x, 0.13, z);
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
-      mesh.userData = { id: mod.id };
-      stageGroup.add(mesh);
-
-      cardMeshes.push({
-        id: mod.id,
-        mesh,
-        baseX: x,
-        baseZ: z,
-        baseY: 0.13,
-        targetY: 0.13,
-        topMat,
-        mod,
-        texture
-      });
-    });
-
-    const updateCardTextures = (activeModId: string, hoveredModId: string | null) => {
-      cardMeshes.forEach((item) => {
-        const isSel = item.id === activeModId;
-        const isHov = item.id === hoveredModId;
-        const canvas = createTactileCardCanvas(item.mod, isSel, isHov);
-        item.texture.image = canvas;
-        item.texture.needsUpdate = true;
-      });
-    };
-
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2(-999, -999);
-    let hoveredId: string | null = null;
-    let isDragging = false;
-    let prevMouseX = 0;
-    let prevMouseY = 0;
-    let targetRotationY = -0.22;
-    let targetRotationX = 0.38;
-
-    let parallaxTargetX = 0;
-    let parallaxTargetY = 0;
-
-    const onPointerDown = (e: MouseEvent) => {
-      isDragging = true;
-      prevMouseX = e.clientX;
-      prevMouseY = e.clientY;
-    };
-
-    const onPointerMove = (e: MouseEvent) => {
-      const rect = container.getBoundingClientRect();
-      const rawX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      const rawY = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
-      mouse.x = rawX;
-      mouse.y = rawY;
-
-      parallaxTargetX = rawX * 0.12;
-      parallaxTargetY = rawY * 0.08;
-
-      if (isDragging) {
-        const dx = e.clientX - prevMouseX;
-        const dy = e.clientY - prevMouseY;
-        targetRotationY += dx * 0.006;
-        targetRotationX = Math.max(0.12, Math.min(0.65, targetRotationX + dy * 0.005));
-        prevMouseX = e.clientX;
-        prevMouseY = e.clientY;
-      }
-    };
-
-    const onPointerUp = () => {
-      isDragging = false;
-    };
-
-    const onClick = () => {
-      if (hoveredId) {
-        onSelectRef.current(hoveredId);
-        updateCardTextures(hoveredId, hoveredId);
-      }
-    };
-
-    container.addEventListener("mousedown", onPointerDown);
-    window.addEventListener("mousemove", onPointerMove);
-    window.addEventListener("mouseup", onPointerUp);
-    container.addEventListener("click", onClick);
-
-    let animId: number;
-    let lastTime = performance.now();
-
-    const animate = (currentTime: number) => {
-      animId = requestAnimationFrame(animate);
-      const delta = Math.min((currentTime - lastTime) / 1000, 0.1);
-      lastTime = currentTime;
-
-      const currentMode = viewModeRef.current;
-      const activeItem = cardMeshes.find((c) => c.id === activeIdRef.current) || cardMeshes[0];
-
-      let camTargetX = 0;
-      let camTargetY = 4.5;
-      let camTargetZ = 7.5;
-      let lookTargetX = 0;
-      let lookTargetY = -0.15;
-      let lookTargetZ = 0;
-
-      if (currentMode === "focus") {
-        camTargetX = activeItem.baseX * 0.45;
-        camTargetY = 3.2;
-        camTargetZ = 5.2;
-        lookTargetX = activeItem.baseX * 0.55;
-        lookTargetZ = activeItem.baseZ * 0.55;
-      } else if (currentMode === "top") {
-        camTargetX = 0;
-        camTargetY = 8.5;
-        camTargetZ = 0.5;
-        lookTargetX = 0;
-        lookTargetY = 0;
-        lookTargetZ = 0;
-      }
-
-      camera.position.x = THREE.MathUtils.damp(camera.position.x, camTargetX, 4, delta);
-      camera.position.y = THREE.MathUtils.damp(camera.position.y, camTargetY, 4, delta);
-      camera.position.z = THREE.MathUtils.damp(camera.position.z, camTargetZ, 4, delta);
-      camera.lookAt(lookTargetX, lookTargetY, lookTargetZ);
-
-      if (!isDragging && currentMode === "orbit") {
-        targetRotationY += 0.0012;
-      }
-
-      const combinedTargetY = targetRotationY + parallaxTargetX;
-      const combinedTargetX = targetRotationX - parallaxTargetY;
-
-      stageGroup.rotation.y = THREE.MathUtils.damp(stageGroup.rotation.y, combinedTargetY, 4, delta);
-      stageGroup.rotation.x = THREE.MathUtils.damp(stageGroup.rotation.x, combinedTargetX, 4, delta);
-
-      pulses.forEach((pulse) => {
-        pulse.progress = (pulse.progress + delta * 0.6) % 1.0;
-        pulse.mesh.position.lerpVectors(pulse.p1, pulse.p2, pulse.progress);
-      });
-
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObjects(cardMeshes.map((b) => b.mesh));
-
-      let newlyHovered: string | null = null;
-      if (intersects.length > 0) {
-        newlyHovered = intersects[0].object.userData.id;
-        container.style.cursor = "pointer";
-      } else {
-        newlyHovered = null;
-        container.style.cursor = isDragging ? "grabbing" : "grab";
-      }
-
-      if (newlyHovered !== hoveredId) {
-        hoveredId = newlyHovered;
-        updateCardTextures(activeIdRef.current, hoveredId);
-      }
-
-      activeSpotLight.position.x = THREE.MathUtils.damp(activeSpotLight.position.x, activeItem.mesh.position.x, 6, delta);
-      activeSpotLight.position.z = THREE.MathUtils.damp(activeSpotLight.position.z, activeItem.mesh.position.z, 6, delta);
-
-      cardMeshes.forEach((item) => {
-        const isActive = item.id === activeIdRef.current;
-        const isHovered = item.id === hoveredId;
-
-        item.targetY = isActive ? item.baseY + 0.38 : isHovered ? item.baseY + 0.18 : item.baseY;
-        item.mesh.position.y = THREE.MathUtils.damp(item.mesh.position.y, item.targetY, 9, delta);
-      });
-
-      renderer.render(scene, camera);
-    };
-
-    animId = requestAnimationFrame(animate);
-
-    const onResize = () => {
-      if (!container) return;
-      const w = container.clientWidth;
-      const h = container.clientHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
-    };
-
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", onResize);
-      container.removeEventListener("mousedown", onPointerDown);
-      window.removeEventListener("mousemove", onPointerMove);
-      window.removeEventListener("mouseup", onPointerUp);
-      container.removeEventListener("click", onClick);
-
-      cardMeshes.forEach((item) => {
-        item.texture.dispose();
-      });
-
-      scene.clear();
-      renderer.dispose();
-      if (renderer.domElement.parentNode === container) {
-        container.removeChild(renderer.domElement);
-      }
-    };
-  }, []);
+  const handleMouseLeave = () => {
+    setTilt({ x: 0, y: 0 });
+  };
 
   return (
-    <div className="relative w-full h-full min-h-[520px] sm:min-h-[600px] lg:min-h-[680px] select-none flex items-center justify-center">
-      <div ref={mountRef} className="w-full h-full absolute inset-0" />
+    <div
+      ref={containerRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="relative w-full min-h-[520px] sm:min-h-[580px] flex flex-col justify-between p-4 sm:p-6 rounded-[28px] bg-white/95 backdrop-blur-xl border border-black/[0.08] shadow-[0_20px_48px_rgba(0,0,0,0.06)] transition-transform duration-300 ease-out select-none"
+      style={{
+        transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+        transformStyle: "preserve-3d"
+      }}
+    >
+      <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-black/[0.06]">
+        <div className="flex items-center gap-2">
+          <span
+            className="w-2.5 h-2.5 rounded-full animate-pulse shadow-sm"
+            style={{ backgroundColor: activeModule.accent }}
+          />
+          <span className="text-[11px] font-mono tracking-widest text-[#0f172a] uppercase font-bold">
+            ALGORITHM SILICON WORKBENCH // SYSTEM {activeModule.index}
+          </span>
+        </div>
+
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f8f9fc] border border-black/[0.06] text-[10px] font-mono text-[#64748b]">
+          <Sparkles size={11} className="text-sky-500" />
+          <span>Interactive Memory Sandbox</span>
+        </div>
+      </div>
+
+      <div className="relative z-10 py-4 flex-1 flex flex-col justify-center">
+        <div className="mb-3">
+          <div className="flex items-center gap-2 mb-1">
+            <span
+              className="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase font-bold"
+              style={{ backgroundColor: activeModule.chipColor, color: activeModule.accent }}
+            >
+              {activeModule.category}
+            </span>
+            <span className="text-xs font-mono text-[#64748b]">{activeModule.memory}</span>
+          </div>
+          <h2 className="font-clash font-bold text-2xl text-[#0f172a]">
+            {activeModule.name}
+          </h2>
+          <p className="text-xs text-[#475569] mt-0.5">
+            {activeModule.tagline}
+          </p>
+        </div>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeModule.id}
+            initial={{ opacity: 0, y: 10, scale: 0.99 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.99 }}
+            transition={{ duration: 0.2 }}
+            className="w-full"
+          >
+            {activeModule.id === "arrays" && <ArraysMemoryWidget />}
+            {activeModule.id === "linked-lists" && <LinkedListWidget />}
+            {activeModule.id === "stacks-queues" && <StacksQueuesWidget />}
+            {activeModule.id === "trees" && <TreesWidget />}
+            {activeModule.id === "graphs" && <GraphsWidget />}
+            {activeModule.id === "dp" && <DynamicProgrammingWidget />}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <div className="relative z-10 pt-3 border-t border-black/[0.06] flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono text-[#64748b]">
+        <div className="flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
+          <span>Contiguous 64-bit Memory Topology Online</span>
+        </div>
+        <span>Hover &amp; interact with the memory simulation above</span>
+      </div>
     </div>
   );
 }
