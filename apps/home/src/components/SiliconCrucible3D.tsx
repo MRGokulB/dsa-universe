@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Layers,
@@ -13,7 +13,10 @@ import {
   ArrowRight,
   CheckCircle2,
   Play,
-  RotateCcw
+  RotateCcw,
+  Sliders,
+  Activity,
+  Gauge
 } from "lucide-react";
 
 export interface AlgorithmModuleMeta {
@@ -118,10 +121,88 @@ export const MODULE_SYSTEMS: AlgorithmModuleMeta[] = [
   }
 ];
 
-function ArraysMemoryWidget() {
+function CrtOscilloscope({ modId, nScale }: { modId: string; nScale: number }) {
+  const getWavePath = () => {
+    if (modId === "arrays") {
+      return "M 10 70 L 290 70";
+    }
+    if (modId === "trees") {
+      return "M 10 90 Q 60 50, 140 38 T 290 28";
+    }
+    if (modId === "graphs") {
+      return "M 10 90 L 80 75 L 140 50 L 210 32 L 290 15";
+    }
+    if (modId === "dp") {
+      return "M 10 90 L 290 20";
+    }
+    return "M 10 90 L 290 35";
+  };
+
+  const getFormula = () => {
+    if (modId === "arrays") return "T(N) = O(1) CONSTANT TIME";
+    if (modId === "trees") return "T(N) = O(log₂ N) LOGARITHMIC";
+    if (modId === "graphs") return "T(N) = O(E log V) DIJKSTRA";
+    if (modId === "dp") return "T(N) = O(N) TABULATION MEMO";
+    return "T(N) = O(N) LINEAR TRAVERSAL";
+  };
+
+  return (
+    <div className="w-full crt-screen rounded-2xl p-4 flex flex-col justify-between h-[180px] relative select-none">
+      <div className="relative z-10 flex items-center justify-between text-[10px] font-mono text-emerald-400">
+        <span className="flex items-center gap-1.5 font-bold tracking-wider">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+          OSCILLOSCOPE // PHOSPHOR CH-01
+        </span>
+        <span className="text-emerald-500/80">SCALE: {nScale}X</span>
+      </div>
+
+      <div className="relative z-10 w-full h-[90px] flex items-center justify-center">
+        <svg viewBox="0 0 300 100" className="w-full h-full">
+          <defs>
+            <pattern id="crt-grid" width="30" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 30 0 L 0 0 0 20" fill="none" stroke="#064e3b" strokeWidth="0.5" strokeOpacity="0.6" />
+            </pattern>
+          </defs>
+          <rect width="300" height="100" fill="url(#crt-grid)" />
+          
+          <path
+            d={getWavePath()}
+            fill="none"
+            stroke="#22c55e"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="filter drop-shadow-[0_0_8px_#22c55e]"
+          />
+          
+          <motion.circle
+            r="3.5"
+            fill="#86efac"
+            className="filter drop-shadow-[0_0_8px_#4ade80]"
+            animate={{
+              cx: [15, 285],
+              opacity: [0.4, 1, 0.4]
+            }}
+            transition={{
+              duration: 2.5,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            cy={modId === "arrays" ? 70 : modId === "trees" ? 40 : modId === "graphs" ? 45 : 35}
+          />
+        </svg>
+      </div>
+
+      <div className="relative z-10 flex items-center justify-between text-[11px] font-mono text-emerald-300 font-bold">
+        <span>{getFormula()}</span>
+        <span className="text-[10px] text-emerald-500 font-normal">PHOSPHOR: P31 GREEN</span>
+      </div>
+    </div>
+  );
+}
+
+function ArraysHardwareSim() {
   const [left, setLeft] = useState(0);
   const [right, setRight] = useState(4);
-
   const cells = [
     { addr: "0x00", val: 12 },
     { addr: "0x08", val: 24 },
@@ -130,7 +211,7 @@ function ArraysMemoryWidget() {
     { addr: "0x20", val: 60 }
   ];
 
-  const advancePointers = () => {
+  const advance = () => {
     if (left < right) {
       setLeft((l) => l + 1);
     } else {
@@ -140,339 +221,232 @@ function ArraysMemoryWidget() {
   };
 
   return (
-    <div className="w-full flex flex-col gap-3 font-mono text-xs">
-      <div className="p-3.5 rounded-2xl bg-white border border-black/[0.08] shadow-xs">
-        <div className="flex items-center justify-between mb-2.5">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-sky-700 bg-sky-50 px-2 py-0.5 rounded-md">
-            CONTIGUOUS 64-BIT CACHE LINE MEMORY
-          </span>
-          <span className="text-[10px] text-sky-600 font-semibold">Stride: 8 Bytes</span>
-        </div>
-
-        <div className="grid grid-cols-5 gap-2 mb-3">
-          {cells.map((cell, idx) => {
-            const isLeft = left === idx;
-            const isRight = right === idx;
-            return (
-              <div
-                key={idx}
-                className={`p-2 rounded-xl text-center border transition-all ${
-                  isLeft || isRight
-                    ? "bg-sky-100/70 border-sky-400 shadow-xs"
-                    : "bg-[#f8f9fc] border-black/[0.04]"
-                }`}
-              >
-                <div className="text-[9px] text-[#94a3b8]">{cell.addr}</div>
-                <div className="font-bold text-sm text-[#0f172a] my-0.5">{cell.val}</div>
-                <div className="text-[8px] font-bold">
-                  {isLeft && isRight ? (
-                    <span className="text-amber-600">Match!</span>
-                  ) : isLeft ? (
-                    <span className="text-sky-600">&larr; Left (i)</span>
-                  ) : isRight ? (
-                    <span className="text-indigo-600">Right (j) &rarr;</span>
-                  ) : (
-                    <span className="text-transparent">-</span>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="flex items-center justify-between pt-2 border-t border-black/[0.05]">
-          <span className="text-[10px] text-[#64748b]">
-            Direct pointer arithmetic: base + (index &times; 8) &rarr; O(1) Cache Hit
-          </span>
-          <button
-            onClick={advancePointers}
-            className="px-2.5 py-1 rounded-lg bg-sky-600 text-white font-semibold text-[11px] hover:bg-sky-700 transition-colors cursor-pointer"
-          >
-            Advance Pointers
-          </button>
-        </div>
+    <div className="space-y-3 font-mono text-xs">
+      <div className="flex items-center justify-between text-[11px] text-[#64748b]">
+        <span>CACHE LINE MEMORY (STRIDE: 8 BYTES)</span>
+        <span className="text-blue-600 font-bold">ADDR BUS: 64-BIT</span>
       </div>
+
+      <div className="grid grid-cols-5 gap-2">
+        {cells.map((c, i) => {
+          const isLeft = i === left;
+          const isRight = i === right;
+          return (
+            <div
+              key={c.addr}
+              className={`p-2.5 rounded-xl border text-center transition-all ${
+                isLeft || isRight
+                  ? "bg-blue-600 text-white border-blue-700 shadow-md scale-105"
+                  : "bg-white text-[#0f172a] border-black/10"
+              }`}
+            >
+              <div className="text-[9px] opacity-70 mb-1">{c.addr}</div>
+              <div className="text-base font-bold">{c.val}</div>
+              <div className="text-[8px] mt-1 font-semibold uppercase tracking-wider">
+                {isLeft ? "PTR_i" : isRight ? "PTR_j" : "—"}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <button
+        onClick={advance}
+        className="w-full py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:translate-y-0.5"
+      >
+        <Play size={12} />
+        <span>Step Pointers [ i={left}, j={right} ]</span>
+      </button>
     </div>
   );
 }
 
-function LinkedListWidget() {
-  const [fastPos, setFastPos] = useState(1);
-
+function ListsHardwareSim() {
+  const [curr, setCurr] = useState(0);
   const nodes = [
-    { addr: "0x3F", val: "A" },
-    { addr: "0x8A", val: "B" },
-    { addr: "0xC2", val: "C" },
-    { addr: "0xFA", val: "D" }
+    { id: "A", next: "0x20", val: 10 },
+    { id: "B", next: "0x40", val: 25 },
+    { id: "C", next: "0x60", val: 40 },
+    { id: "D", next: "NIL", val: 85 }
   ];
 
   return (
-    <div className="w-full flex flex-col gap-3 font-mono text-xs">
-      <div className="p-3.5 rounded-2xl bg-white border border-black/[0.08] shadow-xs">
-        <div className="flex items-center justify-between mb-2.5">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md">
-            HEAP POINTER CHAIN &middot; FLOYD CYCLE DETECTION
-          </span>
-          <span className="text-[10px] text-purple-600 font-semibold">Torque: Slow (1x) vs Fast (2x)</span>
-        </div>
-
-        <div className="flex items-center justify-between gap-1 overflow-x-auto no-scrollbar py-2">
-          {nodes.map((node, idx) => (
-            <div key={idx} className="flex items-center gap-1 shrink-0">
-              <div
-                className={`p-2 rounded-xl border text-center min-w-[70px] ${
-                  fastPos === idx ? "bg-purple-100/70 border-purple-400" : "bg-[#f8f9fc] border-black/[0.04]"
-                }`}
-              >
-                <div className="text-[8px] text-[#94a3b8]">{node.addr}</div>
-                <div className="font-bold text-sm text-[#0f172a]">{node.val}</div>
-                <div className="text-[8px] text-purple-600">
-                  {fastPos === idx ? "Fast &bull;" : "next &rarr;"}
-                </div>
-              </div>
-              {idx < nodes.length - 1 && <ArrowRight size={12} className="text-purple-400 shrink-0" />}
-            </div>
-          ))}
-        </div>
-
-        <div className="flex items-center justify-between pt-2 border-t border-black/[0.05]">
-          <span className="text-[10px] text-[#64748b]">Heap allocated nodes connected via 64-bit pointers</span>
-          <button
-            onClick={() => setFastPos((p) => (p < nodes.length - 1 ? p + 1 : 0))}
-            className="px-2.5 py-1 rounded-lg bg-purple-600 text-white font-semibold text-[11px] hover:bg-purple-700 transition-colors cursor-pointer"
-          >
-            Step Fast Pointer
-          </button>
-        </div>
+    <div className="space-y-3 font-mono text-xs">
+      <div className="flex items-center justify-between text-[11px] text-[#64748b]">
+        <span>HEAP POINTER CHAIN (DEREFERENCE)</span>
+        <span className="text-purple-600 font-bold">DEREF: 0x{nodes[curr].next}</span>
       </div>
+
+      <div className="grid grid-cols-4 gap-2">
+        {nodes.map((n, i) => {
+          const isSelected = i === curr;
+          return (
+            <div
+              key={n.id}
+              className={`p-2.5 rounded-xl border text-center transition-all ${
+                isSelected
+                  ? "bg-purple-600 text-white border-purple-700 shadow-md scale-105"
+                  : "bg-white text-[#0f172a] border-black/10"
+              }`}
+            >
+              <div className="text-[9px] opacity-70 mb-1">NODE {n.id}</div>
+              <div className="text-base font-bold">{n.val}</div>
+              <div className="text-[8px] mt-1 text-purple-300 font-bold">NEXT &rarr; {n.next}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      <button
+        onClick={() => setCurr((c) => (c + 1) % nodes.length)}
+        className="w-full py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:translate-y-0.5"
+      >
+        <Play size={12} />
+        <span>Dereference Next Pointer &rarr; Node {nodes[(curr + 1) % nodes.length].id}</span>
+      </button>
     </div>
   );
 }
 
-function StacksQueuesWidget() {
-  const [frames, setFrames] = useState(["solve()", "dfs(node)", "main()"]);
+function StacksHardwareSim() {
+  const [frames, setFrames] = useState(["main()", "renderFrame()", "alloc()"]);
 
   const pushFrame = () => {
     if (frames.length < 5) {
-      setFrames(["helper(" + frames.length + ")", ...frames]);
-    }
-  };
-
-  const popFrame = () => {
-    if (frames.length > 1) {
-      setFrames(frames.slice(1));
+      setFrames([...frames, `call_0x${frames.length + 1}()`]);
+    } else {
+      setFrames(["main()"]);
     }
   };
 
   return (
-    <div className="w-full flex flex-col gap-3 font-mono text-xs">
-      <div className="p-3.5 rounded-2xl bg-white border border-black/[0.08] shadow-xs">
-        <div className="flex items-center justify-between mb-2.5">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
-            LIFO CALL STACK &middot; RSP REGISTER
-          </span>
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={pushFrame}
-              className="px-2 py-0.5 rounded bg-emerald-600 text-white font-semibold text-[10px] hover:bg-emerald-700 cursor-pointer"
-            >
-              + Push
-            </button>
-            <button
-              onClick={popFrame}
-              className="px-2 py-0.5 rounded bg-[#0f172a] text-white font-semibold text-[10px] hover:bg-black cursor-pointer"
-            >
-              - Pop
-            </button>
-          </div>
-        </div>
-
-        <div className="space-y-1">
-          {frames.map((frame, idx) => (
-            <div
-              key={idx}
-              className={`p-1.5 rounded-lg border flex items-center justify-between ${
-                idx === 0 ? "bg-emerald-100/70 border-emerald-400 font-bold" : "bg-[#f8f9fc] border-black/[0.04]"
-              }`}
-            >
-              <span className="text-[11px] text-[#0f172a]">{frame}</span>
-              <span className="text-[9px] text-emerald-700">
-                {idx === 0 ? "RSP &rarr; Top of Stack" : `Frame -${idx * 16}`}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <div className="text-[10px] text-[#64748b] bg-[#f8f9fc] p-2 rounded-xl mt-2 flex items-center justify-between">
-          <span>Stack frames allocate O(1) by decrementing the stack pointer (RSP)</span>
-          <span className="font-semibold text-emerald-600">Frames: {frames.length}</span>
-        </div>
+    <div className="space-y-3 font-mono text-xs">
+      <div className="flex items-center justify-between text-[11px] text-[#64748b]">
+        <span>LIFO CALL STACK (RSP REGISTER)</span>
+        <span className="text-emerald-600 font-bold">DEPTH: {frames.length} FRAMES</span>
       </div>
+
+      <div className="flex flex-col-reverse gap-1.5 bg-[#f8fafc] p-2.5 rounded-xl border border-black/10 min-h-[90px] justify-end">
+        {frames.map((f, i) => (
+          <div
+            key={i}
+            className={`p-1.5 px-3 rounded-lg text-xs font-bold flex items-center justify-between ${
+              i === frames.length - 1
+                ? "bg-emerald-600 text-white shadow-xs"
+                : "bg-white text-[#0f172a] border border-black/5"
+            }`}
+          >
+            <span>RSP - 0x{i * 8}: {f}</span>
+            <span className="text-[9px] opacity-80">{i === frames.length - 1 ? "ACTIVE FRAME" : "CALLER"}</span>
+          </div>
+        ))}
+      </div>
+
+      <button
+        onClick={pushFrame}
+        className="w-full py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:translate-y-0.5"
+      >
+        <Play size={12} />
+        <span>{frames.length >= 5 ? "Purge Stack Frame (Return)" : "Push New Stack Frame"}</span>
+      </button>
     </div>
   );
 }
 
-function TreesWidget() {
-  const [traversal, setTraversal] = useState("IN-ORDER");
-
-  return (
-    <div className="w-full flex flex-col gap-3 font-mono text-xs">
-      <div className="p-3.5 rounded-2xl bg-white border border-black/[0.08] shadow-xs">
-        <div className="flex items-center justify-between mb-2.5">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md">
-            BINARY SEARCH TREE TOPOLOGY
-          </span>
-          <span className="text-[10px] text-amber-700 font-bold">{traversal}</span>
-        </div>
-
-        <div className="p-3 rounded-xl bg-[#f8f9fc] border border-black/[0.04] flex flex-col items-center gap-2">
-          <div className="w-9 h-9 rounded-full bg-amber-400 text-black font-bold flex items-center justify-center text-xs shadow-xs">
-            50
-          </div>
-          <div className="flex items-center gap-12 sm:gap-20">
-            <div className="w-8 h-8 rounded-full bg-amber-200 text-black font-bold flex items-center justify-center text-xs">
-              25
-            </div>
-            <div className="w-8 h-8 rounded-full bg-amber-200 text-black font-bold flex items-center justify-center text-xs">
-              75
-            </div>
-          </div>
-          <div className="flex items-center gap-4 sm:gap-8">
-            <div className="w-7 h-7 rounded-full bg-amber-100 text-[#0f172a] font-semibold flex items-center justify-center text-[10px]">
-              12
-            </div>
-            <div className="w-7 h-7 rounded-full bg-amber-100 text-[#0f172a] font-semibold flex items-center justify-center text-[10px]">
-              35
-            </div>
-            <div className="w-7 h-7 rounded-full bg-amber-100 text-[#0f172a] font-semibold flex items-center justify-center text-[10px]">
-              65
-            </div>
-            <div className="w-7 h-7 rounded-full bg-amber-100 text-[#0f172a] font-semibold flex items-center justify-center text-[10px]">
-              90
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between pt-2 border-t border-black/[0.05]">
-          <span className="text-[10px] text-[#64748b]">Balanced search invariant: Left &lt; Root &lt; Right</span>
-          <div className="flex gap-1">
-            {["IN-ORDER", "PRE-ORDER", "LEVEL"].map((m) => (
-              <button
-                key={m}
-                onClick={() => setTraversal(m)}
-                className={`px-2 py-0.5 rounded text-[10px] font-semibold transition-all cursor-pointer ${
-                  traversal === m ? "bg-amber-500 text-white shadow-xs" : "bg-slate-100 text-[#475569]"
-                }`}
-              >
-                {m}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function GraphsWidget() {
-  const [visitedCount, setVisitedCount] = useState(2);
-
-  const graphNodes = [
-    { id: "A", dist: "0" },
-    { id: "B", dist: "4" },
-    { id: "C", dist: "2" },
-    { id: "D", dist: "5" }
+function TreesHardwareSim() {
+  const [step, setStep] = useState(0);
+  const steps = [
+    { target: "Root 50", status: "Root node inspected" },
+    { target: "Left Subtree 30", status: "Branch Left: Val < 50" },
+    { target: "Right Child 40", status: "Branch Right: Val > 30 (Found)" }
   ];
 
   return (
-    <div className="w-full flex flex-col gap-3 font-mono text-xs">
-      <div className="p-3.5 rounded-2xl bg-white border border-black/[0.08] shadow-xs">
-        <div className="flex items-center justify-between mb-2.5">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md">
-            DIJKSTRA SHORTEST PATH PRIORITY QUEUE
-          </span>
-          <span className="text-[10px] text-rose-600 font-semibold">Min-Heap Greedy</span>
-        </div>
-
-        <div className="grid grid-cols-4 gap-2 mb-2">
-          {graphNodes.map((node, idx) => {
-            const isVisited = idx < visitedCount;
-            return (
-              <div
-                key={node.id}
-                className={`p-2 rounded-xl text-center border transition-all ${
-                  isVisited ? "bg-rose-100/70 border-rose-400" : "bg-[#f8f9fc] border-black/[0.04]"
-                }`}
-              >
-                <div className="font-bold text-sm text-[#0f172a]">Node {node.id}</div>
-                <div className="text-[10px] text-rose-700">dist = {node.dist}</div>
-                <div className="text-[8px] text-[#64748b]">{isVisited ? "Settled" : "Queue"}</div>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="flex items-center justify-between pt-2 border-t border-black/[0.05]">
-          <span className="text-[10px] text-[#64748b]">Time: O(E log V) using Fibonacci / Binary Min-Heap</span>
-          <button
-            onClick={() => setVisitedCount((c) => (c < graphNodes.length ? c + 1 : 1))}
-            className="px-2.5 py-1 rounded-lg bg-rose-600 text-white font-semibold text-[11px] hover:bg-rose-700 transition-colors cursor-pointer"
-          >
-            Relax Next Node
-          </button>
-        </div>
+    <div className="space-y-3 font-mono text-xs">
+      <div className="flex items-center justify-between text-[11px] text-[#64748b]">
+        <span>BINARY SEARCH TREE INVARIANT</span>
+        <span className="text-amber-600 font-bold">O(log N) PATH</span>
       </div>
+
+      <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-950 font-bold flex items-center justify-between">
+        <span>Current Node: {steps[step % steps.length].target}</span>
+        <span className="text-[10px] text-amber-700">{steps[step % steps.length].status}</span>
+      </div>
+
+      <button
+        onClick={() => setStep((s) => s + 1)}
+        className="w-full py-2 px-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:translate-y-0.5"
+      >
+        <Play size={12} />
+        <span>Traverse BST Branch</span>
+      </button>
     </div>
   );
 }
 
-function DynamicProgrammingWidget() {
-  const [step, setStep] = useState(4);
-
-  const dpArray = [0, 1, 1, 2, 3, 5, 8, 13];
+function GraphsHardwareSim() {
+  const [step, setStep] = useState(0);
+  const path = ["A (Start, Dist=0)", "B (Relaxed, Dist=4)", "C (Relaxed, Dist=7)", "D (Target Reached)"];
 
   return (
-    <div className="w-full flex flex-col gap-3 font-mono text-xs">
-      <div className="p-3.5 rounded-2xl bg-white border border-black/[0.08] shadow-xs">
-        <div className="flex items-center justify-between mb-2.5">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md">
-            1D ROLLING TABULATION MEMOIZATION
-          </span>
-          <span className="text-[10px] text-indigo-600 font-semibold">dp[i] = dp[i-1] + dp[i-2]</span>
-        </div>
-
-        <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 mb-2">
-          {dpArray.map((val, idx) => {
-            const isComputed = idx <= step;
-            const isCurrent = idx === step;
-            return (
-              <div
-                key={idx}
-                className={`p-1.5 rounded-lg text-center border transition-all ${
-                  isCurrent
-                    ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
-                    : isComputed
-                    ? "bg-indigo-100/60 border-indigo-300 text-[#0f172a]"
-                    : "bg-[#f8f9fc] border-black/[0.04] text-[#94a3b8]"
-                }`}
-              >
-                <div className="text-[8px] opacity-75">i={idx}</div>
-                <div className="font-bold text-xs">{isComputed ? val : "?"}</div>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="flex items-center justify-between pt-2 border-t border-black/[0.05]">
-          <span className="text-[10px] text-[#64748b]">Transforms exponential recursion O(2^N) into linear O(N)</span>
-          <button
-            onClick={() => setStep((s) => (s < dpArray.length - 1 ? s + 1 : 2))}
-            className="px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-semibold text-[11px] hover:bg-indigo-700 transition-colors cursor-pointer"
-          >
-            Tabulate Next
-          </button>
-        </div>
+    <div className="space-y-3 font-mono text-xs">
+      <div className="flex items-center justify-between text-[11px] text-[#64748b]">
+        <span>DIJKSTRA PRIORITY QUEUE RELAXATION</span>
+        <span className="text-rose-600 font-bold">HEAP EXTRACT_MIN</span>
       </div>
+
+      <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-950 font-bold flex items-center justify-between">
+        <span>Active Vertex: {path[step % path.length]}</span>
+        <span className="text-[10px] text-rose-700">Cost: {(step % 4) * 3} units</span>
+      </div>
+
+      <button
+        onClick={() => setStep((s) => s + 1)}
+        className="w-full py-2 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:translate-y-0.5"
+      >
+        <Play size={12} />
+        <span>Relax Next Adjacent Edge</span>
+      </button>
+    </div>
+  );
+}
+
+function DpHardwareSim() {
+  const [idx, setIdx] = useState(2);
+  const dpTable = [0, 1, 1, 2, 3, 5, 8];
+
+  return (
+    <div className="space-y-3 font-mono text-xs">
+      <div className="flex items-center justify-between text-[11px] text-[#64748b]">
+        <span>1D TABULATION LATTICE (MEMOIZATION)</span>
+        <span className="text-indigo-600 font-bold">dp[i] = dp[i-1] + dp[i-2]</span>
+      </div>
+
+      <div className="grid grid-cols-7 gap-1.5">
+        {dpTable.map((val, i) => (
+          <div
+            key={i}
+            className={`p-2 rounded-lg border text-center transition-all ${
+              i === idx
+                ? "bg-indigo-600 text-white border-indigo-700 shadow-sm font-bold scale-105"
+                : i < idx
+                ? "bg-indigo-50 text-indigo-900 border-indigo-200"
+                : "bg-white text-gray-400 border-black/5"
+            }`}
+          >
+            <div className="text-[8px] opacity-70">i={i}</div>
+            <div className="text-sm font-bold">{i <= idx ? val : "?"}</div>
+          </div>
+        ))}
+      </div>
+
+      <button
+        onClick={() => setIdx((i) => (i < 6 ? i + 1 : 2))}
+        className="w-full py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer active:translate-y-0.5"
+      >
+        <Play size={12} />
+        <span>Calculate Tabulation dp[{idx < 6 ? idx + 1 : 2}]</span>
+      </button>
     </div>
   );
 }
@@ -483,95 +457,106 @@ interface Props {
 }
 
 export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-
+  const [nScale, setNScale] = useState(1);
   const activeModule = MODULE_SYSTEMS.find((m) => m.id === activeId) || MODULE_SYSTEMS[0];
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    setTilt({ x: -(y * 8), y: x * 10 });
-  };
-
-  const handleMouseLeave = () => {
-    setTilt({ x: 0, y: 0 });
-  };
-
   return (
-    <div
-      ref={containerRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className="relative w-full min-h-[520px] sm:min-h-[580px] flex flex-col justify-between p-4 sm:p-6 rounded-[28px] bg-white/95 backdrop-blur-xl border border-black/[0.08] shadow-[0_20px_48px_rgba(0,0,0,0.06)] transition-transform duration-300 ease-out select-none"
-      style={{
-        transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-        transformStyle: "preserve-3d"
-      }}
-    >
-      <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-black/[0.06]">
-        <div className="flex items-center gap-2">
-          <span
-            className="w-2.5 h-2.5 rounded-full animate-pulse shadow-sm"
-            style={{ backgroundColor: activeModule.accent }}
-          />
-          <span className="text-[11px] font-mono tracking-widest text-[#0f172a] uppercase font-bold">
-            ALGORITHM SILICON WORKBENCH // SYSTEM {activeModule.index}
-          </span>
+    <div className="w-full flex flex-col gap-6 select-none">
+      <div className="w-full skeuo-rack-bezel rounded-[28px] p-5 sm:p-7 relative overflow-hidden">
+        <div className="absolute top-3 left-4 flex gap-2">
+          <div className="skeuo-screw" />
+          <div className="skeuo-screw" />
+        </div>
+        <div className="absolute top-3 right-4 flex gap-2">
+          <div className="skeuo-screw" />
+          <div className="skeuo-screw" />
+        </div>
+        <div className="absolute bottom-3 left-4 flex gap-2">
+          <div className="skeuo-screw" />
+          <div className="skeuo-screw" />
+        </div>
+        <div className="absolute bottom-3 right-4 flex gap-2">
+          <div className="skeuo-screw" />
+          <div className="skeuo-screw" />
         </div>
 
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f8f9fc] border border-black/[0.06] text-[10px] font-mono text-[#64748b]">
-          <Sparkles size={11} className="text-sky-500" />
-          <span>Interactive Memory Sandbox</span>
-        </div>
-      </div>
-
-      <div className="relative z-10 py-4 flex-1 flex flex-col justify-center">
-        <div className="mb-3">
-          <div className="flex items-center gap-2 mb-1">
-            <span
-              className="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase font-bold"
-              style={{ backgroundColor: activeModule.chipColor, color: activeModule.accent }}
-            >
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-6 px-4 pt-2">
+          <div className="flex items-center gap-2.5">
+            <span className="led-diode-green" />
+            <span className="text-xs font-mono uppercase tracking-widest text-zinc-300 font-bold">
+              SILICON BENCH // SYSTEM {activeModule.index}
+            </span>
+            <span className="text-[10px] font-mono text-zinc-400 bg-zinc-800/80 px-2 py-0.5 rounded border border-zinc-700">
               {activeModule.category}
             </span>
-            <span className="text-xs font-mono text-[#64748b]">{activeModule.memory}</span>
           </div>
-          <h2 className="font-clash font-bold text-2xl text-[#0f172a]">
-            {activeModule.name}
-          </h2>
-          <p className="text-xs text-[#475569] mt-0.5">
-            {activeModule.tagline}
-          </p>
+
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] font-mono text-zinc-400">SCALE:</span>
+            {[1, 2, 4].map((s) => (
+              <button
+                key={s}
+                onClick={() => setNScale(s)}
+                className={`px-2.5 py-0.5 rounded text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                  nScale === s
+                    ? "bg-emerald-500 text-black shadow-[0_0_8px_#10b981]"
+                    : "bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-700"
+                }`}
+              >
+                {s}X
+              </button>
+            ))}
+          </div>
         </div>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeModule.id}
-            initial={{ opacity: 0, y: 10, scale: 0.99 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.99 }}
-            transition={{ duration: 0.2 }}
-            className="w-full"
-          >
-            {activeModule.id === "arrays" && <ArraysMemoryWidget />}
-            {activeModule.id === "linked-lists" && <LinkedListWidget />}
-            {activeModule.id === "stacks-queues" && <StacksQueuesWidget />}
-            {activeModule.id === "trees" && <TreesWidget />}
-            {activeModule.id === "graphs" && <GraphsWidget />}
-            {activeModule.id === "dp" && <DynamicProgrammingWidget />}
-          </motion.div>
-        </AnimatePresence>
-      </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center px-2">
+          <div className="lg:col-span-6 flex flex-col justify-between space-y-4">
+            <CrtOscilloscope modId={activeId} nScale={nScale} />
 
-      <div className="relative z-10 pt-3 border-t border-black/[0.06] flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono text-[#64748b]">
-        <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
-          <span>Contiguous 64-bit Memory Topology Online</span>
+            <div className="p-3.5 rounded-xl vfd-display text-emerald-400 font-mono text-xs flex items-center justify-between">
+              <div>
+                <span className="text-[10px] text-zinc-500 block">SCHEMATIC INVARIANT</span>
+                <span className="text-xs font-bold text-emerald-300">{activeModule.glyph}</span>
+              </div>
+              <div className="text-right">
+                <span className="text-[10px] text-zinc-500 block">MEMORY</span>
+                <span className="text-[11px] text-zinc-300">{activeModule.memory.split(" ")[0]}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-6 p-5 rounded-2xl bg-white border border-zinc-200 shadow-sm flex flex-col justify-between min-h-[260px]">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 font-bold">
+                  INTERACTIVE HARDWARE DIE
+                </span>
+                <span className="text-xs font-mono font-bold text-zinc-900">
+                  {activeModule.name}
+                </span>
+              </div>
+
+              {activeId === "arrays" && <ArraysHardwareSim />}
+              {activeId === "linked-lists" && <ListsHardwareSim />}
+              {activeId === "stacks-queues" && <StacksHardwareSim />}
+              {activeId === "trees" && <TreesHardwareSim />}
+              {activeId === "graphs" && <GraphsHardwareSim />}
+              {activeId === "dp" && <DpHardwareSim />}
+            </div>
+
+            <div className="pt-4 border-t border-zinc-100 flex items-center justify-between mt-3">
+              <span className="text-[11px] font-mono text-zinc-500">{activeModule.complexity}</span>
+              <a
+                href={activeModule.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 rounded-xl bg-zinc-900 hover:bg-black !text-white font-mono text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm active:translate-y-0.5"
+              >
+                <span className="!text-white font-bold">Full Workbench ↗</span>
+              </a>
+            </div>
+          </div>
         </div>
-        <span>Hover &amp; interact with the memory simulation above</span>
       </div>
     </div>
   );
