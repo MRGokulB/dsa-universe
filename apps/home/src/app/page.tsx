@@ -131,11 +131,6 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-xs font-semibold text-emerald-800">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Interactive Algorithmic Lab</span>
-          </div>
-
           <div className="flex items-center gap-2.5">
             <button
               onClick={() => window.dispatchEvent(new CustomEvent("open-dsa-tour"))}

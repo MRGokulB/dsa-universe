@@ -138,7 +138,7 @@ function ArrayInteractiveStage() {
         <span className="text-xs font-semibold text-slate-500">
           Two-Pointer Convergence Pattern
         </span>
-        <span className="text-xs font-mono font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
+        <span className="text-xs font-mono font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60">
           Step {(step % pointerStates.length) + 1} of {pointerStates.length}
         </span>
       </div>
@@ -153,19 +153,19 @@ function ArrayInteractiveStage() {
             <div key={i} className="flex flex-col items-center gap-1.5">
               <div className="h-6 flex items-center justify-center">
                 {isConverged ? (
-                  <span className="text-[10px] font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full animate-bounce">
+                  <span className="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-md">
                     Target
                   </span>
                 ) : isLeft ? (
-                  <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200/60">
                     Left (i)
                   </span>
                 ) : isRight ? (
-                  <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200/60">
                     Right (j)
                   </span>
                 ) : (
-                  <span className="text-[10px] text-slate-300">[{i}]</span>
+                  <span className="text-[10px] text-slate-400 font-mono">[{i}]</span>
                 )}
               </div>
 
@@ -217,7 +217,7 @@ function ListInteractiveStage() {
         <span className="text-xs font-semibold text-slate-500">
           Sequential Pointer Dereference
         </span>
-        <span className="text-xs font-mono font-bold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full">
+        <span className="text-xs font-mono font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60">
           Node {nodes[curr].id} Active
         </span>
       </div>
@@ -239,7 +239,7 @@ function ListInteractiveStage() {
                   Node {n.id}
                 </span>
                 {isActive && (
-                  <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white" />
                 )}
               </div>
               <div className="text-xl font-bold">{n.val}</div>
@@ -285,7 +285,7 @@ function StackInteractiveStage() {
         <span className="text-xs font-semibold text-slate-500">
           Last-In, First-Out (LIFO) Call Stack
         </span>
-        <span className="text-xs font-mono font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
+        <span className="text-xs font-mono font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60">
           Depth: {frames.length} Frame{frames.length > 1 ? "s" : ""}
         </span>
       </div>
@@ -345,7 +345,7 @@ function TreeInteractiveStage() {
         <span className="text-xs font-semibold text-slate-500">
           Binary Search Tree: Looking for Value 40
         </span>
-        <span className="text-xs font-mono font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">
+        <span className="text-xs font-mono font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60">
           Step {(step % path.length) + 1} of 3
         </span>
       </div>
@@ -454,7 +454,7 @@ function GraphInteractiveStage() {
         <span className="text-xs font-semibold text-slate-500">
           Dijkstra Shortest Path Exploration
         </span>
-        <span className="text-xs font-mono font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full">
+        <span className="text-xs font-mono font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60">
           Vertex {current.active} (Cost: {current.cost})
         </span>
       </div>
@@ -512,7 +512,7 @@ function DpInteractiveStage() {
         <span className="text-xs font-semibold text-slate-500">
           Fibonacci 1D Tabulation Memoization
         </span>
-        <span className="text-xs font-mono font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">
+        <span className="text-xs font-mono font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60">
           dp[{idx}] = {dpTable[idx - 1]} + {dpTable[idx - 2]} = {dpTable[idx]}
         </span>
       </div>
