@@ -1,53 +1,55 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
-const DOMAIN = "https://home-two-rust.vercel.app"; // The permanent domain can be configured here
+const DOMAIN = "https://home-two-rust.vercel.app";
+
+export const viewport: Viewport = {
+  themeColor: "#f4f5f8",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 export const metadata: Metadata = {
   title: {
-    default: "Master DSA Visually | Next-Gen Interactive Learning",
-    template: "%s | DSA Visualizer",
+    default: "DSA Universe | Silicon Hardware Architecture & Precision Visualizers",
+    template: "%s | DSA Universe",
   },
-  description: "Stop staring at walls of text. Understand Data Structures & Algorithms through cinematic, step-by-step interactive animations, memory visualization, and real code execution.",
-  keywords: ["DSA", "Data Structures", "Algorithms", "Visualizer", "Interactive Learning", "Learn Coding", "LeetCode Prep", "Computer Science"],
-  authors: [{ name: "DSA Visualizer Team" }],
-  creator: "DSA Visualizer",
-  publisher: "DSA Visualizer",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
+  description: "Master Data Structures & Algorithms visually. Step through physical cache lines, pointer dereference chains, LIFO stack frames, and dynamic programming memoization on live silicon dies.",
+  keywords: [
+    "DSA visualizer",
+    "Data Structures",
+    "Algorithms",
+    "Interactive computer science",
+    "Cache lines memory",
+    "Dijkstra algorithm visualizer",
+    "Binary Search Tree visualizer",
+    "Dynamic programming memoization",
+    "LeetCode visualization"
+  ],
+  authors: [{ name: "DSA Universe Team" }],
+  creator: "DSA Universe",
+  publisher: "DSA Universe",
   metadataBase: new URL(DOMAIN),
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Master DSA Visually | Interactive Data Structures",
-    description: "Learn Data Structures & Algorithms with cinematic, step-by-step 3D animations and real-time code execution.",
+    title: "DSA Universe | Silicon Hardware Architecture & Precision Visualizers",
+    description: "Step through physical cache lines, pointer dereference chains, and asymptotic execution curves on live silicon dies.",
     url: DOMAIN,
-    siteName: "DSA Visualizer",
-    images: [
-      {
-        url: "/og-image.jpg", // You can add a real OG image later
-        width: 1200,
-        height: 630,
-        alt: "DSA Visualizer Dashboard",
-      },
-    ],
+    siteName: "DSA Universe",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Master DSA Visually | Interactive Data Structures",
-    description: "Learn Data Structures & Algorithms with cinematic, step-by-step 3D animations and real-time code execution.",
-    creator: "@dsavisualizer", // Replace if applicable
-    images: ["/og-image.jpg"],
+    title: "DSA Universe | Silicon Hardware Architecture & Precision Visualizers",
+    description: "Interactive hardware silicon visualizers for Data Structures and Algorithms.",
   },
   robots: {
     index: true,
@@ -62,34 +64,110 @@ export const metadata: Metadata = {
   },
 };
 
-// Generative Engine Optimization (GEO) Structured Data
-const jsonLd = {
+const educationalOrgJsonLd = {
   "@context": "https://schema.org",
   "@type": "EducationalOrganization",
-  "name": "DSA Visualizer",
+  "name": "DSA Universe",
   "url": DOMAIN,
-  "logo": `${DOMAIN}/logo.png`, // Add a logo later
-  "description": "An interactive educational platform teaching Data Structures and Algorithms through visual, step-by-step animations.",
+  "description": "An interactive educational platform teaching Data Structures and Algorithms through hardware silicon console visualizers.",
   "sameAs": [
-    // Social links go here
-  ],
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": `${DOMAIN}/search?q={search_term_string}`,
-    "query-input": "required name=search_term_string"
-  }
+    "https://github.com/MRGokulB/dsa-universe"
+  ]
+};
+
+const webAppJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "DSA Universe Silicon Workbench",
+  "url": DOMAIN,
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "All",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "Contiguous 64-bit cache line array visualizer",
+    "Floyd cycle detection pointer chain simulation",
+    "LIFO RSP stack frame push and purge tracking",
+    "Binary Search Tree logarithmic traversal pathfinder",
+    "Dijkstra priority queue shortest path relaxation",
+    "1D dynamic programming tabulation lattice"
+  ]
+};
+
+const courseJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "Data Structures & Algorithms Silicon Visualizer Masterclass",
+  "description": "Step-by-step interactive course teaching algorithm time complexity, spatial locality, and memory layout.",
+  "provider": {
+    "@type": "EducationalOrganization",
+    "name": "DSA Universe",
+    "url": DOMAIN
+  },
+  "educationalLevel": "Beginner to Advanced",
+  "about": [
+    "Data Structures",
+    "Algorithms",
+    "Big O Complexity",
+    "Computer Architecture",
+    "Memory Hierarchy"
+  ]
+};
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why are Arrays faster than Linked Lists for sequential traversal?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Arrays allocate memory in contiguous 64-bit blocks. When a CPU reads an array index, it loads an entire 64-byte cache line into L1 cache, achieving spatial locality with near-zero cache misses. Linked Lists store nodes dispersed across the heap, causing CPU cache misses on every pointer dereference."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the time complexity of Dijkstra's algorithm vs Breadth-First Search (BFS)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Breadth-First Search (BFS) operates in O(V + E) time on unweighted graphs using a standard FIFO queue. For weighted graphs with non-negative edge weights, Dijkstra's algorithm utilizes a Min-Heap priority queue, resulting in an O(E log V) time complexity."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does Dynamic Programming tabulation differ from memoization?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Tabulation is an iterative bottom-up approach that fills an array or matrix starting from base cases, eliminating recursion stack overhead and optimizing CPU cache locality. Memoization is a top-down recursive approach that caches subproblem results on demand."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does the Call Stack operate during recursive function calls?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The CPU Call Stack operates as a Last-In, First-Out (LIFO) data structure. Each function invocation pushes an activation frame containing return addresses, parameters, and local variables. Excessive unoptimized recursion without tail call elimination leads to Call Stack overflow."
+      }
+    }
+  ]
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(educationalOrgJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(courseJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       </head>
-      <body suppressHydrationWarning className="bg-[#09090b] text-white min-h-screen">{children}</body>
+      <body suppressHydrationWarning className="bg-[#f3f4f7] text-[#0f172a] min-h-screen">
+        {children}
+      </body>
     </html>
   );
 }

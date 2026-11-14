@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Sparkles,
+  Compass,
   ArrowUpRight,
   Layers,
   LayoutList,
@@ -143,9 +143,9 @@ export default function Home() {
           <div className="flex items-center gap-2.5">
             <button
               onClick={() => window.dispatchEvent(new CustomEvent("open-dsa-tour"))}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-black/[0.1] bg-white hover:bg-black hover:text-white transition-all text-xs font-mono font-bold text-[#0f172a] shadow-xs cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-black/[0.1] bg-white hover:bg-black hover:text-white transition-all text-xs font-mono font-bold text-[#0f172a] shadow-xs cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
             >
-              <Sparkles size={13} className="text-emerald-500" />
+              <Compass size={13} className="text-emerald-600" />
               <span>Tour</span>
             </button>
 
@@ -167,10 +167,6 @@ export default function Home() {
         <section className="mb-10">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-4">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-zinc-900 text-emerald-400 font-mono text-[10px] tracking-widest uppercase font-bold mb-3 border border-zinc-700 shadow-2xs">
-                <span className="led-diode-green" />
-                <span>HARDWARE SYNTHESIZER WORKSTATION &middot; 2026</span>
-              </div>
               <h1 className="font-clash font-bold text-3xl sm:text-5xl text-[#0f172a] tracking-tight leading-tight">
                 Silicon Memory Architecture. <br />
                 <span className="font-instrument italic font-normal text-zinc-600">

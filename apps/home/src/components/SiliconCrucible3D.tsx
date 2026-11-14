@@ -463,22 +463,10 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
   return (
     <div className="w-full flex flex-col gap-6 select-none">
       <div className="w-full skeuo-rack-bezel rounded-[28px] p-5 sm:p-7 relative overflow-hidden">
-        <div className="absolute top-3 left-4 flex gap-2">
-          <div className="skeuo-screw" />
-          <div className="skeuo-screw" />
-        </div>
-        <div className="absolute top-3 right-4 flex gap-2">
-          <div className="skeuo-screw" />
-          <div className="skeuo-screw" />
-        </div>
-        <div className="absolute bottom-3 left-4 flex gap-2">
-          <div className="skeuo-screw" />
-          <div className="skeuo-screw" />
-        </div>
-        <div className="absolute bottom-3 right-4 flex gap-2">
-          <div className="skeuo-screw" />
-          <div className="skeuo-screw" />
-        </div>
+        <div className="absolute top-4 left-4 skeuo-screw" />
+        <div className="absolute top-4 right-4 skeuo-screw" />
+        <div className="absolute bottom-4 left-4 skeuo-screw" />
+        <div className="absolute bottom-4 right-4 skeuo-screw" />
 
         <div className="flex flex-wrap items-center justify-between gap-3 mb-6 px-4 pt-2">
           <div className="flex items-center gap-2.5">
