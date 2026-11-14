@@ -12,7 +12,7 @@ export interface AlgorithmModuleMeta {
   tagline: string;
   url: string;
   accent: string;
-  chipColor: string;
+  accentHex: number;
   complexity: string;
   memory: string;
   glyph: string;
@@ -27,8 +27,8 @@ export const MODULE_SYSTEMS: AlgorithmModuleMeta[] = [
     category: "Linear",
     tagline: "Sequential cache lines and two-pointer convergence",
     url: "https://arrays-rho.vercel.app",
-    accent: "#2563eb",
-    chipColor: "#bfdbfe", // Soft sky blue ceramic
+    accent: "#38bdf8",
+    accentHex: 0x38bdf8,
     complexity: "Access O(1) · Search O(N)",
     memory: "Contiguous 64-bit Cache Lines",
     glyph: "[ 0x00 | 0x08 | 0x10 | 0x18 ]"
@@ -41,8 +41,8 @@ export const MODULE_SYSTEMS: AlgorithmModuleMeta[] = [
     category: "Linear",
     tagline: "Dispersed heap nodes and Floyd cycle isolation",
     url: "https://linked-lists-xi.vercel.app/",
-    accent: "#7c3aed",
-    chipColor: "#e9d5ff", // Soft lilac ceramic
+    accent: "#c084fc",
+    accentHex: 0xc084fc,
     complexity: "Insert O(1) · Traversal O(N)",
     memory: "Heap Allocated Pointer Chain",
     glyph: "[ Node* ] -> [ Node* ] -> ∅"
@@ -55,8 +55,8 @@ export const MODULE_SYSTEMS: AlgorithmModuleMeta[] = [
     category: "Linear",
     tagline: "LIFO execution frames and circular ring queues",
     url: "https://stacks-queues.vercel.app",
-    accent: "#059669",
-    chipColor: "#bbf7d0", // Soft mint ceramic
+    accent: "#34d399",
+    accentHex: 0x34d399,
     complexity: "Push/Pop O(1) · Enqueue O(1)",
     memory: "RSP Stack Register & Ring Buffer",
     glyph: "RSP -> [ Frame 3 ] [ Frame 2 ]"
@@ -69,8 +69,8 @@ export const MODULE_SYSTEMS: AlgorithmModuleMeta[] = [
     category: "Hierarchical",
     tagline: "Balanced BST invariants and recursive traversals",
     url: "https://trees-eight-omega.vercel.app",
-    accent: "#d97706",
-    chipColor: "#fef08a", // Soft amber ceramic
+    accent: "#fbbf24",
+    accentHex: 0xfbbf24,
     complexity: "Balanced O(log N) · Worst O(N)",
     memory: "Recursive Node Hierarchy",
     glyph: "( Root ) -> [ L ] / [ R ]"
@@ -83,8 +83,8 @@ export const MODULE_SYSTEMS: AlgorithmModuleMeta[] = [
     category: "Topological",
     tagline: "Adjacency matrix traversal and priority queue shortest paths",
     url: "https://graphs-steel.vercel.app",
-    accent: "#e11d48",
-    chipColor: "#fecdd3", // Soft rose ceramic
+    accent: "#fb7185",
+    accentHex: 0xfb7185,
     complexity: "BFS O(V+E) · Dijkstra O(E log V)",
     memory: "Sparse Adjacency Matrix & Heap",
     glyph: "( A ) === ( B ) --- ( C )"
@@ -97,8 +97,8 @@ export const MODULE_SYSTEMS: AlgorithmModuleMeta[] = [
     category: "Topological",
     tagline: "DAG state lattices and 1D rolling tabulation",
     url: "https://dp-sigma-one.vercel.app",
-    accent: "#4f46e5",
-    chipColor: "#c7d2fe", // Soft indigo ceramic
+    accent: "#818cf8",
+    accentHex: 0x818cf8,
     complexity: "Pseudo-polynomial O(N * W)",
     memory: "Contiguous DP Memoization Cache",
     glyph: "dp[i][w] = max(dp[i-1], val)"
@@ -107,113 +107,109 @@ export const MODULE_SYSTEMS: AlgorithmModuleMeta[] = [
 
 function createTactileCardCanvas(mod: AlgorithmModuleMeta, isSelected: boolean, isHovered: boolean): HTMLCanvasElement {
   const canvas = document.createElement("canvas");
-  canvas.width = 512;
-  canvas.height = 512;
+  canvas.width = 1024;
+  canvas.height = 1024;
   const ctx = canvas.getContext("2d");
   if (!ctx) return canvas;
 
-  // Solid clean pastel background
-  ctx.fillStyle = mod.chipColor;
-  ctx.fillRect(0, 0, 512, 512);
+  const bgGrad = ctx.createLinearGradient(0, 0, 1024, 1024);
+  if (isSelected) {
+    bgGrad.addColorStop(0, "#192236");
+    bgGrad.addColorStop(1, "#101624");
+  } else if (isHovered) {
+    bgGrad.addColorStop(0, "#161d2d");
+    bgGrad.addColorStop(1, "#0d131f");
+  } else {
+    bgGrad.addColorStop(0, "#131826");
+    bgGrad.addColorStop(1, "#0a0e17");
+  }
 
-  // Outer border with subtle corner chamfer
-  ctx.lineWidth = isSelected ? 14 : 7;
-  ctx.strokeStyle = isSelected ? "#0f172a" : isHovered ? "rgba(15, 23, 42, 0.45)" : "rgba(15, 23, 42, 0.18)";
-  ctx.strokeRect(10, 10, 492, 492);
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, 1024, 1024);
 
-  // Top Index Badge
-  ctx.fillStyle = "#0f172a";
-  ctx.font = "bold 32px sans-serif";
-  ctx.fillText(mod.index, 38, 70);
+  ctx.lineWidth = isSelected ? 20 : 10;
+  ctx.strokeStyle = isSelected ? mod.accent : isHovered ? "rgba(255, 255, 255, 0.4)" : "rgba(255, 255, 255, 0.12)";
+  ctx.strokeRect(18, 18, 988, 988);
 
-  // Category Tag
-  ctx.fillStyle = "rgba(15, 23, 42, 0.65)";
-  ctx.font = "bold 18px monospace";
-  ctx.fillText(mod.category.toUpperCase(), 38, 104);
+  ctx.fillStyle = mod.accent;
+  ctx.fillRect(18, 18, 988, 22);
 
-  // Gold contact pad in top-right corner
-  ctx.fillStyle = isSelected ? "#0f172a" : "rgba(15, 23, 42, 0.25)";
-  ctx.fillRect(436, 36, 36, 18);
-  ctx.fillStyle = "#d97706";
-  ctx.fillRect(440, 40, 28, 10);
+  ctx.fillStyle = "rgba(255, 255, 255, 0.08)";
+  ctx.beginPath();
+  ctx.roundRect(70, 75, 280, 70, 35);
+  ctx.fill();
 
-  // Primary Bold Short Title
-  ctx.fillStyle = "#0f172a";
-  ctx.font = "bold 60px sans-serif";
-  ctx.fillText(mod.shortTitle, 38, 255);
+  ctx.fillStyle = mod.accent;
+  ctx.font = "bold 38px monospace";
+  ctx.fillText(`${mod.index} · ${mod.category.toUpperCase()}`, 100, 124);
 
-  // Invariant schematic line
-  ctx.fillStyle = "rgba(15, 23, 42, 0.7)";
-  ctx.font = "bold 20px monospace";
-  ctx.fillText(mod.glyph, 38, 305);
+  ctx.beginPath();
+  ctx.arc(930, 110, 16, 0, Math.PI * 2);
+  ctx.fillStyle = isSelected ? mod.accent : "rgba(255, 255, 255, 0.25)";
+  ctx.fill();
+  if (isSelected) {
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.8)";
+    ctx.stroke();
+  }
 
-  // Complexity indicator
-  ctx.fillStyle = "rgba(15, 23, 42, 0.55)";
-  ctx.font = "500 22px monospace";
-  ctx.fillText(mod.complexity.split("·")[0].trim(), 38, 360);
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "bold 106px sans-serif";
+  ctx.fillText(mod.shortTitle, 70, 480);
 
-  // Bottom hairline decorative bar
-  ctx.fillStyle = "rgba(15, 23, 42, 0.12)";
-  ctx.fillRect(38, 420, 436, 2);
+  ctx.fillStyle = mod.accent;
+  ctx.font = "bold 44px monospace";
+  ctx.fillText(mod.glyph, 70, 585);
 
-  // Bottom corner branding
-  ctx.fillStyle = "rgba(15, 23, 42, 0.4)";
-  ctx.font = "bold 17px monospace";
-  ctx.fillText("DSA · LAB SPEC 2026", 38, 460);
+  ctx.fillStyle = "rgba(255, 255, 255, 0.65)";
+  ctx.font = "500 40px monospace";
+  ctx.fillText(mod.complexity.split("·")[0].trim(), 70, 700);
+
+  ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+  ctx.fillRect(70, 830, 884, 4);
+
+  ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+  ctx.font = "bold 34px monospace";
+  ctx.fillText("DSA · SILICON SPEC 2026", 70, 915);
 
   return canvas;
 }
 
-function createGroundTelemetryTexture(): THREE.CanvasTexture {
+function createGroundSubstrateTexture(): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
   canvas.width = 1024;
   canvas.height = 1024;
   const ctx = canvas.getContext("2d");
   if (!ctx) return new THREE.CanvasTexture(canvas);
 
-  const cx = 512;
-  const cy = 512;
+  ctx.fillStyle = "#121724";
+  ctx.fillRect(0, 0, 1024, 1024);
 
-  // Concentric architectural hairline rings
-  ctx.strokeStyle = "rgba(15, 23, 42, 0.05)";
-  ctx.lineWidth = 1.5;
+  ctx.strokeStyle = "rgba(56, 189, 248, 0.15)";
+  ctx.lineWidth = 3;
 
-  [180, 280, 380, 460].forEach((r) => {
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.stroke();
-  });
+  ctx.strokeRect(40, 40, 944, 944);
 
-  // Crosshair coordinate axes
-  ctx.strokeStyle = "rgba(15, 23, 42, 0.04)";
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.06)";
+  ctx.lineWidth = 2;
+
   ctx.beginPath();
-  ctx.moveTo(cx, 60);
-  ctx.lineTo(cx, 964);
-  ctx.moveTo(60, cy);
-  ctx.lineTo(964, cy);
+  ctx.moveTo(341, 40);
+  ctx.lineTo(341, 984);
+  ctx.moveTo(682, 40);
+  ctx.lineTo(682, 984);
+  ctx.moveTo(40, 512);
+  ctx.lineTo(984, 512);
   ctx.stroke();
 
-  // Degree ticks and micro-labels
-  ctx.fillStyle = "rgba(15, 23, 42, 0.18)";
-  ctx.font = "bold 13px monospace";
-  ctx.fillText("00° N · STAGE REF", cx + 12, 120);
-  ctx.fillText("90° E · MEM BUS", 840, cy - 10);
-  ctx.fillText("180° S · CACHE L1", cx + 12, 920);
-  ctx.fillText("270° W · HEAP REG", 70, cy - 10);
-
-  // Small corner grid tick marks
-  for (let i = 0; i < 36; i++) {
-    const angle = (i * 10 * Math.PI) / 180;
-    const r1 = 380;
-    const r2 = i % 3 === 0 ? 395 : 388;
-    ctx.beginPath();
-    ctx.moveTo(cx + Math.cos(angle) * r1, cy + Math.sin(angle) * r1);
-    ctx.lineTo(cx + Math.cos(angle) * r2, cy + Math.sin(angle) * r2);
-    ctx.stroke();
-  }
+  ctx.strokeStyle = "rgba(56, 189, 248, 0.3)";
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.arc(512, 512, 120, 0, Math.PI * 2);
+  ctx.stroke();
 
   const texture = new THREE.CanvasTexture(canvas);
-  texture.anisotropy = 8;
+  texture.anisotropy = 16;
   return texture;
 }
 
@@ -241,8 +237,6 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
     scene.background = null;
 
     const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 100);
-    camera.position.set(0, 4.8, 7.6);
-    camera.lookAt(0, -0.2, 0);
 
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -254,14 +248,33 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.05;
+    renderer.toneMappingExposure = 1.15;
     container.appendChild(renderer.domElement);
 
-    // Studio Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.9);
+    const applyResponsiveCamera = () => {
+      if (!container) return;
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      const aspect = w / h;
+      camera.aspect = aspect;
+
+      if (aspect < 1.0) {
+        const extraDist = (1.0 - aspect) * 5.2;
+        camera.position.set(0, 4.8 + extraDist * 0.35, 7.6 + extraDist);
+      } else {
+        camera.position.set(0, 4.8, 7.6);
+      }
+      camera.lookAt(0, -0.2, 0);
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    };
+
+    applyResponsiveCamera();
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xfffbf2, 2.5);
+    const keyLight = new THREE.DirectionalLight(0xfff7ed, 2.4);
     keyLight.position.set(5, 9, 6);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 1024;
@@ -269,77 +282,45 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
     keyLight.shadow.bias = -0.0005;
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0xe8f0fe, 1.2);
-    fillLight.position.set(-6, 5, -3);
-    scene.add(fillLight);
-
-    const rimLight = new THREE.PointLight(0xffffff, 0.9, 15);
-    rimLight.position.set(0, 6, -5);
+    const rimLight = new THREE.DirectionalLight(0x38bdf8, 1.8);
+    rimLight.position.set(-6, 6, -5);
     scene.add(rimLight);
 
-    // Architectural Ground Ring Plane with Telemetry
-    const telemetryTexture = createGroundTelemetryTexture();
-    const telemetryGeo = new THREE.PlaneGeometry(12, 12);
-    const telemetryMat = new THREE.MeshBasicMaterial({
-      map: telemetryTexture,
-      transparent: true,
-      opacity: 0.85
-    });
-    const telemetryMesh = new THREE.Mesh(telemetryGeo, telemetryMat);
-    telemetryMesh.rotation.x = -Math.PI / 2;
-    telemetryMesh.position.y = -0.235;
-    scene.add(telemetryMesh);
-
-    // Floating Spatial Depth Particles (~45 ambient motes)
-    const particleCount = 45;
-    const particleGeo = new THREE.BufferGeometry();
-    const particlePositions = new Float32Array(particleCount * 3);
-    const particleSpeeds = new Float32Array(particleCount);
-
-    for (let i = 0; i < particleCount; i++) {
-      particlePositions[i * 3] = (Math.random() - 0.5) * 10;
-      particlePositions[i * 3 + 1] = Math.random() * 4 + 0.2;
-      particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 8;
-      particleSpeeds[i] = 0.2 + Math.random() * 0.4;
-    }
-
-    particleGeo.setAttribute("position", new THREE.BufferAttribute(particlePositions, 3));
-    const particleMat = new THREE.PointsMaterial({
-      color: 0x94a3b8,
-      size: 0.05,
-      transparent: true,
-      opacity: 0.45
-    });
-    const particles = new THREE.Points(particleGeo, particleMat);
-    scene.add(particles);
+    const activePointLight = new THREE.PointLight(0x38bdf8, 2.5, 9);
+    activePointLight.position.set(0, 2.2, 0);
+    scene.add(activePointLight);
 
     const stageGroup = new THREE.Group();
     scene.add(stageGroup);
 
-    // Soft Ceramic Substrate Base Slab
-    const slabGeo = new THREE.BoxGeometry(5.8, 0.22, 4.2);
-    const slabMat = new THREE.MeshPhysicalMaterial({
-      color: 0xf1f3f7,
-      metalness: 0.08,
-      roughness: 0.45,
-      clearcoat: 0.35,
-      clearcoatRoughness: 0.2
+    const substrateTexture = createGroundSubstrateTexture();
+    const slabGeo = new THREE.BoxGeometry(6.2, 0.26, 4.6);
+    const slabMatSide = new THREE.MeshPhysicalMaterial({
+      color: 0x0f1422,
+      metalness: 0.25,
+      roughness: 0.35,
+      clearcoat: 0.4
     });
-    const slabMesh = new THREE.Mesh(slabGeo, slabMat);
-    slabMesh.position.y = -0.11;
+    const slabMatTop = new THREE.MeshPhysicalMaterial({
+      map: substrateTexture,
+      metalness: 0.2,
+      roughness: 0.4,
+      clearcoat: 0.5
+    });
+    const slabMaterials = [slabMatSide, slabMatSide, slabMatTop, slabMatSide, slabMatSide, slabMatSide];
+    const slabMesh = new THREE.Mesh(slabGeo, slabMaterials);
+    slabMesh.position.y = -0.13;
     slabMesh.receiveShadow = true;
     stageGroup.add(slabMesh);
 
-    // Diffuse Ground Contact Shadow
     const shadowGeo = new THREE.PlaneGeometry(14, 12);
-    const shadowMat = new THREE.ShadowMaterial({ opacity: 0.16 });
+    const shadowMat = new THREE.ShadowMaterial({ opacity: 0.4 });
     const shadowMesh = new THREE.Mesh(shadowGeo, shadowMat);
     shadowMesh.rotation.x = -Math.PI / 2;
-    shadowMesh.position.y = -0.23;
+    shadowMesh.position.y = -0.26;
     shadowMesh.receiveShadow = true;
     scene.add(shadowMesh);
 
-    // 6 Tactile Ceramic Cards (2 rows x 3 columns)
     const cardMeshes: {
       id: string;
       mesh: THREE.Mesh;
@@ -350,10 +331,10 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
       texture: THREE.CanvasTexture;
     }[] = [];
 
-    const cardGeo = new THREE.BoxGeometry(1.58, 0.26, 1.58);
+    const cardGeo = new THREE.BoxGeometry(1.68, 0.28, 1.68);
     const cols = 3;
-    const spacingX = 1.82;
-    const spacingZ = 1.78;
+    const spacingX = 1.95;
+    const spacingZ = 1.92;
 
     MODULE_SYSTEMS.forEach((mod, idx) => {
       const col = idx % cols;
@@ -365,26 +346,28 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
       const isSelected = mod.id === activeIdRef.current;
       const canvas = createTactileCardCanvas(mod, isSelected, false);
       const texture = new THREE.CanvasTexture(canvas);
-      texture.anisotropy = 8;
+      texture.anisotropy = 16;
+      texture.generateMipmaps = true;
+      texture.minFilter = THREE.LinearMipmapLinearFilter;
 
       const sideMat = new THREE.MeshPhysicalMaterial({
-        color: new THREE.Color(mod.chipColor).multiplyScalar(0.92),
-        metalness: 0.12,
+        color: 0x0f1523,
+        metalness: 0.2,
         roughness: 0.35,
         clearcoat: 0.5
       });
 
       const topMat = new THREE.MeshPhysicalMaterial({
         map: texture,
-        metalness: 0.12,
-        roughness: 0.32,
-        clearcoat: 0.7,
-        clearcoatRoughness: 0.18
+        metalness: 0.15,
+        roughness: 0.3,
+        clearcoat: 0.8,
+        clearcoatRoughness: 0.15
       });
 
       const materials = [sideMat, sideMat, topMat, sideMat, sideMat, sideMat];
       const mesh = new THREE.Mesh(cardGeo, materials);
-      mesh.position.set(x, 0.13, z);
+      mesh.position.set(x, 0.14, z);
       mesh.castShadow = true;
       mesh.receiveShadow = true;
       mesh.userData = { id: mod.id };
@@ -393,8 +376,8 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
       cardMeshes.push({
         id: mod.id,
         mesh,
-        baseY: 0.13,
-        targetY: 0.13,
+        baseY: 0.14,
+        targetY: 0.14,
         topMat,
         mod,
         texture
@@ -411,7 +394,6 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
       });
     };
 
-    // Raycasting & Interaction
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2(-999, -999);
     let hoveredId: string | null = null;
@@ -421,7 +403,6 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
     let targetRotationY = -0.22;
     let targetRotationX = 0.38;
 
-    // Subtle pointer parallax offsets
     let parallaxTargetX = 0;
     let parallaxTargetY = 0;
 
@@ -438,7 +419,6 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
       mouse.x = rawX;
       mouse.y = rawY;
 
-      // Subtle parallax response when moving across stage
       parallaxTargetX = rawX * 0.12;
       parallaxTargetY = rawY * 0.08;
 
@@ -480,19 +460,11 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
         targetRotationY += 0.0012;
       }
 
-      // Smooth camera orbit + natural pointer parallax
       const combinedTargetY = targetRotationY + parallaxTargetX;
       const combinedTargetX = targetRotationX - parallaxTargetY;
 
       stageGroup.rotation.y = THREE.MathUtils.damp(stageGroup.rotation.y, combinedTargetY, 4, delta);
       stageGroup.rotation.x = THREE.MathUtils.damp(stageGroup.rotation.x, combinedTargetX, 4, delta);
-
-      // Animate floating spatial dust motes
-      const positions = particleGeo.attributes.position.array as Float32Array;
-      for (let i = 0; i < particleCount; i++) {
-        positions[i * 3 + 1] += Math.sin(currentTime * 0.001 + i) * 0.003;
-      }
-      particleGeo.attributes.position.needsUpdate = true;
 
       raycaster.setFromCamera(mouse, camera);
       const intersects = raycaster.intersectObjects(cardMeshes.map((b) => b.mesh));
@@ -511,12 +483,22 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
         updateCardTextures(activeIdRef.current, hoveredId);
       }
 
+      const currentActive = MODULE_SYSTEMS.find((m) => m.id === activeIdRef.current);
+      if (currentActive) {
+        activePointLight.color.setHex(currentActive.accentHex);
+      }
+
       cardMeshes.forEach((item) => {
         const isActive = item.id === activeIdRef.current;
         const isHovered = item.id === hoveredId;
 
         item.targetY = isActive ? item.baseY + 0.38 : isHovered ? item.baseY + 0.18 : item.baseY;
         item.mesh.position.y = THREE.MathUtils.damp(item.mesh.position.y, item.targetY, 9, delta);
+
+        if (isActive) {
+          activePointLight.position.x = THREE.MathUtils.damp(activePointLight.position.x, item.mesh.position.x, 8, delta);
+          activePointLight.position.z = THREE.MathUtils.damp(activePointLight.position.z, item.mesh.position.z, 8, delta);
+        }
       });
 
       renderer.render(scene, camera);
@@ -524,20 +506,11 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
 
     animId = requestAnimationFrame(animate);
 
-    const onResize = () => {
-      if (!container) return;
-      const w = container.clientWidth;
-      const h = container.clientHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
-    };
-
-    window.addEventListener("resize", onResize);
+    window.addEventListener("resize", applyResponsiveCamera);
 
     return () => {
       cancelAnimationFrame(animId);
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener("resize", applyResponsiveCamera);
       container.removeEventListener("mousedown", onPointerDown);
       window.removeEventListener("mousemove", onPointerMove);
       window.removeEventListener("mouseup", onPointerUp);
@@ -546,9 +519,7 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
       cardMeshes.forEach((item) => {
         item.texture.dispose();
       });
-      telemetryTexture.dispose();
-      particleGeo.dispose();
-      particleMat.dispose();
+      substrateTexture.dispose();
 
       scene.clear();
       renderer.dispose();
@@ -559,7 +530,7 @@ export default function SiliconCrucible3D({ activeId, onSelectModule }: Props) {
   }, []);
 
   return (
-    <div className="relative w-full h-[480px] sm:h-[560px] select-none flex items-center justify-center">
+    <div className="relative w-full h-[360px] sm:h-[460px] lg:h-[520px] select-none flex items-center justify-center">
       <div ref={mountRef} className="w-full h-full" />
     </div>
   );
