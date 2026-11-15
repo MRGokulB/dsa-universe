@@ -113,20 +113,26 @@ export default function Home() {
       <header className="sticky top-0 z-50 border-b border-slate-200/80 dark:border-slate-800/80 bg-white/80 dark:bg-[#07090e]/85 backdrop-blur-xl transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 h-18 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-zinc-950 flex items-center justify-center shadow-sm border border-indigo-500/30 relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 via-transparent to-transparent pointer-events-none" />
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-10">
-                <path d="M12 2.5L20.2 7.25V16.75L12 21.5L3.8 16.75V7.25Z" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M12 2.5V21.5" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" />
-                <path d="M3.8 7.25L20.2 16.75" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" />
-                <path d="M3.8 16.75L20.2 7.25" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" />
-                <circle cx="12" cy="2.5" r="2.2" fill="#818cf8" />
-                <circle cx="20.2" cy="7.25" r="2.2" fill="#818cf8" />
-                <circle cx="20.2" cy="16.75" r="2.2" fill="#818cf8" />
-                <circle cx="12" cy="21.5" r="2.2" fill="#818cf8" />
-                <circle cx="3.8" cy="16.75" r="2.2" fill="#818cf8" />
-                <circle cx="3.8" cy="7.25" r="2.2" fill="#818cf8" />
-                <circle cx="12" cy="12" r="2.8" fill="#818cf8" />
+            <div className="w-10 h-10 rounded-xl bg-zinc-950 flex items-center justify-center shadow-sm border border-indigo-500/40 relative overflow-hidden group hover:border-cyan-400/50 transition-colors">
+              <svg width="24" height="24" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-10">
+                <defs>
+                  <linearGradient id="dsaNavNeon" x1="120" y1="120" x2="390" y2="390" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#38BDF8"/>
+                    <stop offset="50%" stopColor="#818CF8"/>
+                    <stop offset="100%" stopColor="#A855F7"/>
+                  </linearGradient>
+                </defs>
+                <path d="M256 120 L380 188 V324 L256 392 L132 324 V188 Z" stroke="url(#dsaNavNeon)" strokeWidth="24" strokeLinejoin="round"/>
+                <line x1="256" y1="256" x2="256" y2="120" stroke="url(#dsaNavNeon)" strokeWidth="20" strokeLinecap="round"/>
+                <line x1="256" y1="256" x2="380" y2="324" stroke="url(#dsaNavNeon)" strokeWidth="20" strokeLinecap="round"/>
+                <line x1="256" y1="256" x2="132" y2="324" stroke="url(#dsaNavNeon)" strokeWidth="20" strokeLinecap="round"/>
+                <circle cx="256" cy="120" r="32" fill="#38BDF8"/>
+                <circle cx="380" cy="188" r="32" fill="#818CF8"/>
+                <circle cx="380" cy="324" r="32" fill="#A855F7"/>
+                <circle cx="256" cy="392" r="32" fill="#6366F1"/>
+                <circle cx="132" cy="324" r="32" fill="#38BDF8"/>
+                <circle cx="132" cy="188" r="32" fill="#818CF8"/>
+                <circle cx="256" cy="256" r="28" fill="#FFFFFF"/>
               </svg>
             </div>
             <div>
